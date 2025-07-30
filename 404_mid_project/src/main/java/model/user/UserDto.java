@@ -1,4 +1,4 @@
-package controller.user;
+package model.user;
 
 public class UserDto {
 	private long num;
