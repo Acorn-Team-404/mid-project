@@ -6,8 +6,6 @@
 .classpath
 .project
 
-!**/lib/*.jar
-
 ### Eclipse ###
 .metadata
 bin/
