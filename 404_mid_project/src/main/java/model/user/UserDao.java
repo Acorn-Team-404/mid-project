@@ -1,4 +1,4 @@
-package controller.user;
+package model.user;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

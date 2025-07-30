@@ -39,8 +39,8 @@
 	        </a>
 	      </li>
 	      <li class="nav-item mx-2">
-	        <a class="nav-link text-dark d-flex align-items-center" href="#">
-	          <i class="bi bi-person me-1"></i> 로그인
+	        <a class="nav-link text-dark d-flex align-items-center" href="${pageContext.request.contextPath}/user/signup-form.jsp">
+	          <i class="bi bi-person me-1"></i> 회원가입
 	        </a>
 	      </li>
 	    </ul>
