@@ -9,6 +9,7 @@
 <body>
 	<ul>
 		<li><a href="${pageContext.request.contextPath}/dbtest">DBtest</a></li>
+		<li><a href="${pageContext.request.contextPath}/user/signup-form.jsp">회원가입</a></li>
 	</ul>
 </body>
 </html>
