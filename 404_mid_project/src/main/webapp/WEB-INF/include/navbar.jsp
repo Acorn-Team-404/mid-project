@@ -1,12 +1,49 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
+<%-- /WEB-INF/include/navbar.jsp --%>
+<%
+	String navUserId = "null";
+%>
+<nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm py-3">
+  <div class="container-fluid align-items-center">
+    <!-- 좌측 로고 -->
+    <a class="navbar-brand fw-bold" href="#">STAYLOG</a>
 
-</body>
-</html>
+    <!-- 검색창 -->
+    <form class="d-flex mx-4 flex-grow-1" role="search">
+      <div class="input-group rounded-pill border bg-light px-3" style="height: 45px; width: 100%;">
+        <span class="input-group-text bg-transparent border-0">
+          <i class="bi bi-search"></i> <!-- Bootstrap Icons 사용 -->
+        </span>
+        <input type="search" class="form-control border-0 bg-transparent fw-semibold" placeholder="어디로 떠날까요?" aria-label="Search">
+      </div>
+    </form>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+			data-bs-target="#navbarNav">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+    <!-- 우측 메뉴(collapse) -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+	    <ul class="navbar-nav align-items-center ms-auto fw-semibold">
+	      <li class="nav-item mx-2"><a class="nav-link text-dark" href="#">FIND STAY</a></li>
+	      <li class="nav-item mx-2"><a class="nav-link text-dark" href="#">PROMOTION</a></li>
+	      <li class="nav-item mx-2"><a class="nav-link text-dark" href="#">JOURNAL</a></li>
+	      <li class="nav-item mx-2"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/dbtest">DBTest</a></li>
+	      <li class="nav-item mx-3">
+	        <div class="vr"></div> <!-- 세로 구분선 -->
+	      </li>
+	      <li class="nav-item mx-2">
+	        <a class="nav-link text-dark d-flex align-items-center" href="#">
+	          <i class="bi bi-bell"></i> 알림
+	        </a>
+	      </li>
+	      <li class="nav-item mx-2">
+	        <a class="nav-link text-dark d-flex align-items-center" href="#">
+	          <i class="bi bi-person me-1"></i> 로그인
+	        </a>
+	      </li>
+	    </ul>
+    </div> <!-- end collapse -->
+  </div>
+</nav>
