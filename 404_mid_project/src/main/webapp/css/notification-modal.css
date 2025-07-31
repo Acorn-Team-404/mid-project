@@ -1,11 +1,21 @@
-.bg-custom-light { /* 알림 카드 배경색 설정 */
-  background-color: rgb(192, 192, 192);
+
+.noti-card{
+	display: flex;
+	padding: 20px;
+	background-color: gray;
+	border-radius: 8px;
+	border-top-right-radius: 40px;
+	position: relative;
 }
 
-.custom-top-right-round { /* 알림 카드 배경색 설정 */
-  border-top-right-radius: 60px;
-  border-top-left-radius: 6px;
-  border-bottom-right-radius: 6px;
-  border-bottom-left-radius: 6px;
+.noti-dott{
+	position: absolute;
+	top: 4px;
+	right: 4px
 }
+
+.noti-img{
+	border-radius: 8px;
+}
+
 
