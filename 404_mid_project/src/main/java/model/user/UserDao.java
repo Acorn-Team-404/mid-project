@@ -75,7 +75,7 @@ public class UserDao {
         ResultSet rs = null;
         
         try {
-			conn = new DBConnector().getConn();
+			conn = DBConnector.getConn();
 
 			String sql = """
 				SELECT users_id FROM users WHERE users_id=?
@@ -91,15 +91,7 @@ public class UserDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (rs != null)
-					rs.close();
-				if (pstmt != null)
-					pstmt.close();
-				if (conn != null)
-					conn.close();
-			} catch (Exception e) {
-			}
+			DBConnector.close(rs, pstmt, conn);
 		}
 		return isIdExist;
         
@@ -113,12 +105,11 @@ public class UserDao {
 		//변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
 		int rowCount = 0;
 		try {
-			conn = new DBConnector().getConn();
+			conn = DBConnector.getConn();
 			String sql = """
 				INSERT INTO users
 				(users_num, users_id, users_name, users_pw, users_email, users_phone, users_birth, users_profile_image, users_role, users_updated_at, users_created_at)
 				VALUES(users_seq.NEXTVAL, ?, ?, ?, ?, ?, TO_DATE(?, 'YYYY-MM-DD'), ?, DEFAULT, SYSDATE, SYSDATE)
-
 			""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 순서대로 필요한 값 바인딩
@@ -135,13 +126,7 @@ public class UserDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (pstmt != null)
-					pstmt.close();
-				if (conn != null)
-					conn.close();
-			} catch (Exception e) {
-			}
+			DBConnector.close(pstmt, conn);
 		}
 
 		//변화된 rowCount 값을 조사해서 작업의 성공 여부를 알아 낼수 있다.
