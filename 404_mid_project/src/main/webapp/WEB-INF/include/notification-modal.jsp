@@ -16,10 +16,22 @@
   	<div class="offcanvas-body">
 		<!-- 알림 카드 (읽지 않은 경우 .unread 추가) -->
 		<div class="noti-card">
-			<img src="" alt="" />
-			<span>2025.07.02</span>
-			<span>제주 재재소소</span>
-			
+			<span class="noti-dott d-inline-block rounded-circle bg-danger" style="width: 10px; height: 10px;"></span>
+			<img class="noti-img" src="" alt="" />
+			<div class="noti-top-wrapper">
+				<div class="noti-title-wrapper">
+					<span>2025.07.02</span>
+					<span>제주 재재소소</span>
+				</div>
+				<div class="noti-type-wrapper">
+					<span>review</span>
+				</div>
+			</div>
+			<hr />
+			<div class="noti-message-wrapper">
+				<span>신규리뷰</span>
+				<span>27일 전</span>
+			</div>
 		</div>
   	</div>
 </div>
