@@ -24,6 +24,129 @@ public class UserDao {
 		//static 필드에 저장된 dao 의 참조값을 리턴해 준다. 
 		return dao;
 	}
+
+	
+	//비밀번호 재발급
+	public boolean updateUserPassword(String userId, String hashed) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		//변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
+		int rowCount = 0;
+		try {
+			conn = DBConnector.getConn();
+			String sql = """ 
+					UPDATE users
+					SET users_pw = ?
+					WHERE users_id = ?
+			""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 순서대로 필요한 값 바인딩
+			pstmt.setString(1, hashed);
+			pstmt.setString(2, userId);
+
+			
+			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
+			rowCount = pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(pstmt, conn);
+		}
+
+		//변화된 rowCount 값을 조사해서 작업의 성공 여부를 알아 낼수 있다.
+		if (rowCount > 0) {
+			return true; //작업 성공이라는 의미에서 true 리턴하기
+		} else {
+			return false; //작업 실패라는 의미에서 false 리턴하기
+		}
+	}
+	
+	
+	
+	
+	
+	//비밀번호 병경하려는 유저의 존재 확인
+	public boolean findPassword(String usersName, String usersId, String usersEmail) {
+		// 필요한 객체를 담을 지역변수를 미리 만든다.
+		// ex) List<DTO> list=new ArrayList<>();
+	
+		boolean isUserValidForPwReset = false;
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		System.out.println(">> DAO 진입");
+		System.out.println("입력값: " + usersName + ", " + usersId + ", " + usersEmail);
+		
+		try {
+			conn = DBConnector.getConn();
+			// 실행할 sql 문
+			String sql = """
+				SELECT users_Email FROM users 
+				WHERE users_name=? AND users_email = ? AND users_id= ?
+							""";
+			// ? 에 값 바인딩
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, usersName);
+			pstmt.setString(2, usersEmail);
+			pstmt.setString(3, usersId);
+
+			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+			// 단일 : if  /  다중 : while
+			
+			if (rs.next()) {
+				System.out.println("사용자 확인");
+				isUserValidForPwReset = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		}
+		return isUserValidForPwReset; //리턴할 객체;
+	}
+	
+	
+	
+	
+	//아이디 찾기
+	public String findId(String usersName, String usersEmail) {
+		// 필요한 객체를 담을 지역변수를 미리 만든다.
+		// ex) List<DTO> list=new ArrayList<>();
+		String usersId = null;
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			// 실행할 sql 문
+			String sql = """
+				SELECT users_id FROM users 
+				WHERE users_name=? AND users_email = ?
+							""";
+			// ? 에 값 바인딩
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, usersName);
+			pstmt.setString(2, usersEmail);
+
+			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+			// 단일 : if  /  다중 : while
+			
+			if (rs.next()) {
+				usersId = rs.getString("users_id");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		}
+		return usersId; //리턴할 객체;
+	}
 	
 	// 전화번호 수정
 	public boolean updatePhone(UserDto user) {
@@ -122,24 +245,17 @@ public class UserDao {
 				dto.setUsersId(rs.getString("users_id"));
 				dto.setUsersName(rs.getString("users_name"));
 				dto.setUsersPw(rs.getString("users_pw"));
-				dto.setEmail(rs.getString("users_email"));
-				dto.setPhone(rs.getString("users_phone"));
-				dto.setBirth(rs.getString("users_birth"));
+				dto.setUsersEmail(rs.getString("users_email"));
+				dto.setUsersPhone(rs.getString("users_phone"));
+				dto.setUsersBirth(rs.getString("users_birth"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (rs != null)
-					rs.close();
-				if (pstmt != null)
-					pstmt.close();
-				if (conn != null)
-					conn.close();
-				} catch (Exception e) {
-				}
-			}
+			DBConnector.close(rs, pstmt, conn);
+		}
 			return dto;		 
+			
 	 }
 	
 	
@@ -194,10 +310,9 @@ public class UserDao {
 			pstmt.setString(1, dto.getUsersId());
 			pstmt.setString(2, dto.getUsersName());
 			pstmt.setString(3, dto.getUsersPw());
-			pstmt.setString(4, dto.getEmail());
-			pstmt.setString(5, dto.getPhone());
-			pstmt.setString(6, dto.getBirth());
-			pstmt.setString(7, dto.getBirth());
+			pstmt.setString(4, dto.getUsersEmail());
+			pstmt.setString(5, dto.getUsersPhone());
+			pstmt.setString(6, dto.getUsersBirth());
 			
 			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
 			rowCount = pstmt.executeUpdate();
@@ -214,7 +329,5 @@ public class UserDao {
 			return false; //작업 실패라는 의미에서 false 리턴하기
 		}
 	}
-	
-	
 	
 }

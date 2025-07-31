@@ -27,7 +27,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
 	    <ul class="navbar-nav align-items-center ms-auto fw-semibold">
 	      <li class="nav-item mx-2">
-	     	 <a class="nav-link text-dark text-nowrap" href="#">FIND STAY</a>
+	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/user/login-form.jsp">LOGIN</a>
 	      </li>
 	      <li class="nav-item mx-2">
 	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/my-page">MYPAGE</a>
