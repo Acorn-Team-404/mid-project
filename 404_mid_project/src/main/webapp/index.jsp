@@ -46,6 +46,9 @@
 		    <span class="visually-hidden">Next</span>
 		  </button>
 		</div>
+			<form action="${pageContext.request.contextPath}/my-page/my-page.jsp" method="post">
+    		<button type="submit">마이페이지</button>
+			</form>
 	<jsp:include page="/WEB-INF/include/footer.jsp"></jsp:include>
 </body>
 </html>
