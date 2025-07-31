@@ -5,12 +5,12 @@
 <head>
 <meta charset="UTF-8">
 <title>include/notification-modal.jsp</title>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/notification-modal.css" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/notification/notification-modal.css" />
 </head>
 <body>
 <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
 	<div class="offcanvas-header">
-    	<h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">infreeJ</h5>
+    	<h5 class="offcanvas-title ms-3" id="offcanvasWithBothOptionsLabel">infreeJ</h5>
     	<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   	</div>
   	<div class="offcanvas-body">
@@ -69,5 +69,8 @@
 		
   	</div>
 </div>
+
+<script src="${pageContext.request.contextPath}/js/notification/noti-sse.js"></script>
+
 </body>
 </html>
