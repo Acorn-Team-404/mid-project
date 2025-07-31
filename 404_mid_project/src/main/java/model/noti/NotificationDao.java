@@ -29,7 +29,7 @@ public class NotificationDao {
 		List<NotificationDto> list = new ArrayList<>(); // row를 담을 빈 배열
 
 		try {
-			conn = new DBConnector().getConn();
+			conn = DBConnector.getConn();
 			String sql = """
 					SELECT num, name, addr
 					FROM member
@@ -47,13 +47,7 @@ public class NotificationDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (rs != null) rs.close();
-				if (pstmt != null) pstmt.close();
-				if (conn != null) conn.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			DBConnector.close(rs, pstmt, conn);
 		}
 		return list;
 	}
@@ -69,7 +63,7 @@ public class NotificationDao {
 		int rowCount = 0;
 
 		try {
-			conn = new DBConnector().getConn();
+			conn = DBConnector.getConn();
 			String sql = """
 					INSERT INTO notifications (
 						noti_num, noti_recipient_num, noti_sender_num, noti_type_code,
@@ -91,14 +85,7 @@ public class NotificationDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (pstmt != null)
-					pstmt.close();
-				if (conn != null)
-					conn.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			DBConnector.close(pstmt, conn);
 		}
 		if (rowCount > 0) {
 			System.out.println(rowCount + "개 작업 성공");
@@ -108,4 +95,5 @@ public class NotificationDao {
 			return false;
 		}
 	}
+			
 }
