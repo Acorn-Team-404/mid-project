@@ -65,6 +65,58 @@ public class UserDao {
 		} return dto;
 	}
 	
+	//회원정보 리턴
+	 public UserDto getByUserId(String usersId) {
+
+		 
+		UserDto dto=null;
+		//필요한 객체를 담을 지역변수를 미리 만든다 
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = new DBConnector().getConn();
+			//실행할 sql문
+			String sql = """
+				SELECT users_num, users_id, users_name, users_pw, users_email, users_phone, users_birth, users_profile_image, users_role, users_updated_at, users_created_at
+				FROM users
+				WHERE users_id=?
+			""";
+			pstmt = conn.prepareStatement(sql);
+			//? 에 값 바인딩
+			pstmt.setString(1, usersId);
+			// select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			//만일 select 되는 row 가 존재한다면
+			if(rs.next()) {
+				//UserDto 객체를 생성해서 
+				dto=new UserDto();
+				//select 된 정보를 담는다.
+				dto.setNum(rs.getLong("users_num"));
+				dto.setUsersId(rs.getString("users_id"));
+				dto.setUsersName(rs.getString("users_Name"));
+				dto.setUsersPw(rs.getString("users_Pw"));
+				dto.setEmail(rs.getString("email"));
+				dto.setPhone(rs.getString("phone"));
+				dto.setBirth(rs.getString("birth"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (pstmt != null)
+					pstmt.close();
+				if (conn != null)
+					conn.close();
+				} catch (Exception e) {
+				}
+			}
+			return dto;		 
+	 }
+	
+	
 	//아이디 중복 체크
 	public boolean isIdExist(String usersId) {//아이디 중복이면 true
 		
@@ -135,8 +187,8 @@ public class UserDao {
 		} else {
 			return false; //작업 실패라는 의미에서 false 리턴하기
 		}
-		
-	
 	}
+	
+	
 	
 }
