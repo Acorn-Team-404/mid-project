@@ -5,7 +5,7 @@
 	String navUserId = "null";
 %>
 <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm py-3">
-  <div class="container-fluid align-items-center">
+  <div class="container-fluid align-items-center flex-nowrap">
     <!-- 좌측 로고 -->
     <a class="navbar-brand fw-bold" href="#">STAYLOG</a>
 
@@ -26,10 +26,18 @@
     <!-- 우측 메뉴(collapse) -->
     <div class="collapse navbar-collapse" id="navbarNav">
 	    <ul class="navbar-nav align-items-center ms-auto fw-semibold">
-	      <li class="nav-item mx-2"><a class="nav-link text-dark" href="#">FIND STAY</a></li>
-	      <li class="nav-item mx-2"><a class="nav-link text-dark" href="#">PROMOTION</a></li>
-	      <li class="nav-item mx-2"><a class="nav-link text-dark" href="#">JOURNAL</a></li>
-	      <li class="nav-item mx-2"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/dbtest">DBTest</a></li>
+	      <li class="nav-item mx-2">
+	     	 <a class="nav-link text-dark text-nowrap" href="#">FIND STAY</a>
+	      </li>
+	      <li class="nav-item mx-2">
+	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/my-page/my-page.jsp">MYPAGE</a>
+	      </li>
+	      <li class="nav-item mx-2">
+	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/pay/patments.jsp">PAY</a>
+	      </li>
+	      <li class="nav-item mx-2">
+	      	<a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/dbtest">DBTest</a>
+	      </li>
 	      <li class="nav-item mx-3">
 	        <div class="vr"></div> <!-- 세로 구분선 -->
 	      </li>
@@ -38,7 +46,7 @@
 	          <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions"><i class="bi bi-bell"></i> 알림</button>
 	      </li>
 	      <li class="nav-item mx-2">
-	        <a class="nav-link text-dark d-flex align-items-center" href="${pageContext.request.contextPath}/user/signup-form.jsp">
+	        <a class="nav-link text-dark d-flex align-items-center text-nowrap" href="${pageContext.request.contextPath}/user/signup-form.jsp">
 	          <i class="bi bi-person me-1"></i> 회원가입
 	        </a>
 	      </li>
