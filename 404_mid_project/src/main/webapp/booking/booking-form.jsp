@@ -45,7 +45,7 @@
 				
 				<div>
 					<h1>추가 요청사항</h1>
-					<textarea name="demand" id="demand" cols="100" rows="10">요청사항을 입력해 주세요
+					<textarea name="bookRequest" id="bookRequest" cols="100" rows="10">요청사항을 입력해 주세요
 					</textarea>
 				</div>
 				
