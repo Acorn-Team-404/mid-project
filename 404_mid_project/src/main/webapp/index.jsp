@@ -7,9 +7,9 @@
 <title>index.jsp</title>
 <jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
   <style>
-    .carousel-inner {
+/*     .carousel-inner {
       height: 600px;
-    }
+    } */
     .carousel-inner img {
       height: 100%;
       width: 100%;
@@ -26,7 +26,8 @@
 		    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
 		    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
 		  </div>
-		  <div class="carousel-inner">
+		  
+		  <div class="carousel-inner ratio ratio-16x9">
 		    <div class="carousel-item active">
 		      <img src="${pageContext.request.contextPath}/images/indexc01.jpg" class="d-block w-100" alt="...">
 		    </div>
