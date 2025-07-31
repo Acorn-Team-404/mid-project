@@ -19,7 +19,7 @@
 <body>
 	<div class="container">
 		<h1>로그인</h1>
-		<form action="${pageContext.request.contextPath}/user/login" method="post">
+		<form action="${pageContext.request.contextPath}/login.user" method="post">
 			<%-- 로그인 성공후에 이동할 url 정보를 추가로 form 전송되도록 한다 --%>
 			<input type="hidden" name="url" value="<%=url %>"/>
 			<div>
@@ -30,6 +30,9 @@
 				<label for="usersPassword">비밀번호</label>
 				<input type="password" name="usersPassword" id="usersPassword"/>
 			</div>
+			<a href="${pageContext.request.contextPath}/user/findId-form.jsp">아아디 찾기</a>
+			<a href="${pageContext.request.contextPath}/user/findpassword-form.jsp">비밀번호 찾기</a>
+			<br>
 			<button type="submit">로그인</button>
 		</form>
 	</div>

@@ -6,6 +6,7 @@ import model.noti.NotificationDto;
 @WebServlet("")
 public class NotiCommentServlet {
 	NotificationDto notiDto = new NotificationDto();
+	
 	Long notiRecipientNum = notiDto.getNotiRecipientNum();
 	Long notiSenderNum = notiDto.getNotiSenderNum();
 	int notiTypeCode = notiDto.getNotiTypeCode();

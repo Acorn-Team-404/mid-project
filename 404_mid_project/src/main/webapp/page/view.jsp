@@ -4,9 +4,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>/booking/booking-info.jsp</title>
+<title>/page/view</title>
+<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
 </head>
 <body>
-
+	
 </body>
 </html>

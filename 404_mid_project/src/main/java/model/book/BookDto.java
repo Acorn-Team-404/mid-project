@@ -2,157 +2,159 @@ package model.book;
 
 public class BookDto {
 	// 예약 번호
-	private String num;
+	private String bookNum;
 	// 예약자 아이디
-	private int userNum;
+	private int bookUserNum;
 	// 숙소 번호
-	private int stayNum;
+	private int bookStayNum;
 	// 객실 번호
-	private int roomId;
+	private int bookRoomId;
 	// 체크인 날짜
-	private String checkIn;
+	private String BookCheckIn;
 	// 체크아웃 날짜
-	private String checkOut;
+	private String bookCheckOut;
 	// 성인 수
-	private int adult;
+	private int bookAdult;
 	// 어린이 수
-	private int children;
+	private int bookChildren;
 	// 유아 수
-	private int infant;
+	private int bookInfant;
 	// 총 인원 수
-	private int totalPax;
+	private int bookTotalPax;
 	// 간이 침대
-	private int extraBed;
+	private int bookExtraBed;
 	// 유아 침대
-	private int infantBed;
+	private int bookInfantBed;
 	// 체크인 시간
-	private String checkInTime;
+	private String bookCheckInTime;
 	// 추가 요청 사항
-	private String request;
+	private String bookRequest;
 	// 총 금액
-	private int totalAmount;
+	private int bookTotalAmount;
 	// 
-	private String statusGroupId;
+	private String bookStatusGroupId;
 	// 예약 상태
-	private int statusCode;
+	private int bookStatusCode;
 	// 예약 날짜
-	private String createdAt;
+	private String bookCreatedAt;
 	// 예약 수정 날짜
-	private String updatedAt;
+	private String bookUpdatedAt;
 	
 	// setter & getter
-	public String getNum() {
-		return num;
+	public String getBookNum() {
+		return bookNum;
 	}
-	public void setNum(String num) {
-		this.num = num;
+	public void setBookNum(String bookNum) {
+		this.bookNum = bookNum;
 	}
-	public int getUserNum() {
-		return userNum;
+	public int getBookUserNum() {
+		return bookUserNum;
 	}
-	public void setUserNum(int userNum) {
-		this.userNum = userNum;
+	public void setBookUserNum(int bookUserNum) {
+		this.bookUserNum = bookUserNum;
 	}
-	public int getRoomId() {
-		return roomId;
+	public int getBookStayNum() {
+		return bookStayNum;
 	}
-	public void setRoomId(int roomId) {
-		this.roomId = roomId;
+	public void setBookStayNum(int bookStayNum) {
+		this.bookStayNum = bookStayNum;
 	}
-	public int getStayNum() {
-		return stayNum;
+	public int getBookRoomId() {
+		return bookRoomId;
 	}
-	public void setStayNum(int stayNum) {
-		this.stayNum = stayNum;
+	public void setBookRoomId(int bookRoomId) {
+		this.bookRoomId = bookRoomId;
 	}
-	public String getCheckIn() {
-		return checkIn;
+	public String getBookCheckIn() {
+		return BookCheckIn;
 	}
-	public void setCheckIn(String checkIn) {
-		this.checkIn = checkIn;
+	public void setBookCheckIn(String bookCheckIn) {
+		BookCheckIn = bookCheckIn;
 	}
-	public String getCheckOut() {
-		return checkOut;
+	public String getBookCheckOut() {
+		return bookCheckOut;
 	}
-	public void setCheckOut(String checkOut) {
-		this.checkOut = checkOut;
+	public void setBookCheckOut(String bookCheckOut) {
+		this.bookCheckOut = bookCheckOut;
 	}
-	public int getAdult() {
-		return adult;
+	public int getBookAdult() {
+		return bookAdult;
 	}
-	public void setAdult(int adult) {
-		this.adult = adult;
+	public void setBookAdult(int bookAdult) {
+		this.bookAdult = bookAdult;
 	}
-	public int getChildren() {
-		return children;
+	public int getBookChildren() {
+		return bookChildren;
 	}
-	public void setChildren(int children) {
-		this.children = children;
+	public void setBookChildren(int bookChildren) {
+		this.bookChildren = bookChildren;
 	}
-	public int getInfant() {
-		return infant;
+	public int getBookInfant() {
+		return bookInfant;
 	}
-	public void setInfant(int infant) {
-		this.infant = infant;
+	public void setBookInfant(int bookInfant) {
+		this.bookInfant = bookInfant;
 	}
-	public int getTotalPax() {
-		return totalPax;
+	public int getBookTotalPax() {
+		return bookTotalPax;
 	}
-	public void setTotalPax(int totalPax) {
-		this.totalPax = totalPax;
+	public void setBookTotalPax(int bookTotalPax) {
+		this.bookTotalPax = bookTotalPax;
 	}
-	public int getExtraBed() {
-		return extraBed;
+	public int getBookExtraBed() {
+		return bookExtraBed;
 	}
-	public void setExtraBed(int extraBed) {
-		this.extraBed = extraBed;
+	public void setBookExtraBed(int bookExtraBed) {
+		this.bookExtraBed = bookExtraBed;
 	}
-	public int getInfantBed() {
-		return infantBed;
+	public int getBookInfantBed() {
+		return bookInfantBed;
 	}
-	public void setInfantBed(int infantBed) {
-		this.infantBed = infantBed;
+	public void setBookInfantBed(int bookInfantBed) {
+		this.bookInfantBed = bookInfantBed;
 	}
-	public String getCheckInTime() {
-		return checkInTime;
+	public String getBookCheckInTime() {
+		return bookCheckInTime;
 	}
-	public void setCheckInTime(String checkInTime) {
-		this.checkInTime = checkInTime;
+	public void setBookCheckInTime(String bookCheckInTime) {
+		this.bookCheckInTime = bookCheckInTime;
 	}
-	public String getRequest() {
-		return request;
+	public String getBookRequest() {
+		return bookRequest;
 	}
-	public void setRequest(String request) {
-		this.request = request;
+	public void setBookRequest(String bookRequest) {
+		this.bookRequest = bookRequest;
 	}
-	public int getTotalAmount() {
-		return totalAmount;
+	public int getBookTotalAmount() {
+		return bookTotalAmount;
 	}
-	public void setTotalAmount(int totalAmount) {
-		this.totalAmount = totalAmount;
+	public void setBookTotalAmount(int bookTotalAmount) {
+		this.bookTotalAmount = bookTotalAmount;
 	}
-	public String getStatusGroupId() {
-		return statusGroupId;
+	public String getBookStatusGroupId() {
+		return bookStatusGroupId;
 	}
-	public void setStatusGroupId(String statusGroupId) {
-		this.statusGroupId = statusGroupId;
+	public void setBookStatusGroupId(String bookStatusGroupId) {
+		this.bookStatusGroupId = bookStatusGroupId;
 	}
-	public int getStatusCode() {
-		return statusCode;
+	public int getBookStatusCode() {
+		return bookStatusCode;
 	}
-	public void setStatusCode(int statusCode) {
-		this.statusCode = statusCode;
+	public void setBookStatusCode(int bookStatusCode) {
+		this.bookStatusCode = bookStatusCode;
 	}
-	public String getCreatedAt() {
-		return createdAt;
+	public String getBookCreatedAt() {
+		return bookCreatedAt;
 	}
-	public void setCreatedAt(String createdAt) {
-		this.createdAt = createdAt;
+	public void setBookCreatedAt(String bookCreatedAt) {
+		this.bookCreatedAt = bookCreatedAt;
 	}
-	public String getUpdatedAt() {
-		return updatedAt;
+	public String getBookUpdatedAt() {
+		return bookUpdatedAt;
 	}
-	public void setUpdatedAt(String updatedAt) {
-		this.updatedAt = updatedAt;
+	public void setBookUpdatedAt(String bookUpdatedAt) {
+		this.bookUpdatedAt = bookUpdatedAt;
 	}
+	
+	
 }

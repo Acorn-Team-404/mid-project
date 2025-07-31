@@ -9,7 +9,7 @@
 <body>
 	<div class="container">
 		<h1>회원가입</h1>
-		<form action="${pageContext.request.contextPath}/user/signup" method="post" autocapitalize="off">
+		<form action="${pageContext.request.contextPath}/signup.user" method="post" autocapitalize="off">
 			
 			<div>
 				<label for="usersName">성함</label>
@@ -33,12 +33,13 @@
 			<div>
 				<label for="usersCheckPassword">비밀번호 확인</label>
 				<input type="password" name="usersCheckPassword" id="usersCheckPassword" required>
-				<span id="usersCheckPasswordMessage" style="font-size: 0.9em;"></span>
+				<span id="usersCheckPasswordMessage"></span>
 			</div>
 			
 			<div>
 				<label for="email">이메일</label>
 				<input type="email" name="email" id="email" required>
+				<button type="button" onclick="sendEmailCode()">인증 코드 보내기</button>
 			</div>
 			
 			<div>
@@ -56,6 +57,9 @@
 	</div>
 	
 	<script>
+	
+	const contextPath = "<%= request.getContextPath() %>";
+	
 	// 비밀번호 복잡도 체크
 	document.getElementById("usersPassword").addEventListener("input", () => {
 		const usersPassword = document.getElementById("usersPassword").value;
@@ -121,7 +125,7 @@
 		const usersId = document.getElementById("usersId").value;
 		const checkIdAction = document.getElementById("checkIdAction");
 
-		fetch("${pageContext.request.contextPath}/user/check-id?usersId=" + encodeURIComponent(usersId))
+		fetch(contextPath +"/checkId.user?usersId=" + encodeURIComponent(usersId))
 			.then(response => response.text())
 			.then(data => {
 				if (data.trim() === "empty") {
@@ -146,6 +150,17 @@
 			.replace(/[^0-9]/g, '')
 			.replace(/^(\d{3})(\d{4})(\d{0,4})$/, '$1-$2-$3')
 			.replace(/(-{1,2})$/, '');
+		
+		
+		
+		//중복확인을 해야만 회원가입 가능
+	document.querySelector("form").addEventListener("submit", function(e) {
+		if (document.getElementById("checkIdAction").value !== "on") {
+			e.preventDefault();
+			alert("아이디 중복확인을 해주세요.");
+		}
+	});	
+		
 	}
 	</script>
 </body>

@@ -1,6 +1,7 @@
 package model.noti;
 
 public class NotificationDto {
+	// TABLE 기본 필드
 	private long notiNum;
 	private long notiRecipientNum;
 	private long notiSenderNum;
@@ -13,6 +14,10 @@ public class NotificationDto {
 	private String notiReadGroupId;
 	private int notiReadCode;
 	private String notiCreatedAt;
+	
+	
+	// 추가로 필요한 필드
+	//private String 이미지가져와야함
 	
 	
 	public long getNotiNum() {
