@@ -1,22 +1,22 @@
 package model.user;
 
 public class UserDto {
-	private long num;
+	private long userNum;
 	private String usersId;
 	private String usersName;
 	private String usersPw;
-	private String Email;
-	private String Phone;
-	private String birth;
-	private String profileImage;
-	private String role;
-	private String updatedAt;
-	private String createdAt;
+	private String usersEmail;
+	private String usersPhone;
+	private String usersBirth;
+	private String usersProfileImage;
+	private String usersRole;
+	private String usersUpdatedAt;
+	private String usersCreatedAt;
 	public long getNum() {
-		return num;
+		return userNum;
 	}
 	public void setNum(long num) {
-		this.num = num;
+		this.userNum = num;
 	}
 	public String getUsersId() {
 		return usersId;
@@ -36,48 +36,49 @@ public class UserDto {
 	public void setUsersPw(String usersPw) {
 		this.usersPw = usersPw;
 	}
-	public String getEmail() {
-		return Email;
+	public String getUsersEmail() {
+		return usersEmail;
 	}
-	public void setEmail(String email) {
-		Email = email;
+	public void setUsersEmail(String usersEmail) {
+		this.usersEmail = usersEmail;
 	}
-	public String getPhone() {
-		return Phone;
+	public String getUsersPhone() {
+		return usersPhone;
 	}
-	public void setPhone(String phone) {
-		Phone = phone;
+	public void setUsersPhone(String usersPhone) {
+		this.usersPhone = usersPhone;
 	}
-	public String getBirth() {
-		return birth;
+	public String getUsersBirth() {
+		return usersBirth;
 	}
-	public void setBirth(String birth) {
-		this.birth = birth;
+	public void setUsersBirth(String usersBirth) {
+		this.usersBirth = usersBirth;
 	}
-	public String getProfileImage() {
-		return profileImage;
+	public String getUsersProfileImage() {
+		return usersProfileImage;
 	}
-	public void setProfileImage(String profileImage) {
-		this.profileImage = profileImage;
+	public void setUsersProfileImage(String usersProfileImage) {
+		this.usersProfileImage = usersProfileImage;
 	}
-	public String getRole() {
-		return role;
+	public String getUsersRole() {
+		return usersRole;
 	}
-	public void setRole(String role) {
-		this.role = role;
+	public void setUsersRole(String usersRole) {
+		this.usersRole = usersRole;
 	}
-	public String getUpdatedAt() {
-		return updatedAt;
+	public String getUsersUpdatedAt() {
+		return usersUpdatedAt;
 	}
-	public void setUpdatedAt(String updatedAt) {
-		this.updatedAt = updatedAt;
+	public void setUsersUpdatedAt(String usersUpdatedAt) {
+		this.usersUpdatedAt = usersUpdatedAt;
 	}
-	public String getCreatedAt() {
-		return createdAt;
+	public String getUsersCreatedAt() {
+		return usersCreatedAt;
 	}
-	public void setCreatedAt(String createdAt) {
-		this.createdAt = createdAt;
+	public void setUsersCreatedAt(String usersCreatedAt) {
+		this.usersCreatedAt = usersCreatedAt;
 	}
-
+	
+	
 	
 }
