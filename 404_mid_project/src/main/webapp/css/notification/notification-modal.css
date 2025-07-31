@@ -1,0 +1,53 @@
+
+.noti-card{
+	border-radius: 8px;
+	border-top-right-radius: 40px;
+}
+
+
+.noti-img-wrapper{
+	width: 80px;
+	height: 80px
+}
+
+.noti-text-wrapper{
+	width: 210px;
+}
+
+.noti-type-wrapper{
+	bottom: 2px;
+}
+
+hr{
+	margin-top: 4px;
+	margin-bottom: 4px;
+}
+
+.offcanvas-body * {
+	cursor: pointer;
+}
+
+/* BootStrap 확장 커스텀 클래스 */
+.fs-7{
+	font-size: 14px;
+}
+
+.fs-8{
+	font-size: 12px;
+}
+
+.fs-9{
+	font-size: 10px;
+}
+
+.fs-10{
+	font-size: 8px;
+}
+
+.text-semiblack{
+	color: rgb(76, 76, 76);
+}
+
+.bg-semired{
+	background-color: rgb(255, 116, 116);
+}
