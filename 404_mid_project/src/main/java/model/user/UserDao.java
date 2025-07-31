@@ -148,44 +148,70 @@ public class UserDao {
 		return usersId; //리턴할 객체;
 	}
 	
-	// 마이페이지 사용자 정보 조회
-	public UserDto getUserById(String usersId) {
-		UserDto dto = null;
-		
+	// 전화번호 수정
+	public boolean updatePhone(UserDto user) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		ResultSet rs = null;
+		// 변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
+		int rowCount = 0;
 		try {
-			conn = new DBConnector().getConn();
+			conn = DBConnector.getConn();
 			String sql = """
-					SELECT users_num, users_id, users_name, users_email, users_phone, 
-					users_birth, users_profile_image, users_updated_at 
-					FROM users 
-					WHERE users_id = ?
-
+					UPDATE users
+					SET users_Phone = ?
+					WHERE users_Id = ?
 					""";
 			pstmt = conn.prepareStatement(sql);
-			// ? 에 값 바인딩
-			pstmt.setString(1, usersId);
-			// select 문 실행하고 결과를 ResultSet으로 받아온
-			rs = pstmt.executeQuery();
-			// 반복문 돌면서 ResulteSet 에 담긴 데이터를 추출해서 리턴 해 줄 객체에 담는다
-			while (rs.next()) {
+			// ? 에 순서대로 필요한 값 바인딩
+			pstmt.setString(1, user.getPhone());
+			pstmt.setString(2, user.getUsersId());
+			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
+			rowCount = pstmt.executeUpdate();
 
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (rs != null)
-					rs.close();
-				if (pstmt != null)
-					pstmt.close();
-				if (conn != null)
-					conn.close();
-			} catch (Exception e) {
-			}
-		} return dto;
+			DBConnector.close(pstmt, conn);
+		}
+		// 작업의 성공 여부 (변화된 row 의 갯수로 판단)
+		if (rowCount > 0) {
+			return true; // 작업 성공
+		} else {
+			return false; // 작업 실패
+		}
+	}
+	
+	// 회원 이름 수정
+	public boolean updateName(UserDto user) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		// 변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
+		int rowCount = 0;
+		try {
+			conn = DBConnector.getConn();
+			String sql = """
+					UPDATE users 
+					SET users_Name  = ?
+					WHERE users_Id = ?
+					""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 순서대로 필요한 값 바인딩
+			pstmt.setString(1, user.getUsersName());
+			pstmt.setString(2, user.getUsersId());
+			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
+			rowCount = pstmt.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(pstmt, conn);
+		}
+		// 작업의 성공 여부 (변화된 row 의 갯수로 판단)
+		if (rowCount > 0) {
+			return true; // 작업 성공
+		} else {
+			return false; // 작업 실패
+		}
 	}
 	
 	//회원정보 리턴
@@ -203,7 +229,7 @@ public class UserDao {
 			String sql = """
 				SELECT users_num, users_id, users_name, users_pw, users_email, users_phone, users_birth, users_profile_image, users_role, users_updated_at, users_created_at
 				FROM users
-				WHERE users_id=?
+				WHERE users_id=? 
 			""";
 			pstmt = conn.prepareStatement(sql);
 			//? 에 값 바인딩
@@ -222,7 +248,6 @@ public class UserDao {
 				dto.setUsersEmail(rs.getString("users_email"));
 				dto.setUsersPhone(rs.getString("users_phone"));
 				dto.setUsersBirth(rs.getString("users_birth"));
-	
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

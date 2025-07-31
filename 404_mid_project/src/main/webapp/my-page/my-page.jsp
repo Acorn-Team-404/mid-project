@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,42 +23,50 @@
 <body>
 
 <div class="container my-5">
-
 	<h2 class="mb-4">마이페이지</h2>
 
 	<div class="card p-4 shadow-sm">
-		<div class="row align-items-center">
-			<!-- 회원 정보 왼쪽 -->
+		<div class="row align-items-start">
+			<!-- 왼쪽 회원 정보 -->
 			<div class="col-md-9">
 				<table class="table table-borderless">
 					<tr>
 						<th class="text-end" style="width: 25%;">이메일</th>
-						<td style="color:grey;">${users.email}</td>
+						<td style="color:grey;">${user.email}</td>
 					</tr>
 					<tr>
-						<th class="text-end">이름</th>
-						<td>${users_name }
-						<button type="button" class="btn btn-outline-secondary btn-sm ms-2">변경하기</button>
-						</td>					
+  						<th class="text-end">이름</th>
+  						<td>
+    						${user.usersName}
+    						<a href="${pageContext.request.contextPath}/my-page/update-name.jsp" class="btn btn-outline-secondary btn-sm ms-2">변경하기</a>
+  						</td>
 					</tr>
 					<tr>
 						<th class="text-end">전화번호</th>
-						<td >${users_phone}
-						<button type="button" class="btn btn-outline-secondary btn-sm ms-2">변경하기</button>
+						<td>${user.phone}
+							 <a href="${pageContext.request.contextPath}/my-page/update-phone.jsp" class="btn btn-outline-secondary btn-sm ms-2">변경하기</a>
 						</td>
 					</tr>
 					<tr>
 						<th class="text-end">생년월일</th>
-						<td>${users_birth}</td>
+						<td>${user.birth}</td>
 					</tr>
 				</table>
 			</div>
+
+			<!-- 오른쪽 프로필 이미지 및 업로드 폼 -->
 			<div class="col-md-3 text-center">
-				<img src="${pageContext.request.contextPath}/images/${users_profile_image}" alt="프로필 이미지" class="profile-img"><br />
+				<img src="${pageContext.request.contextPath}/images/${user.profileImage}" alt="프로필 이미지" class="profile-img mb-3" />
+				
+				<form action="${pageContext.request.contextPath}/update-profile-image" method="post" enctype="multipart/form-data">
+					<div class="mb-2">
+						<input type="file" name="profileImage" accept="image/*" class="form-control form-control-sm" />
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>
-
 </div>
+
 </body>
 </html>
