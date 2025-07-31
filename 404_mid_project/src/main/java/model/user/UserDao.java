@@ -25,6 +25,45 @@ public class UserDao {
 		return dao;
 	}
 	
+	// 마이페이지 사용자 정보 조회
+	public UserDto getUserById(String usersId) {
+		UserDto dto = null;
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = new DBConnector().getConn();
+			String sql = """
+					SELECT users_num, users_id, users_name, users_email, users_phone, 
+					users_birth, users_profile_image, users_updated_at 
+					FROM users 
+					WHERE users_id = ?
+
+					""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 값 바인딩
+			pstmt.setString(1, usersId);
+			// select 문 실행하고 결과를 ResultSet으로 받아온
+			rs = pstmt.executeQuery();
+			// 반복문 돌면서 ResulteSet 에 담긴 데이터를 추출해서 리턴 해 줄 객체에 담는다
+			while (rs.next()) {
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (pstmt != null)
+					pstmt.close();
+				if (conn != null)
+					conn.close();
+			} catch (Exception e) {
+			}
+		} return dto;
+	}
 	
 	//아이디 중복 체크
 	public boolean isIdExist(String usersId) {//아이디 중복이면 true
