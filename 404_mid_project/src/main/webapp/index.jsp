@@ -11,4 +11,5 @@
 		<li><a href="${pageContext.request.contextPath}/dbtest">DBtest</a></li>
 	</ul>
 </body>
+
 </html>
