@@ -13,17 +13,21 @@ import model.user.UserDto;
 @WebServlet("/my-page")
 public class MyPageServlet extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String userId = (String) req.getSession().getAttribute("loginId");
+        String usersId = (String) req.getSession().getAttribute("usersId");
+        
+        System.out.println("세션의 loginId: " + usersId);
 
-        if (userId == null) {
-            resp.sendRedirect(req.getContextPath() + "/login.jsp");
+        if (usersId == null) {
+            resp.sendRedirect(req.getContextPath() + "/user/login-form.jsp");
             return;
         }
 
         UserDao userDao = UserDao.getInstance();
-        UserDto user = userDao.getUserById(userId);
+        UserDto user = userDao.getByUserId(usersId);
+        
+        System.out.println("userDto: " + user);
 
         req.setAttribute("user", user);
         req.getRequestDispatcher("/my-page/my-page.jsp").forward(req, resp);

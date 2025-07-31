@@ -47,9 +47,10 @@
 		    <span class="visually-hidden">Next</span>
 		  </button>
 		</div>
-			<form action="${pageContext.request.contextPath}/my-page/my-page.jsp" method="post">
-    		<button type="submit">마이페이지</button>
-			</form>
+<!-- 로그인 성공 후 뜨는 메인화면 JSP에 추가 -->
+<form action="${pageContext.request.contextPath}/my-page" method="get" style="display:inline;">
+  <button type="submit" class="btn btn-primary">마이페이지</button>
+</form>
 	<jsp:include page="/WEB-INF/include/footer.jsp"></jsp:include>
 </body>
 

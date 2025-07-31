@@ -30,7 +30,7 @@
 	     	 <a class="nav-link text-dark text-nowrap" href="#">FIND STAY</a>
 	      </li>
 	      <li class="nav-item mx-2">
-	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/my-page/my-page.jsp">MYPAGE</a>
+	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/my-page">MYPAGE</a>
 	      </li>
 	      <li class="nav-item mx-2">
 	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/pay/patments.jsp">PAY</a>
