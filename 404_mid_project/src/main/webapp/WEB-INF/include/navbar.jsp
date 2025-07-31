@@ -36,7 +36,7 @@
 	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/my-page/my-page.jsp">MYPAGE</a>
 	      </li>
 	      <li class="nav-item mx-2">
-	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/pay/patments.jsp">PAY</a>
+	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/pay/payments.jsp">PAY</a>
 	      </li>
 	      <li class="nav-item mx-2">
 	      	<a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/dbtest">DBTest</a>
