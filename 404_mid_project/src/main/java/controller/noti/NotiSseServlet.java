@@ -2,6 +2,7 @@ package controller.noti;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.simple.JSONArray;
@@ -23,38 +24,37 @@ public class NotiSseServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 알림 데이터 조회 (임시로 recipient_id = 3 고정)
-        List<NotificationDto> list = NotificationDao.getInstance().notiSelectAll();
-
-        // JSON 배열 생성
-        JSONArray jsonArray = new JSONArray();
-
-        for (NotificationDto dto : list) {
-            JSONObject obj = new JSONObject();
-            // String이어야 함
-            /*obj.put("createdAt", dto.getNotiCreatedAt());
-            obj.put("senderId", String.valueOf(dto.getNotiSenderNum()));
-            obj.put("message", dto.getNotiMessage());
-            obj.put("typeGroupId", dto.getNotiTypeGroupId());*/
-            
-            obj.put("createdAt", "2025-07-02 ~ 2025-08-27");
-            obj.put("senderId", "비로소 한옥");
-            obj.put("message", "예약 확정");
-            obj.put("typeGroupId", "reservation");
-            
-            jsonArray.add(obj);
-        }
-        
-
-        // SSE 응답 설정
         response.setContentType("text/event-stream");
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Cache-Control", "no-cache");
         response.setHeader("Connection", "keep-alive");
 
-        // JSON 문자열 전송
         PrintWriter out = response.getWriter();
-        out.write("data: " + jsonArray.toJSONString() + "\n\n");
-        out.flush();
+
+        while (true) {
+            JSONArray jsonArray = new JSONArray();
+            JSONObject obj = new JSONObject();
+
+            obj.put("createdAt", "2025-07-02 ~ 2025-08-27");
+            obj.put("senderId", "비로소 한옥");
+            obj.put("typeGroupId", "reservation");
+            obj.put("message", "예약 확정" + System.currentTimeMillis());
+
+            jsonArray.add(obj);
+
+            out.write("data: " + jsonArray.toJSONString() + "\n\n");
+            out.flush();
+
+            try {
+                Thread.sleep(3000); // 3초 대기
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // 상태만 복구
+                System.err.println("SSE 쓰레드 인터럽트 발생. 연결 유지.");
+                // break 하지 않음 — 계속 연결 유지
+            } catch (Exception e) {
+                e.printStackTrace();
+                break; // 진짜 예외일 때만 종료
+            }
+        }
     }
 }

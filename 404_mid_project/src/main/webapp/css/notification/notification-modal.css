@@ -25,6 +25,9 @@ hr{
 	margin-bottom: 4px;
 }
 
+.offcanvas-body * {
+	cursor: pointer;
+}
 
 /* BootStrap 확장 커스텀 클래스 */
 .fs-7{
