@@ -11,6 +11,7 @@ import java.util.Base64;
 
 import org.json.simple.JSONObject;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -87,9 +88,9 @@ public class PaymentsServlet extends HttpServlet{
 		}
 		
 		//결제 완료 페이지 (result.jsp 같은 거)로 리디렉션 해줘야함
-		response.sendRedirect(request.getContextPath() + "/index.jsp");
-		
-
+		RequestDispatcher rd = request.getRequestDispatcher(request.getContextPath() + "/pay/pay-result.jsp");
+		System.out.println(rd);
+  
 	}
 	
 }
