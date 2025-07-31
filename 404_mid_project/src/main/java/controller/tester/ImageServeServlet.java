@@ -1,0 +1,79 @@
+package controller.tester;
+
+import java.io.*;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+
+import org.apache.commons.net.ftp.FTPClient;
+
+@WebServlet("/showImage")
+public class ImageServeServlet extends HttpServlet {
+
+    private static final String HOST = "danpung.myds.me";
+    private static final int PORT = 21;
+    private static final String USER = "team404";
+    private static final String PASSWORD = "#w3770AmyK@q*r";
+    private static final String REMOTE_DIR = "/team404/upload/";
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String fileName = req.getParameter("name");
+        System.out.println("[ImageServeServlet] 요청된 파일 이름: " + fileName);
+
+        if (fileName == null || fileName.isBlank()) {
+            System.out.println("[ImageServeServlet] 파일명 누락 - 400 오류 발생");
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "파일명이 누락됨");
+            return;
+        }
+
+        FTPClient ftp = new FTPClient();
+        try {
+            System.out.println("[ImageServeServlet] FTP 연결 시도 → " + HOST + ":" + PORT);
+            ftp.connect(HOST, PORT);
+            boolean loginSuccess = ftp.login(USER, PASSWORD);
+            System.out.println("[ImageServeServlet] FTP 로그인 성공 여부: " + loginSuccess);
+
+            ftp.enterLocalPassiveMode();
+            ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
+
+            System.out.println("[ImageServeServlet] NAS 경로로부터 파일 스트림 요청: " + REMOTE_DIR + fileName);
+            InputStream is = ftp.retrieveFileStream(REMOTE_DIR + fileName);
+            if (is == null) {
+                System.out.println("[ImageServeServlet] 파일 없음 또는 다운로드 실패 - 404 오류 발생");
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND, "파일 없음");
+                return;
+            }
+
+            // MIME 타입 설정
+            if (fileName.endsWith(".png")) {
+                resp.setContentType("image/png");
+            } else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
+                resp.setContentType("image/jpeg");
+            } else if (fileName.endsWith(".gif")) {
+                resp.setContentType("image/gif");
+            } else {
+                resp.setContentType("application/octet-stream");
+            }
+
+            OutputStream os = resp.getOutputStream();
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+
+            is.close();
+            boolean completed = ftp.completePendingCommand();
+            System.out.println("[ImageServeServlet] FTP 전송 완료 여부: " + completed);
+        } catch (Exception e) {
+            System.out.println("[ImageServeServlet] 예외 발생: " + e.getMessage());
+            e.printStackTrace();
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "서버 오류 발생");
+        } finally {
+            if (ftp.isConnected()) {
+                ftp.disconnect();
+                System.out.println("[ImageServeServlet] FTP 연결 종료");
+            }
+        }
+    }
+}
