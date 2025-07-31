@@ -68,9 +68,9 @@ public class SignupServlet extends HttpServlet {
         dto.setUsersId(usersId);
         dto.setUsersName(usersName);
         dto.setUsersPw(hashed);
-        dto.setEmail(email);
-        dto.setPhone(phone);
-        dto.setBirth(birth);
+        dto.setUsersEmail(email);
+        dto.setUsersPhone(phone);
+        dto.setUsersBirth(birth);
 
         isSuccess = UserDao.getInstance().insert(dto);
 

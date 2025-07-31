@@ -47,6 +47,8 @@ public class LoginServlet extends HttpServlet {
 			session.setAttribute("usersId", usersId);
 			session.setAttribute("usersNum", usersNum);
 			session.setMaxInactiveInterval(60*60);
+			System.out.println("세션 아이디: " + session.getId());
+		    System.out.println("세션에 저장된 usersId: " + session.getAttribute("usersId"));
 			
 			// 로그인 성공 → 리다이렉트
 			response.sendRedirect(url);
