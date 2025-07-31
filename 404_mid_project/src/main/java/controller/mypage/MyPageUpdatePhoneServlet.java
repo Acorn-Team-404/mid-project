@@ -25,7 +25,7 @@ public class MyPageUpdatePhoneServlet extends HttpServlet {
 		//수정 정보 담을 DTO 만들기
 		UserDto user = new UserDto();
 		user.setUsersId(usersId);
-		user.setPhone(newPhone);
+		user.setUsersPhone(newPhone);
 		
 		// DB 업데이트
 		boolean result = UserDao.getInstance().updatePhone(user);

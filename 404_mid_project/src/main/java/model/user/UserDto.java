@@ -1,22 +1,22 @@
 package model.user;
 
 public class UserDto {
-	private long userNum;
-	private String usersId;
-	private String usersName;
-	private String usersPw;
-	private String usersEmail;
-	private String usersPhone;
-	private String usersBirth;
-	private String usersProfileImage;
-	private String usersRole;
-	private String usersUpdatedAt;
-	private String usersCreatedAt;
-	public long getNum() {
-		return userNum;
+	private long usersNum;
+    private String usersId;
+    private String usersName;
+    private String usersPw;
+    private String usersEmail;
+    private String usersPhone;
+    private String usersBirth;
+    private String usersProfileImage;
+    private String usersRole;
+    private String usersUpdatedAt;
+    private String usersCreatedAt;
+	public long getUsersNum() {
+		return usersNum;
 	}
-	public void setNum(long num) {
-		this.userNum = num;
+	public void setUsersNum(long usersNum) {
+		this.usersNum = usersNum;
 	}
 	public String getUsersId() {
 		return usersId;
@@ -78,7 +78,4 @@ public class UserDto {
 	public void setUsersCreatedAt(String usersCreatedAt) {
 		this.usersCreatedAt = usersCreatedAt;
 	}
-	
-	
-	
 }

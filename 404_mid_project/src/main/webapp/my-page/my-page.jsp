@@ -32,7 +32,7 @@
 				<table class="table table-borderless">
 					<tr>
 						<th class="text-end" style="width: 25%;">이메일</th>
-						<td style="color:grey;">${user.email}</td>
+						<td style="color:grey;">${user.usersEmail}</td>
 					</tr>
 					<tr>
   						<th class="text-end">이름</th>
@@ -43,20 +43,20 @@
 					</tr>
 					<tr>
 						<th class="text-end">전화번호</th>
-						<td>${user.phone}
+						<td>${user.usersPhone}
 							 <a href="${pageContext.request.contextPath}/my-page/update-phone.jsp" class="btn btn-outline-secondary btn-sm ms-2">변경하기</a>
 						</td>
 					</tr>
 					<tr>
 						<th class="text-end">생년월일</th>
-						<td>${user.birth}</td>
+						<td>${user.usersBirth}</td>
 					</tr>
 				</table>
 			</div>
 
 			<!-- 오른쪽 프로필 이미지 및 업로드 폼 -->
 			<div class="col-md-3 text-center">
-				<img src="${pageContext.request.contextPath}/images/${user.profileImage}" alt="프로필 이미지" class="profile-img mb-3" />
+				<img src="${pageContext.request.contextPath}/images/${user.usersProfileImage}" alt="프로필 이미지" class="profile-img mb-3" />
 				
 				<form action="${pageContext.request.contextPath}/update-profile-image" method="post" enctype="multipart/form-data">
 					<div class="mb-2">

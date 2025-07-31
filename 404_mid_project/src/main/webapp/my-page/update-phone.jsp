@@ -14,7 +14,7 @@
 	<h2>전화번호 수정</h2>
 	<form action="${pageContext.request.contextPath}/update-phone" method="post">
 	<label>새 전화번호 : </label>
-	<input type="text" name="phone" value = "<%= user != null ? user.getPhone() : ""%>" />
+	<input type="text" name="phone" value = "<%= user != null ? user.getUsersPhone() : ""%>" />
 	<button type="submit">수정하기</button>
 	</form>
 </body>

@@ -11,17 +11,21 @@
 		<form action="${pageContext.request.contextPath}/booking/submit" method="post">
 			<div class="left-container">
 				<h1>예약자 정보</h1>
+				<input type="hidden" name="usersNum" id="userNum" value="${usersNum}"/>
 				<div>
 					<label for="name">이름</label>
-					<input type="hidden" name="name" id="name"/>
+					<p>${usersName}</p>
+					<input type="hidden" name="usersName" id="userName" value="${usersName}"/>
 				</div>
 				<div>
 					<label for="email">이메일</label>
-					<input type="hidden"name="email" id="email"/>
+					<p>${email}</p>
+					<input type="hidden" name="email" id="email" value="${email}"/>
 				</div>
 				<div>
 					<label for="phone">전화번호</label>
-					<input type="hidden" name="phone" id="phone"/>
+					<p>${phone}</p>
+					<input type="hidden" name="phone" id="phone" value="${phone}"/>
 				</div>
 				
 				<div>
@@ -29,9 +33,9 @@
 					<pre>숙박 시 제공되는 옵션을 선택하세요</pre>
 					<div>
 						<h3>추가 침대</h3>
-						<input type="checkbox" name="bed" value="0"/>간이 침대
+						<input type="checkbox" name="bed" value="extraBed"/>간이 침대
 						<br />
-						<input type="checkbox" name="bed" value="1"/>유아 침대
+						<input type="checkbox" name="bed" value="infantBed"/>유아 침대
 					</div>
 					<div>
 						<h3>도착</h3>
@@ -62,8 +66,8 @@
 			</div>
 			<div class="right-container">
 				<div>
-					<label for="room">객실 선택</label>
-					<select id="room" name="room">
+					<label for="bookRoomId">객실 선택</label>
+					<select id="bookRoomId" name="bookRoomId">
 						<option value="">1</option>
 						<option value="">2</option>
 					</select>			

@@ -50,18 +50,48 @@ public class BookDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (rs != null) rs.close();
-				if (pstmt != null) pstmt.close();
-				if (conn != null) conn.close();
-			}catch (Exception e) { }
+			DBConnector.close(rs, pstmt, conn);
 		}
 		return bookNum;
 	}
 	
-	// 로그인한 사용자 정보 가져오기
+	// 예약하기 메소드
+	/*public boolean insert(BookDto dto) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String sql = """
+			INSERT INTO booking(book_num, book_users_num, book_room_id, book_stay_num,
+			book_checkin_data, book_checkout_date,
+			book_adult, book_children, book_infant, book_total_pax,
+			book_extra_bed, book_infant_bed, book_checkin_time, book_request,
+			book_total_amount, book_status_code, book_created_at, book_updated_at)
+			VALUES(?, ?, ?, ?, ?, ? ,? ,? ,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			""";
+		try {
+			conn = DBConnector.getConn();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, dto.getBookNum());
+			pstmt.setLong(2, dto.getBookUsersNum());
+			pstmt.setInt(3, dto.getBookRoomId());
+			pstmt.setInt(4,dto.)
+			pstmt.set
+			pstmt.set
+			pstmt.set
+			pstmt.set
+			pstmt.set
+			pstmt.set
+			pstmt.set
+			pstmt.set
+			pstmt.set
+			pstmt.set
+			pstmt.set
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(pstmt, conn);
+		}
+	}*/
 	
-	
-	// 선택한 예약 사항들을 추가하는 메소드
 	
 }
