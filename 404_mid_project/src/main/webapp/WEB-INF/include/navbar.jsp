@@ -34,9 +34,8 @@
 	        <div class="vr"></div> <!-- 세로 구분선 -->
 	      </li>
 	      <li class="nav-item mx-2">
-	        <a class="nav-link text-dark d-flex align-items-center" href="#">
-	          <i class="bi bi-bell"></i> 알림
-	        </a>
+	      		<!-- 알림창 버튼 -->
+	          <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions"><i class="bi bi-bell"></i> 알림</button>
 	      </li>
 	      <li class="nav-item mx-2">
 	        <a class="nav-link text-dark d-flex align-items-center" href="${pageContext.request.contextPath}/user/signup-form.jsp">
@@ -47,3 +46,7 @@
     </div> <!-- end collapse -->
   </div>
 </nav>
+
+<!-- notification-modal.jsp (알림창 모달 include) -->
+<jsp:include page="/WEB-INF/include/notification-modal.jsp"></jsp:include>
+
