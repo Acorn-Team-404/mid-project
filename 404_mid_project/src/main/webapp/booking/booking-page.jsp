@@ -4,9 +4,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>/booking/booking-page.jsp</title>
+<title>Insert title here</title>
 </head>
 <body>
-
+	room-info.jsp
+	booking-form.jsp
 </body>
 </html>
