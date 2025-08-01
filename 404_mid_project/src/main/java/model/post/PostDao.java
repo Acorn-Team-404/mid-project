@@ -87,7 +87,7 @@ public class PostDao {
 					FROM
 						(SELECT post_num, post_writer_num, post_title, post_content, 
 						post_views, post_stay_num, post_created_at, post_updated_at, 
-						post_deleted, post_type, users_ID
+						post_deleted, post_type, users_name
 						FROM posts
 						INNER JOIN users ON post_writer_num = users.usersName)
 					WHERE post_num=?
