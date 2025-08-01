@@ -8,7 +8,7 @@ public class BookDto {
 	// 숙소 번호
 	private int bookStayNum;
 	// 객실 번호
-	private int bookRoomId;
+	private int bookRoomNum;
 	// 체크인 날짜
 	private String bookCheckIn;
 	// 체크아웃 날짜
@@ -50,8 +50,8 @@ public class BookDto {
 	public long getBookUsersNum() {
 		return bookUsersNum;
 	}
-	public void setBookUserNum(long bookUsersNum) {
-		this.bookUsersNum = bookUsersNum;
+	public void setBookUsersNum(long bookUsersNum) {
+	    this.bookUsersNum = bookUsersNum;
 	}
 	public int getBookStayNum() {
 		return bookStayNum;
@@ -59,11 +59,11 @@ public class BookDto {
 	public void setBookStayNum(int bookStayNum) {
 		this.bookStayNum = bookStayNum;
 	}
-	public int getBookRoomId() {
-		return bookRoomId;
+	public int getBookRoomNum() {
+		return bookRoomNum;
 	}
-	public void setBookRoomId(int bookRoomId) {
-		this.bookRoomId = bookRoomId;
+	public void setBookRoomNum(int bookRoomNum) {
+		this.bookRoomNum = bookRoomNum;
 	}
 	public String getBookCheckIn() {
 		return bookCheckIn;

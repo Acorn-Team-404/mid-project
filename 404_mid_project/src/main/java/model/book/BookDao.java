@@ -39,6 +39,35 @@ public class BookDao {
 	           pstmt.executeUpdate();
 	       }
 	   }
+	// 해당 숙소의 객실 목록
+	/*public List<RoomDto> getRoomByStayNum(int stayNum){
+		List<RoomDto> list = new ArrayList<>();
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		String sql = """
+			SELECT room_num, room_name
+			FROM room
+			WHERE room_stay_num = ?
+			""";
+		try {
+			conn = DBConnector.getConn();
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				RoomDto dto = new RoomDto();
+				dto.setRoomNum(rs.getInt("room_num"));
+				dto.setRoomName(rs.getString("room_name"));
+				list.add(dto);
+			}
+		} catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        DBConnector.close(rs, pstmt, conn);
+	    }
+	    return list;
+	}*/
 	
 	// 예약 번호 생성 메소드
 	public String generateBookNum() {
@@ -73,43 +102,84 @@ public class BookDao {
 		return bookNum;
 	}
 	
-	// 예약하기 메소드
-	/*public boolean insert(BookDto dto) {
+	// 객실 금액 조회
+	public int getRoomPrice(int roomNum) {
+		int price = 0;
 		Connection conn = null;
 		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = DBConnector.getConn();
+			String sql = """
+					SELECT room_price FROM room WHERE room_num = ?	
+					""";
+				
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, roomNum);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				price = rs.getInt("room_price");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(pstmt, conn);
+		}	
+		return price;
+	}
+	
+	// 예약하기 메소드
+	public boolean insert(BookDto dto) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		int rowCount = 0;
+		
 		String sql = """
-			INSERT INTO booking(book_num, book_users_num, book_room_id, book_stay_num,
-			book_checkin_data, book_checkout_date,
+			INSERT INTO booking(book_num, book_users_num, book_room_num, book_stay_num,
+			book_checkin_date, book_checkout_date,
 			book_adult, book_children, book_infant, book_total_pax,
 			book_extra_bed, book_infant_bed, book_checkin_time, book_request,
-			book_total_amount, book_status_code, book_created_at, book_updated_at)
-			VALUES(?, ?, ?, ?, ?, ? ,? ,? ,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			book_total_amount, book_status_code, book_created_at)
+			VALUES(?, ?, ?, ?, ?, ? ,? ,? ,?, ?, ?, ?, ?, ?, ?, ?, SYSDATE)
 			""";
 		try {
 			conn = DBConnector.getConn();
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, dto.getBookNum());
 			pstmt.setLong(2, dto.getBookUsersNum());
-			pstmt.setInt(3, dto.getBookRoomId());
-			pstmt.setInt(4,dto.)
-			pstmt.set
-			pstmt.set
-			pstmt.set
-			pstmt.set
-			pstmt.set
-			pstmt.set
-			pstmt.set
-			pstmt.set
-			pstmt.set
-			pstmt.set
-			pstmt.set
+			pstmt.setInt(3, dto.getBookRoomNum());
+			pstmt.setInt(4,dto.getBookStayNum());
+			pstmt.setString(5,dto.getBookCheckIn());
+			pstmt.setString(6,dto.getBookCheckOut());
+			pstmt.setInt(7, dto.getBookAdult());
+			pstmt.setInt(8, dto.getBookChildren());
+			pstmt.setInt(9, dto.getBookInfant());
+			pstmt.setInt(10, dto.getBookTotalPax());
+			pstmt.setInt(11, dto.getBookExtraBed());
+			pstmt.setInt(12, dto.getBookInfantBed());
+			pstmt.setString(13, dto.getBookCheckInTime());
+			pstmt.setString(14, dto.getBookRequest());
+			pstmt.setInt(15, dto.getBookTotalAmount());
+			pstmt.setInt(16, dto.getBookStatusCode());
 			
+			// 디버깅용 출력
+	        System.out.println("디버깅: book_users_num = " + dto.getBookUsersNum());
+			
+			rowCount = pstmt.executeUpdate();		
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			DBConnector.close(pstmt, conn);
 		}
-	}*/
+		
+		// 변화된 rowCount 값을 조사해서 작업의 성공 여부를 알아 낼 수 있다
+		if (rowCount > 0) {
+			return true; // 작업 성공이라는 의미에서 true return
+		} else {
+			return false; // 작업 실패라는 의미에서 false return
+		}
+	}
 	
 	
 }
