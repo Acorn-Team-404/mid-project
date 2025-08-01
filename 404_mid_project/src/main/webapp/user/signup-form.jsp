@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+	Boolean verified = (Boolean) session.getAttribute("emailVerified");    
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -39,7 +42,10 @@
 			<div>
 				<label for="email">이메일</label>
 				<input type="email" name="email" id="email" required>
-				<button type="button" onclick="sendEmailCode()">인증 코드 보내기</button>
+				<button type="button" onclick="sendEmailAuth()">인증 코드 보내기</button>
+				
+				<input type="text" name="inputCode" id="inputCode" placeholder="인증코드 입력.." required>
+				<button type="button" onclick="verifycode()">인증 코드 확인</button>
 			</div>
 			
 			<div>
@@ -58,7 +64,53 @@
 	
 	<script>
 	
+	
 	const contextPath = "<%= request.getContextPath() %>";
+	
+	
+	//이메일 인증 눌렀는지..
+	document.querySelector("form").addEventListener("submit", function(e) {
+		const verified = <%= verified != null && verified ? "true" : "false" %>;
+		if (!verified) {
+			e.preventDefault();
+			alert("이메일 인증을 먼저 완료해주세요.");
+		}
+	});
+	
+		
+	//인증번호 보내기, 버튼 누르면
+	function sendEmailAuth() {
+	    var email = document.getElementById("email").value;
+	    fetch(contextPath + "/EmailAuth.user", {
+	        method: "POST",
+	        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+	        body: "usersEmail=" + encodeURIComponent(email) // ✅ 서버에서 받는 파라미터 이름에 맞춰야 함!
+	    }).then(resp => resp.text()).then(text => {
+	        console.log("서버 응답:", text); // ✅ 서버가 "success"나 "fail"을 응답
+	        alert("인증 코드가 발송되었습니다.");
+	    });
+	}
+
+	
+	//인증확인 눌렀을 때
+	function verifyCode() {
+	    var code = document.getElementById("inputCode").value;
+	    fetch("/${pageContext.request.contextPath}/VerifyCode.user", {
+	        method: "POST",
+	        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+	        body: "inputCode=" + encodeURIComponent(code)
+	    }).then(resp => resp.text()).then(text => {
+	        if (text === "success") {
+	            alert("인증 완료");
+	        } else {
+	            alert("인증 실패");
+	        }
+	    });
+	}
+	
+	
+	
+	
 	
 	// 비밀번호 복잡도 체크
 	document.getElementById("usersPassword").addEventListener("input", () => {

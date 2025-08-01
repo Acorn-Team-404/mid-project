@@ -14,9 +14,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.user.UserDao;
 import model.user.UserDto;
+import model.util.MailUtil;
 
 @WebServlet("*.user")
 public class UsersServlet extends HttpServlet {
+	
+	
 
 	private static final long serialVersionUID = 1L;
 
@@ -26,6 +29,62 @@ public class UsersServlet extends HttpServlet {
 		String uri = request.getRequestURI();
 		String path = uri.substring(uri.lastIndexOf("/"));
 
+		
+		
+		//사용자 입력코드 확인
+		if(path.equals("/VerifyCode.user")) {
+
+			//request.setCharacterEncoding("UTF-8");
+			//response.setContentType("text/html;charset=UTF-8");
+			PrintWriter out = response.getWriter();
+
+			
+			String inputCode = request.getParameter("inputCode");
+			HttpSession session = request.getSession();
+			String authCode = (String)session.getAttribute("authCode");
+			
+			Long createdAt = (Long) session.getAttribute("authCodeCreatedAt");
+			if (createdAt == null || System.currentTimeMillis() - createdAt > 180000) {
+			    alertAndBack(out, "인증코드가 만료되었습니다.");
+			    return;
+			}
+
+			if (inputCode != null && inputCode.equals(authCode)) {
+			    session.setAttribute("emailVerified", true); // 이 라인!
+			    session.removeAttribute("authCode");
+			    session.removeAttribute("authCodeCreatedAt");
+			    out.print("success");
+			} else {
+			    alertAndBack(out, "인증번호가 틀렸습니다.");
+			}
+			
+			session.removeAttribute("authCode");
+			session.removeAttribute("authCodeCreatedAt");
+		}
+		
+		
+		//인증코드 생성, 세션저장
+		if(path.equals("/EmailAuth.user")) {
+			String usersEmail = request.getParameter("usersEmail");
+			String authCode = String.valueOf((int)(Math.random()*900000)+100000);
+			
+			//세션
+			HttpSession session = request.getSession();
+			PrintWriter out = response.getWriter();
+			
+			//에러 처리를 해줌
+			try {
+			    MailUtil.sendEmail(usersEmail, authCode);//메일 전송, 에러날 수 있음...
+			    session.setAttribute("authCode", authCode);//에러없을 때 세션 저장
+			    response.getWriter().print("success");//클라이언트에 성공 응답
+			} catch (Exception e) {
+			    response.getWriter().print("fail"); //에러났을 때 fail
+			}
+			
+			session.setAttribute("authCodeCreatedAt", System.currentTimeMillis());//이메일 유효 시간체크
+		
+		}
+		
 		
 		//비밀번호 재설정
 		if(path.equals("/resetPassword.user")) {
@@ -156,8 +215,8 @@ public class UsersServlet extends HttpServlet {
 			
 			if(isValid){
 				HttpSession session = request.getSession();
-				session.setAttribute("usersId", usersId);
-				session.setAttribute("usersNum", usersNum);
+				session.setAttribute("usersId", dto.getUsersId());
+				session.setAttribute("usersNum", dto.getUsersNum());
 				session.setMaxInactiveInterval(60*60);
 				
 				// 로그인 성공 → 리다이렉트
@@ -199,6 +258,16 @@ public class UsersServlet extends HttpServlet {
 			response.setContentType("text/html;charset=UTF-8");
 			PrintWriter out = response.getWriter();
 
+			//이메일 인증을 꼭 해야 넘어갈 수 있음...
+			HttpSession session = request.getSession();
+			
+			Boolean verified = (Boolean) session.getAttribute("emailVerified");
+			if (verified == null || !verified) {
+			    alertAndBack(out, "이메일 인증을 완료해주세요.");
+			    return;
+			}
+			
+			
 			// 파라미터 추출
 			String usersId = request.getParameter("usersId");
 			String usersName = request.getParameter("usersName");
@@ -209,6 +278,9 @@ public class UsersServlet extends HttpServlet {
 			String birth = request.getParameter("birth");
 			String checkIdAction = request.getParameter("checkIdAction");
 
+			
+			
+			
 			// 아이디 유효성 검사
 			if (usersId == null || !usersId.matches("^[a-zA-Z0-9]{4,20}$")) {
 				alertAndBack(out, "아이디 형식이 올바르지 않습니다. (영문+숫자 4~20자)");
