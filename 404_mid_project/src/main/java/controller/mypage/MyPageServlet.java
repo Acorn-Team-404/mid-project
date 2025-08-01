@@ -27,6 +27,15 @@ public class MyPageServlet extends HttpServlet {
         UserDao userDao = UserDao.getInstance();
         UserDto user = userDao.getByUserId(usersId);
         
+        // 전화번호 포맷 변경 (예: 01012345678 → 010-1234-5678)
+        String rawPhone = user.getUsersPhone();
+        if (rawPhone != null && rawPhone.matches("\\d{11}")) {
+            String formattedPhone = rawPhone.replaceAll("(\\d{3})(\\d{4})(\\d{4})", "$1-$2-$3");
+            req.setAttribute("formattedPhone", formattedPhone);
+        } else {
+            req.setAttribute("formattedPhone", rawPhone); // 포맷 안되면 원래 번호 유지
+        }
+        
         System.out.println("userDto: " + user);
 
         req.setAttribute("user", user);
