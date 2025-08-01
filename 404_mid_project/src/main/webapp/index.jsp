@@ -7,9 +7,7 @@
 <title>index.jsp</title>
 <jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
   <style>
-/*     .carousel-inner {
-      height: 600px;
-    } */
+
     .carousel-inner img {
       height: 100%;
       width: 100%;
