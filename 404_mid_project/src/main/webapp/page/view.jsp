@@ -11,7 +11,7 @@
 	StayDao dao = StayDao.getInstance();
 	
 	// 슥소 정보
-	StayDto stayDto = dao.getStay(stayNum);
+	StayDto stayDto = dao.getByNum(stayNum);
 	
 	// 페이지 정보
 	PageDto pageDto = dao.getPage(stayNum);
