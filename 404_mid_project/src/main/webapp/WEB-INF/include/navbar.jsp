@@ -2,7 +2,9 @@
     pageEncoding="UTF-8"%>
 <%-- /WEB-INF/include/navbar.jsp --%>
 <%
-	String navUserId = "null";
+	//String navUserId = "null";
+	String usersId = (session != null) ? (String) session.getAttribute("usersId") : null;
+	request.setAttribute("usersId", usersId);
 %>
 <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm py-3">
   <div class="container-fluid align-items-center flex-nowrap">
@@ -45,8 +47,10 @@
 	        <div class="vr"></div> <!-- 세로 구분선 -->
 	      </li>
 	      <li class="nav-item mx-2">
-	      		<!-- 알림창 버튼 -->
+	      	<% if(usersId != null) {%>
+	      		<!-- 알림창 버튼 (로그인 세션 있을때만 출력) -->
 	          <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions"><i class="bi bi-bell"></i> 알림</button>
+	      	<%} %>
 	      </li>
 	      <li class="nav-item mx-2">
 	        <a class="nav-link text-dark d-flex align-items-center text-nowrap" href="${pageContext.request.contextPath}/user/signup-form.jsp">
@@ -58,6 +62,10 @@
   </div>
 </nav>
 
+
 <!-- notification-modal.jsp (알림창 모달 include) -->
 <jsp:include page="/WEB-INF/include/notification-modal.jsp"></jsp:include>
+
+
+
 

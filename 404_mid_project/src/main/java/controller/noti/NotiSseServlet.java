@@ -13,16 +13,20 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.noti.NotificationDao;
 import model.noti.NotificationDto;
 
 
-
 @WebServlet("/sse")
 public class NotiSseServlet extends HttpServlet {
+
 	@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+		HttpSession session = request.getSession(false);
+		String usersId = (session != null) ? (String) session.getAttribute("usersId") : null;
 
         response.setContentType("text/event-stream");
         response.setCharacterEncoding("UTF-8");
@@ -36,7 +40,7 @@ public class NotiSseServlet extends HttpServlet {
             JSONObject obj = new JSONObject();
 
             obj.put("createdAt", "2025-07-02 ~ 2025-08-27");
-            obj.put("senderId", "비로소 한옥");
+            obj.put("senderId", usersId);
             obj.put("typeGroupId", "reservation");
             obj.put("message", "예약 확정" + System.currentTimeMillis());
 

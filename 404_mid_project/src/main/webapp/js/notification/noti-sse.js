@@ -1,6 +1,7 @@
 // SSE를 사용하기 위해 클라이언트에서 사용하는 내장 객체인 EventSource 생성
 // 인자는 SSE 요청을 보낼 서버 주소 (서버에 정의된 서블릿의 URL 매핑값과 일치해야함)
 
+
 const contextPath = "/" + window.location.pathname.split("/")[1];
 const eventSource = new EventSource(contextPath + "/sse");
 
