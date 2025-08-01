@@ -25,35 +25,33 @@ public class NotiCommentServlet extends HttpServlet {
 		
 		if(isCommentSuccess) {
 			
-		
+			long notiRecipientNum = Long.valueOf(req.getParameter("notiRecipientNum"));
+			long notiSenderNum = Long.valueOf(req.getParameter("notiSenderNum"));
+			int notiTypeCode = Integer.parseInt(req.getParameter("notiTypeCode"));
+			int notiTargetTypeCode = Integer.parseInt(req.getParameter("notiTargetTypeCode"));
+			long notiTargetNum = Long.valueOf(req.getParameter("notiTargetNum"));
+			String notiMessage = req.getParameter("notiMessage");
 			
-		long notiRecipientNum = Long.valueOf(req.getParameter("notiRecipientNum"));
-		long notiSenderNum = Long.valueOf(req.getParameter("notiSenderNum"));
-		int notiTypeCode = Integer.parseInt(req.getParameter("notiTypeCode"));
-		int notiTargetTypeCode = Integer.parseInt(req.getParameter("notiTargetTypeCode"));
-		long notiTargetNum = Long.valueOf(req.getParameter("notiTargetNum"));
-		String notiMessage = req.getParameter("notiMessage");
-		
-
-		NotificationDto notiDto = new NotificationDto();
-		
-		notiDto.setNotiRecipientNum(notiRecipientNum);
-		notiDto.setNotiSenderNum(notiSenderNum);
-		notiDto.setNotiTypeCode(notiTypeCode);
-		notiDto.setNotiTargetTypeCode(notiTargetTypeCode);
-		notiDto.setNotiTargetNum(notiTargetNum);
-		notiDto.setNotiMessage(notiMessage);
-		
-		boolean isNotiSuccess = NotificationDao.getInstance().commentInsert(notiDto);
-		
-		if(isNotiSuccess) {
-			System.out.println("알림 데이터 저장 성공");
-			resp.sendRedirect("리디렉션 경로");
-		} else {
-			System.out.println("알림 데이터 저장 실패");
-			resp.sendRedirect("리디렉션 경로");
-		}
-		
+	
+			NotificationDto notiDto = new NotificationDto();
+			
+			notiDto.setNotiRecipientNum(notiRecipientNum);
+			notiDto.setNotiSenderNum(notiSenderNum);
+			notiDto.setNotiTypeCode(notiTypeCode);
+			notiDto.setNotiTargetTypeCode(notiTargetTypeCode);
+			notiDto.setNotiTargetNum(notiTargetNum);
+			notiDto.setNotiMessage(notiMessage);
+			
+			boolean isNotiSuccess = NotificationDao.getInstance().commentInsert(notiDto);
+			
+			if(isNotiSuccess) {
+				System.out.println("알림 데이터 저장 성공");
+				resp.sendRedirect("리디렉션 경로");
+			} else {
+				System.out.println("알림 데이터 저장 실패");
+				resp.sendRedirect("리디렉션 경로");
+			}
+			
 		}
 	}
 }
