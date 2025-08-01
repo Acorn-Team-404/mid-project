@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>/post/uploadform.jsp</title>
+<title>/post/form.jsp</title>
 <jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
 <!-- Toast UI Editor CSS -->
 <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
@@ -20,6 +20,7 @@
 		<jsp:param value="board" name="thisPage"/>	
 	</jsp:include>
 	<div class="container">
+		<h1>게시글 작성 폼</h1>
 		<form action="upload.post" method="post">
 			<div class="mb-2">
 				<label class="form-label" for="title">제목</label>
@@ -31,7 +32,7 @@
 				<div id="editor"></div>
 				<textarea class="form-control" name="content" id="hiddenContent"></textarea>
 			</div>
-			<button class="btn btn-success btn-sm" type="submit">save</button>
+			<button class="btn btn-success btn-sm" type="submit">upload</button>
 		</form>
 	</div>
 </body>

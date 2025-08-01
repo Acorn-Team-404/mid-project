@@ -1,17 +1,22 @@
 package controller.post;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 
-import jakarta.servlet.RequestDispatcher;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.post.postDao;
-import model.post.postDto;
+import jakarta.websocket.Session;
+import model.post.CommentDao;
+import model.post.CommentDto;
+import model.post.PostDao;
+import model.post.PostDto;
 
 @WebServlet("*.post")
 @MultipartConfig(
@@ -26,6 +31,8 @@ public class PostServlet extends HttpServlet{
 		// 사용자 요청 path 추출
 		String uri = req.getRequestURI();
 		String path = uri.substring(uri.lastIndexOf("/"));
+		PostDao dao = PostDao.getInstance();
+				
 		
 		// 추출된 path 정보에 따라 요청을 분기 처리
 		// 1. 게시글 리스트
@@ -33,61 +40,85 @@ public class PostServlet extends HttpServlet{
 			System.out.println("게시글 리스트");
 			
 			// 게시글 불러오기
-			postDto dto=new postDto();
-		    List<postDto> list=new postDao().selectAll();
+			PostDto dto=new PostDto();
+		    List<PostDto> list=dao.selectAll();
 		    
 		    // request 영역에 저장
-		    req.setAttribute("postList", list);
+		    req.setAttribute("list", list);
 		    
 		    // jsp로 포워딩
 		    req.getRequestDispatcher("/post/list.jsp").forward(req, res);
 		
-		// 2. 게시글 1개 조회
-		}else if(path.equals("/get.post")) {
+		// 2. 게시글 상세보기
+		}else if(path.equals("/view.post")) {
 			System.out.println("게시글 상세보기");
 			
 			// 게시글 번호 파라미터 받기
-			String numStr = req.getParameter("num");
-			int num=0;
-			try {
-		    	num = Integer.parseInt(numStr);
-        	} catch (NumberFormatException e) {
-	            res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid post number");
-	            return;
-	        }
-			
+			int num = Integer.parseInt(req.getParameter("num"));
+						
 			// 게시글 조회 - DB
-			postDto dto=new postDao().getByPostNum(num);
+			PostDto dto=dao.getByPostNum(num);
 			
-			// 게시글 존재 X - 404
-			if (dto == null) {
-	            res.sendError(HttpServletResponse.SC_NOT_FOUND, "Post not found");
-	            return;
-	        }
 			
+			
+			/*
+			 * //로그인 String userName=(String)Session.getAttribute("userName"); //만일 본인 글 자세히
+			 * 보기가 아니면 조회수 1을 증가시킨다. if(!dto.getPostWriterNum().equals(userName)){
+			 * postDao.getInstance().views(num); } //로그인했는지 여부 알아내기 boolean isLogin =
+			 * userName == null ? false : true;
+			 */
+			 
+			//댓글 목록을 DB에서 읽어오기
+			List<CommentDto> commentList=CommentDao.getInstance().selectList(num);
+			
+						
 			// jsp
 			req.setAttribute("post", dto);
 			req.getRequestDispatcher("/post/view.jsp").forward(req, res);
+					
+		// 3. 게시글 입력수정폼	
+		}else if(path.equals("/form.post")) {
+			String numStr = req.getParameter("num");
+			if(numStr != null) {
+				int num= Integer.parseInt(numStr);
+				PostDto dto= dao.getByPostNum(num);
+				req.setAttribute("post", dto);
+			}
+
+			req.getRequestDispatcher("/post/form.jsp").forward(req, res);
 			
-		
-		// 3. 게시글 업로드	
+		// 4. 게시글 업로드
 		}else if(path.equals("/upload.post")) {
 			System.out.println("게시글 업로드");
+			PostDto dto=new PostDto(); 
+
+			int num=dao.getSequence();
+			dto.setPostNum(num);
+			dto.setPostTitle(req.getParameter("title"));
+			dto.setPostContent(req.getParameter("content"));
+			dao.insert(dto);
+			res.sendRedirect("list.post");
 			
 			
-			// 요청 전달자 객체 얻어내기
-			RequestDispatcher rd=req.getRequestDispatcher("/list.jsp");
-			// 응답을 위임하기
-			rd.forward(req, res);
-			
-		// 4. 게시글 수정
+					
+		// 5. 게시글 업데이트
 		}else if(path.equals("/update.post")) {
-			System.out.println("게시글 수정");
+			System.out.println("게시글 업데이트");
+			PostDto dto=new PostDto();
+			dto.setPostNum(Integer.parseInt(req.getParameter("num")));
+			dto.setPostTitle(req.getParameter("title"));
+			dto.setPostContent(req.getParameter("content"));
+			dao.update(dto);
+			res.sendRedirect("view.post?num=" + dto.getPostNum());
 			
-		// 5. 게시글 삭제
+			
+			
+		// 6. 게시글 삭제
 		}else if(path.equals("/delete.post")) {
 			System.out.println("게시글 삭제");
-			
+			int num = Integer.parseInt(req.getParameter("num"));
+			dao.deleteByNum(num);
+			res.sendRedirect("list.post");
 		}
 		
 		
