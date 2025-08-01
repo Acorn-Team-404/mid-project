@@ -1,6 +1,6 @@
 package model.post;
 
-public class postDto {
+public class PostDto {
 	private int postNum;
 	private int postWriterNum;
 	private String postTitle;
