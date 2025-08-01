@@ -37,20 +37,31 @@ public class FileUploadServlet extends HttpServlet {
             return;
         }
 
-        // 고유한 파일 이름 생성
+        // 고유한 파일 이름 생성 + 인코딩
+        // 1. 파일명 받기
         String originalFileName = filePart.getSubmittedFileName();
-        String uuid = UUID.randomUUID().toString();
-        String savedFileName = uuid + "_" + originalFileName;
+        
+        // 2. URL-safe 인코딩 (공백 → %20, 특수문자까지 안전하게)
+        String safeFileName = java.net.URLEncoder.encode(originalFileName, "UTF-8");
+        // 3. UUID 결합
+        String savedFileName = UUID.randomUUID().toString() + "_" + safeFileName;
+        // 4. FTP용 파일명 인코딩 (FTPClient는 ISO-8859-1 문자셋으로 파일명 전송)
+        String ftpFileName = new String(savedFileName.getBytes("UTF-8"), "ISO-8859-1");
 
         // NAS에 FTP로 업로드
         FTPClient ftp = new FTPClient();
         try (InputStream fileContent = filePart.getInputStream()) {
             ftp.connect(HOST, PORT);
+            // 파일명 인코딩
+            ftp.setControlEncoding("UTF-8");
             ftp.login(USER, PASSWORD);
+            // 서버에 UTF-8 모드 사용 요청
+            ftp.sendCommand("OPTS UTF8 ON");
+            
             ftp.enterLocalPassiveMode();
             ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
 
-            boolean uploaded = ftp.storeFile(REMOTE_DIR + savedFileName, fileContent);
+            boolean uploaded = ftp.storeFile(REMOTE_DIR + ftpFileName, fileContent);
 
             if (uploaded) {
                 // DB에 저장
