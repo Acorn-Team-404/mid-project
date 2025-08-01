@@ -25,8 +25,12 @@ public class NotiSseServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+		// 세션 검증
 		HttpSession session = request.getSession(false);
-		String usersId = (session != null) ? (String) session.getAttribute("usersId") : null;
+		long usersNum = 0;
+		if (session != null && session.getAttribute("usersNum") != null) {
+		    usersNum = (Long) session.getAttribute("usersNum");
+		}
 
         response.setContentType("text/event-stream");
         response.setCharacterEncoding("UTF-8");
@@ -34,13 +38,17 @@ public class NotiSseServlet extends HttpServlet {
         response.setHeader("Connection", "keep-alive");
 
         PrintWriter out = response.getWriter();
+        
+        // Select문 실행
+        List<NotificationDto> notiList = NotificationDao.getInstance().notiSelectByUsersNum(usersNum);
+        
 
         while (true) {
             JSONArray jsonArray = new JSONArray();
             JSONObject obj = new JSONObject();
 
             obj.put("createdAt", "2025-07-02 ~ 2025-08-27");
-            obj.put("senderId", usersId);
+            obj.put("senderId", usersNum);
             obj.put("typeGroupId", "reservation");
             obj.put("message", "예약 확정" + System.currentTimeMillis());
 

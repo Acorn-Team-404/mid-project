@@ -156,8 +156,8 @@ public class UsersServlet extends HttpServlet {
 			
 			if(isValid){
 				HttpSession session = request.getSession();
-				session.setAttribute("usersId", usersId);
-				session.setAttribute("usersNum", usersNum);
+				session.setAttribute("usersId", dto.getUsersId());
+				session.setAttribute("usersNum", dto.getUsersNum());
 				session.setMaxInactiveInterval(60*60);
 				
 				// 로그인 성공 → 리다이렉트

@@ -2,7 +2,6 @@
     pageEncoding="UTF-8"%>
 
 
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,7 +9,7 @@
 <title>include/notification-modal.jsp</title>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/notification/notification-modal.css" />
 </head>
-<body data-users-id="${requestScope.usersId}">
+<body>
 <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
 	<div class="offcanvas-header">
     	<h5 class="offcanvas-title ms-3" id="offcanvasWithBothOptionsLabel">
@@ -51,10 +50,15 @@
 		</div>
 		
 		
+		
+		
   	</div>
 </div>
 
-<script src="${pageContext.request.contextPath}/js/notification/noti-sse.js"></script>
+<!-- 세션이 있을 때만 sse를 호출하는 js 호출 -->
+<%if(request.getAttribute("usersId") != null && session.getAttribute("usersId") != null) {%>
+	<script src="${pageContext.request.contextPath}/js/notification/noti-sse.js"></script>
+<%} %>
 
 </body>
 </html>

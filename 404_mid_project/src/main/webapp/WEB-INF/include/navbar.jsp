@@ -1,15 +1,24 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%-- /WEB-INF/include/navbar.jsp --%>
+
 <%
-	//String navUserId = "null";
+	// 세션 검증 및 Attribute 저장
+	// navbar.jsp를 include한 jsp페이지에서는 request.getAttribute("key")로 세션값 사용 가능
 	String usersId = (session != null) ? (String) session.getAttribute("usersId") : null;
+	String usersNum = (session != null && session.getAttribute("usersNum") != null)
+		    ? session.getAttribute("usersNum").toString()
+		    : null;
 	request.setAttribute("usersId", usersId);
+	request.setAttribute("usersNum", usersNum);
 %>
+
 <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm py-3">
   <div class="container-fluid align-items-center flex-nowrap">
     <!-- 좌측 로고 -->
     <a class="navbar-brand fw-bold" href="#">STAYLOG</a>
+    <span><%=usersId %></span> <!-- 현재 세션 상태 확인을 위한 임시코드(지워도 상관없음) -->
+    <span><%=usersNum %></span> <!-- 현재 세션 상태 확인을 위한 임시코드(지워도 상관없음) -->
 
     <!-- 검색창 -->
     <form class="d-flex mx-4 flex-grow-1" role="search">
@@ -47,10 +56,12 @@
 	        <div class="vr"></div> <!-- 세로 구분선 -->
 	      </li>
 	      <li class="nav-item mx-2">
+	      
+	      	<!-- 알림창 버튼 (로그인 세션 있을때만 출력) -->
 	      	<% if(usersId != null) {%>
-	      		<!-- 알림창 버튼 (로그인 세션 있을때만 출력) -->
 	          <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions"><i class="bi bi-bell"></i> 알림</button>
 	      	<%} %>
+	      	
 	      </li>
 	      <li class="nav-item mx-2">
 	        <a class="nav-link text-dark d-flex align-items-center text-nowrap" href="${pageContext.request.contextPath}/user/signup-form.jsp">

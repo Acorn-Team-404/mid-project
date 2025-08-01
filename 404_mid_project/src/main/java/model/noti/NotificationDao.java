@@ -34,18 +34,18 @@ public class NotificationDao {
 			conn = DBConnector.getConn();
 			String sql = """
 					SELECT noti_num, NVL(noti_sender_num, 0) AS noti_sender_num,
-						(SELECT cc_code_name
-						FROM common_code
-						WHERE cc_group_id = 'NOTI_TYPE'
-						AND cc_code = 10) noti_type,
-						noti_message, noti_read_code, noti_created_at
-						TRUNC(SYSDATE - noti_created_at) AS noti_days_ago
+							(SELECT cc_code_name
+							FROM common_code
+							WHERE cc_group_id = 'NOTI_TYPE'
+							AND cc_code = 10) noti_type,
+							noti_message, noti_read_code, noti_created_at,
+							TRUNC(SYSDATE - noti_created_at) AS noti_days_ago
 					FROM notifications
-					WHERE noti_recipient_num = ?
+					WHERE noti_recipient_num = 14
 					ORDER BY noti_num DESC
 					""";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setLong(1, usersNum);
+			//pstmt.setLong(1, usersNum);
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
