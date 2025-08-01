@@ -1,0 +1,38 @@
+@charset "UTF-8";
+.count-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.count-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    line-height: 1;
+    text-align: center;
+    padding: 0;
+}
+.left-container {
+	background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.right-container-fixed {
+	position: sticky;
+	top: 20px;
+	background-color: #ffffff;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.gutter {
+	margin-bottom: 40px;
+}
+
+body {
+	background-color: #f8f9fa;
+}
