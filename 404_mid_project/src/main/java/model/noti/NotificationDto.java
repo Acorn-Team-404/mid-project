@@ -1,7 +1,7 @@
 package model.noti;
 
 public class NotificationDto {
-	// TABLE 기본 필드
+	// Notification Table 기본 필드
 	private long notiNum;
 	private long notiRecipientNum;
 	private long notiSenderNum;
@@ -17,7 +17,11 @@ public class NotificationDto {
 	
 	
 	// 추가로 필요한 필드
-	//private String 이미지가져와야함
+	private String notiImage;
+	private String notiStayName;
+	private String notiType;
+	private String notiDaysAgo;
+	
 	
 	
 	public long getNotiNum() {
@@ -91,5 +95,29 @@ public class NotificationDto {
 	}
 	public void setNotiCreatedAt(String notiCreatedAt) {
 		this.notiCreatedAt = notiCreatedAt;
+	}
+	public String getNotiImage() {
+		return notiImage;
+	}
+	public void setNotiImage(String notiImage) {
+		this.notiImage = notiImage;
+	}
+	public String getNotiStayName() {
+		return notiStayName;
+	}
+	public void setNotiStayName(String notiStayName) {
+		this.notiStayName = notiStayName;
+	}
+	public String getNotiType() {
+		return notiType;
+	}
+	public void setNotiType(String notiType) {
+		this.notiType = notiType;
+	}
+	public String getNotiDaysAgo() {
+		return notiDaysAgo;
+	}
+	public void setNotiDaysAgo(String notiDaysAgo) {
+		this.notiDaysAgo = notiDaysAgo;
 	}
 }

@@ -1,14 +1,15 @@
-// SSE를 사용하기 위해 클라이언트에서 사용하는 내장 객체인 EventSource 생성
-// 인자는 SSE 요청을 보낼 서버 주소 (서버에 정의된 서블릿의 URL 매핑값과 일치해야함)
 
+// 기호를 기준으로 나눠서 현재 프로젝트 위치 가져온 후 sse 주소 호출
 const contextPath = "/" + window.location.pathname.split("/")[1];
 const eventSource = new EventSource(contextPath + "/sse");
 
-
+// HTML 요소가 삽입될 부모 요소
 const offcanvasBody = document.querySelector(".offcanvas-body");
 
+// 데이터를 성공적으로 받았을 때 실행
 eventSource.onmessage = function(event) {
       const notiData = JSON.parse(event.data); // JSON 배열 파싱
+	  offcanvasBody.innerHTML = ""; // 기존 요소 삭제
 
       // DOM에 알림 데이터 동적 삽입
       notiData.forEach(noti => {
@@ -36,7 +37,7 @@ eventSource.onmessage = function(event) {
 				</div>
 			</div>
 		`;
-		
+
 		offcanvasBody.insertAdjacentHTML("beforeend", notiCard)
       });
     };

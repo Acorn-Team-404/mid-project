@@ -10,6 +10,7 @@ import model.util.DBConnector;
 
 public class NotificationDao {
 	
+	
 	// Connection Pool 관리
 	private static NotificationDao notiDao;
 	static {
@@ -21,8 +22,9 @@ public class NotificationDao {
 	}
 	
 	
+	
 	// 전체 알림 목록을 반환하는 메서드
-	public List<NotificationDto> notiSelectAll() {
+	public List<NotificationDto> notiSelectByUsersNum(long usersNum) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -31,16 +33,30 @@ public class NotificationDao {
 		try {
 			conn = DBConnector.getConn();
 			String sql = """
-					SELECT num, name, addr
-					FROM member
-					ORDER BY num ASC
+					SELECT noti_num, NVL(noti_sender_num, 0) AS noti_sender_num,
+							(SELECT cc_code_name
+							FROM common_code
+							WHERE cc_group_id = 'NOTI_TYPE'
+							AND cc_code = 10) noti_type,
+							noti_message, noti_read_code, noti_created_at,
+							TRUNC(SYSDATE - noti_created_at) AS noti_days_ago
+					FROM notifications
+					WHERE noti_recipient_num = 14
+					ORDER BY noti_num DESC
 					""";
 			pstmt = conn.prepareStatement(sql);
-
+			//pstmt.setLong(1, usersNum);
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
 				NotificationDto dto = new NotificationDto();
+				dto.setNotiNum(rs.getLong("noti_num"));
+				dto.setNotiSenderNum(rs.getLong("noti_sender_num"));
+				dto.setNotiType(rs.getString("noti_type"));
+				dto.setNotiMessage(rs.getString("noti_message"));
+				dto.setNotiReadCode(rs.getInt("noti_read_code"));
+				dto.setNotiCreatedAt(rs.getString("noti_created_at"));
+				dto.setNotiDaysAgo(rs.getString("noti_days_ago"));
 				list.add(dto);
 			}
 
@@ -95,5 +111,38 @@ public class NotificationDao {
 			return false;
 		}
 	}
+	
+	
+	
+	public boolean NotiGetByDelete(long notiNum) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		// 변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
+		int rowCount = 0;
+		try {
+			conn = DBConnector.getConn();
+			String sql = """
+					DELETE FROM notifications
+					WHERE noti_num = ?
+					""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 순서대로 필요한 값 바인딩
+			pstmt.setLong(1, notiNum);
+			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
+			rowCount = pstmt.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(pstmt, conn);
+		}
+		// 작업의 성공 여부 (변화된 row 의 갯수로 판단)
+		if (rowCount > 0) {
+			return true; // 작업 성공
+		} else {
+			return false; // 작업 실패
+		}
+	}
+	
 			
 }
