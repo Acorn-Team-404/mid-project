@@ -7,7 +7,7 @@
 <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm py-3">
   <div class="container-fluid align-items-center flex-nowrap">
     <!-- 좌측 로고 -->
-    <a class="navbar-brand fw-bold" href="#">STAYLOG</a>
+    <a class="navbar-brand fw-bold" href="${pageContext.request.contextPath}/index.jsp">STAYLOG</a>
 
     <!-- 검색창 -->
     <form class="d-flex mx-4 flex-grow-1" role="search">

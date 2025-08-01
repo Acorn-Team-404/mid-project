@@ -1,96 +1,138 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <title>결제 페이지</title>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="https://static.toss.im/icons/png/4x/icon-toss-logo.png" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://js.tosspayments.com/v2/standard"></script>
-  <style>
-    body {
-      background-color: #f8f9fa;
-      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-    }
-    .container {
-      max-width: 720px;
-      margin-top: 60px;
-    }
-    .card {
-      border: none;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-      padding: 40px;
-    }
-    .title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
-    .info {
-      font-size: 1.1rem;
-      margin-bottom: 0.5rem;
-    }
-    .button2 {
-      flex: 1;
-      margin: 0 5px;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #ced4da;
-      background-color: white;
-      cursor: pointer;
-      transition: all 0.2s ease-in-out;
-    }
-    .button2:hover {
-      background-color: #e9ecef;
-    }
-    .button {
-      width: 100%;
-      padding: 14px;
-      font-size: 1.1rem;
-      background-color: #000;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      transition: background-color 0.3s;
-    }
-    .button:hover {
-      background-color: #333;
-    }
-    #payment-method {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
-  </style>
+<meta charset="utf-8" />
+<title>결제 페이지</title>
+<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<script src="https://js.tosspayments.com/v2/standard"></script>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/payments/payments.css">
 </head>
-
 <body>
-  <div class="container">
-    <div class="card">
-      <!-- 예약 정보 -->
-      <div class="title">예약 정보</div>
-      <p class="info"><strong>숙소:</strong> 그랜드 하얏뜨</p>
-      <p class="info"><strong>결제 금액:</strong> 100,000원</p>
-      <%-- 예: 금액은 자바단에서 TO_CHAR로 포맷팅해서 전달 가능 --%>
+<jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
+	<div class="container">
+		<div class="card">
+			<h2 class="mb-4 text-center">예약 확인 및 결제</h2>
 
-      <hr class="my-4">
 
-      <!-- 결제 수단 선택 -->
-      <h5 class="mb-3">결제 수단</h5>
-      <div id="payment-method">
-        <button id="CARD" class="button2" onclick="selectPaymentMethod('CARD')">카드 및 간편 결제</button>
-        <button id="TRANSFER" class="button2" onclick="selectPaymentMethod('TRANSFER')">계좌이체</button>
-        <button id="MOBILE_PHONE" class="button2" onclick="selectPaymentMethod('MOBILE_PHONE')">휴대폰</button>
-      </div>
+			<div class="section section-box">
+				<h2 class="h5">숙소 정보</h2>
+				<p>
+					<strong>숙소명:</strong>
+				</p>
+				<p>
+					<strong>위치:</strong>
+				</p>
+				<p>
+					<strong>전화번호:</strong>
+				</p>
+			</div>
 
-      <!-- 결제하기 버튼 -->
-      <button class="button mt-4" onclick="requestPayment()">결제하기</button>
-    </div>
-  </div>
+			<div class="section section-box">
+				<h2 class="h5">예약 상세</h2>
+				<p>
+					<strong>예약 번호:</strong>
+				</p>
+				<div class="row row-cols-2">
+					<div>
+						<h3 class="h6">체크인</h3>
+						<p>날짜:</p>
+						<p>시간:</p>
+					</div>
+					<div>
+						<h3 class="h6">체크아웃</h3>
+						<p>날짜:</p>
+						<p>시간:</p>
+					</div>
+				</div>
+			</div>
 
-  <script src="${pageContext.request.contextPath}/js/pay/toss-payments.js"></script>
+			<div class="section section-box">
+				<h2 class="h5">투숙객 정보</h2>
+				<p>
+					<strong>고객 이름:</strong>
+				</p>
+				<p>
+					<strong>투숙 인원:</strong>
+				</p>
+				<ul>
+					<li>성인:</li>
+					<li>어린이:</li>
+					<li>유아:</li>
+				</ul>
+				<p>
+					<strong>객실 타입:</strong>
+				</p>
+				<p>
+					<strong>요청 사항:</strong>
+					안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕
+					서브웨이 스타벅스 떡볶이 안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕
+					서브웨이 스타벅스 떡볶이 에이콘 마이크 테스트 엽떡 신전 포케 삼겹살 소고기
+					안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕
+					서브웨이 스타벅스 떡볶이 안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕
+					서브웨이 스타벅스 떡볶이 안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕
+					서브웨이 스타벅스 떡볶이 안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕
+					서브웨이 스타벅스 떡볶이 안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕
+					서브웨이 스타벅스 떡볶이 안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕
+				</p>
+			</div>
+
+			<div class="section section-box">
+				<h2 class="h5">결제 정보</h2>
+				<p>
+					<strong>금액:</strong> ₩
+				</p>
+				<p>
+					<strong>결제 날짜:</strong>
+				</p>
+			</div>
+
+			<div class="section section-box">
+				<h2 class="h5">취소 및 이용 안내</h2>
+				<p>
+					<strong>취소 규정:</strong> ㅇㅇ 숙소 취소 규정
+				</p>
+				<p>
+					<strong>이용 약관:</strong> 체크인은 오후 4시, 체크아웃은 오전 11시입니다. 최대 인원을 초과할 경우
+					입실이 제한되며, 외부 방문객은 제한됩니다.
+				</p>
+			</div>
+
+			<div class="section section-box">
+				<h2 class="h5 mb-3">결제 수단 선택</h2>
+				<div id="payment-method">
+					<button id="CARD" class="button2"
+						onclick="selectPaymentMethod('CARD')">카드 및 간편 결제</button>
+					<button id="TRANSFER" class="button2"
+						onclick="selectPaymentMethod('TRANSFER')">계좌이체</button>
+					<button id="MOBILE_PHONE" class="button2"
+						onclick="selectPaymentMethod('MOBILE_PHONE')">휴대폰 결제</button>
+				</div>
+				<button class="button mt-4" onclick="requestPayment()">결제하기</button>
+			</div>
+		</div>
+	</div>
+	<script>
+	
+		//브라우저 기본 옵션 파란테두리 생성 떄문에 추가함 
+  		const buttons = document.querySelectorAll('.button2');
+	  
+  		buttons.forEach(btn => {
+    		btn.addEventListener('click', function () {
+      		// 모든 버튼에서 selected 제거
+      		buttons.forEach(b => b.classList.remove('selected'));
+      		// 현재 클릭한 버튼에 selected 추가
+      		this.classList.add('selected');
+      		});
+    		});
+	</script>
+<jsp:include page="/WEB-INF/include/footer.jsp"></jsp:include>
+<script src="${pageContext.request.contextPath}/js/pay/toss-payments.js" defer></script>
+	
 </body>
 </html>
