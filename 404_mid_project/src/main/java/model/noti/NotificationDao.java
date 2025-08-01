@@ -24,7 +24,7 @@ public class NotificationDao {
 	
 	
 	// 전체 알림 목록을 반환하는 메서드
-	public List<NotificationDto> notiSelectAll() {
+	public List<NotificationDto> notiSelectByUsersNum(long usersNum) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -33,14 +33,30 @@ public class NotificationDao {
 		try {
 			conn = DBConnector.getConn();
 			String sql = """
-					
+					SELECT noti_num, NVL(noti_sender_num, 0) AS noti_sender_num,
+						(SELECT cc_code_name
+						FROM common_code
+						WHERE cc_group_id = 'NOTI_TYPE'
+						AND cc_code = 10) noti_type,
+						noti_message, noti_read_code, noti_created_at
+						TRUNC(SYSDATE - noti_created_at) AS noti_days_ago
+					FROM notifications
+					WHERE noti_recipient_num = ?
+					ORDER BY noti_num DESC
 					""";
 			pstmt = conn.prepareStatement(sql);
-
+			pstmt.setLong(1, usersNum);
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
 				NotificationDto dto = new NotificationDto();
+				dto.setNotiNum(rs.getLong("noti_num"));
+				dto.setNotiSenderNum(rs.getLong("noti_sender_num"));
+				dto.setNotiType(rs.getString("noti_type"));
+				dto.setNotiMessage(rs.getString("noti_message"));
+				dto.setNotiReadCode(rs.getInt("noti_read_code"));
+				dto.setNotiCreatedAt(rs.getString("noti_created_at"));
+				dto.setNotiDaysAgo(rs.getString("noti_days_ago"));
 				list.add(dto);
 			}
 

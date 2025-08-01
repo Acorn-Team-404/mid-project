@@ -11,7 +11,7 @@ import model.noti.NotificationDao;
 import model.noti.NotificationDto;
 
 
-@WebServlet("*/noti")
+@WebServlet("")
 public class NotiCommentServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
