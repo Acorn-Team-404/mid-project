@@ -1,13 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+	
+%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>/booking/</title>
+<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/book-mina/room-info.css" />
 </head>
 <body>
-	room-info.jsp
-	booking-form.jsp
+	<jsp:include page="/WEB-INF/include/room-info.jsp"></jsp:include>
+	<jsp:include page="/WEB-INF/include/booking-form.jsp"></jsp:include>
 </body>
 </html>
