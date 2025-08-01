@@ -17,7 +17,8 @@ public class ImageServeServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String fileName = req.getParameter("name");
+    	String fileName = req.getParameter("name");
+    	
         System.out.println("[ImageServeServlet] 요청된 파일 이름: " + fileName);
 
         if (fileName == null || fileName.isBlank()) {
@@ -25,10 +26,14 @@ public class ImageServeServlet extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "파일명이 누락됨");
             return;
         }
+        // Null 체크 후 인코딩
+        String ftpFileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
 
         FTPClient ftp = new FTPClient();
         try {
             System.out.println("[ImageServeServlet] FTP 연결 시도 → " + HOST + ":" + PORT);
+            // UTF-8 인코딩
+            ftp.setControlEncoding("UTF-8");
             ftp.connect(HOST, PORT);
             boolean loginSuccess = ftp.login(USER, PASSWORD);
             System.out.println("[ImageServeServlet] FTP 로그인 성공 여부: " + loginSuccess);
@@ -36,8 +41,8 @@ public class ImageServeServlet extends HttpServlet {
             ftp.enterLocalPassiveMode();
             ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
 
-            System.out.println("[ImageServeServlet] NAS 경로로부터 파일 스트림 요청: " + REMOTE_DIR + fileName);
-            InputStream is = ftp.retrieveFileStream(REMOTE_DIR + fileName);
+            System.out.println("[ImageServeServlet] NAS 경로로부터 파일 스트림 요청: " + REMOTE_DIR + ftpFileName);
+            InputStream is = ftp.retrieveFileStream(REMOTE_DIR + ftpFileName);
             if (is == null) {
                 System.out.println("[ImageServeServlet] 파일 없음 또는 다운로드 실패 - 404 오류 발생");
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND, "파일 없음");
@@ -45,11 +50,11 @@ public class ImageServeServlet extends HttpServlet {
             }
 
             // MIME 타입 설정
-            if (fileName.endsWith(".png")) {
+            if (ftpFileName.endsWith(".png")) {
                 resp.setContentType("image/png");
-            } else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
+            } else if (ftpFileName.endsWith(".jpg") || ftpFileName.endsWith(".jpeg")) {
                 resp.setContentType("image/jpeg");
-            } else if (fileName.endsWith(".gif")) {
+            } else if (ftpFileName.endsWith(".gif")) {
                 resp.setContentType("image/gif");
             } else {
                 resp.setContentType("application/octet-stream");
