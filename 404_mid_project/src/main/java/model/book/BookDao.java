@@ -3,6 +3,7 @@ package model.book;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -22,6 +23,22 @@ public class BookDao {
 		return dao;
 	}
 	
+	// 예약 상태 업데이트하는 메서드
+	public void updateBookStatus(Connection conn, String bookNum) throws SQLException {
+	       String sql = """
+	       		
+	       		UPDATE BOOKING
+	       		SET book_status_code = ? 
+	       		WHERE BOOK_STATUS_GROUP_ID = "예약상태" 
+	       		AND BOOK_NUM = ?
+	       		
+	       		""";
+	       try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	           pstmt.setInt(1, 11); //예약 확정
+	           pstmt.setString(2,bookNum);
+	           pstmt.executeUpdate();
+	       }
+	   }
 	// 해당 숙소의 객실 목록
 	/*public List<RoomDto> getRoomByStayNum(int stayNum){
 		List<RoomDto> list = new ArrayList<>();

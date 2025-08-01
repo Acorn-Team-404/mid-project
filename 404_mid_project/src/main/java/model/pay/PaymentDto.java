@@ -2,7 +2,7 @@ package model.pay;
 
 import java.sql.Date;
 
-public class PaymentDTO {
+public class PaymentDto {
 	private String payNum; //결제 번호 pk
 	private String bookNum; //예약 번호 fk
 	private String orderId; //토스에서 발급된 주문 I
