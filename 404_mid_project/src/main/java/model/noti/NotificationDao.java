@@ -10,6 +10,7 @@ import model.util.DBConnector;
 
 public class NotificationDao {
 	
+	
 	// Connection Pool 관리
 	private static NotificationDao notiDao;
 	static {
@@ -19,6 +20,7 @@ public class NotificationDao {
 	public static NotificationDao getInstance() {
 		return notiDao;
 	}
+	
 	
 	
 	// 전체 알림 목록을 반환하는 메서드
@@ -31,9 +33,7 @@ public class NotificationDao {
 		try {
 			conn = DBConnector.getConn();
 			String sql = """
-					SELECT num, name, addr
-					FROM member
-					ORDER BY num ASC
+					
 					""";
 			pstmt = conn.prepareStatement(sql);
 
@@ -95,5 +95,38 @@ public class NotificationDao {
 			return false;
 		}
 	}
+	
+	
+	
+	public boolean NotiGetByDelete(long notiNum) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		// 변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
+		int rowCount = 0;
+		try {
+			conn = DBConnector.getConn();
+			String sql = """
+					DELETE FROM notifications
+					WHERE noti_num = ?
+					""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 순서대로 필요한 값 바인딩
+			pstmt.setLong(1, notiNum);
+			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
+			rowCount = pstmt.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(pstmt, conn);
+		}
+		// 작업의 성공 여부 (변화된 row 의 갯수로 판단)
+		if (rowCount > 0) {
+			return true; // 작업 성공
+		} else {
+			return false; // 작업 실패
+		}
+	}
+	
 			
 }

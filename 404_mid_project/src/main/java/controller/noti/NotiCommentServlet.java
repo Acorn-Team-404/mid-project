@@ -11,7 +11,6 @@ import model.noti.NotificationDao;
 import model.noti.NotificationDto;
 
 
-
 @WebServlet("*/noti")
 public class NotiCommentServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -28,11 +27,11 @@ public class NotiCommentServlet extends HttpServlet {
 			
 		
 			
-		Long notiRecipientNum = Long.valueOf(req.getParameter("notiRecipientNum"));
-		Long notiSenderNum = Long.valueOf(req.getParameter("notiSenderNum"));
+		long notiRecipientNum = Long.valueOf(req.getParameter("notiRecipientNum"));
+		long notiSenderNum = Long.valueOf(req.getParameter("notiSenderNum"));
 		int notiTypeCode = Integer.parseInt(req.getParameter("notiTypeCode"));
 		int notiTargetTypeCode = Integer.parseInt(req.getParameter("notiTargetTypeCode"));
-		Long notiTargetNum = Long.valueOf(req.getParameter("notiTargetNum"));
+		long notiTargetNum = Long.valueOf(req.getParameter("notiTargetNum"));
 		String notiMessage = req.getParameter("notiMessage");
 		
 
