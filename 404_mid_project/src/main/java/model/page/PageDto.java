@@ -1,13 +1,16 @@
 package model.page;
 
 public class PageDto {
-	private int page_num;
-	private int stay_num;
-	private int user_num;
+	private long page_num;
+	private long stay_num;
+	private long user_num;
 	private String page_content;
 	private String page_created_at;
 	private String page_update_at;
 	private String page_delete;
+	private String page_reserve;
+	private String page_guide;
+	private String page_refund;
 	
 	// 숙소 정보, 작성자, 키워드
 	private String stay_name;
@@ -15,22 +18,22 @@ public class PageDto {
 	private String keyword;
 	
 	// setter, getter
-	public int getPage_num() {
+	public long getPage_num() {
 		return page_num;
 	}
-	public void setPage_num(int page_num) {
+	public void setPage_num(long page_num) {
 		this.page_num = page_num;
 	}
-	public int getStay_num() {
+	public long getStay_num() {
 		return stay_num;
 	}
-	public void setStay_num(int stay_num) {
+	public void setStay_num(long stay_num) {
 		this.stay_num = stay_num;
 	}
-	public int getUser_num() {
+	public long getUser_num() {
 		return user_num;
 	}
-	public void setUser_num(int user_num) {
+	public void setUser_num(long user_num) {
 		this.user_num = user_num;
 	}
 	public String getPage_content() {
@@ -56,6 +59,24 @@ public class PageDto {
 	}
 	public void setPage_delete(String page_delete) {
 		this.page_delete = page_delete;
+	}
+	public String getPage_reserve() {
+		return page_reserve;
+	}
+	public void setPage_reserve(String page_reserve) {
+		this.page_reserve = page_reserve;
+	}
+	public String getPage_guide() {
+		return page_guide;
+	}
+	public void setPage_guide(String page_guide) {
+		this.page_guide = page_guide;
+	}
+	public String getPage_refund() {
+		return page_refund;
+	}
+	public void setPage_refund(String page_refund) {
+		this.page_refund = page_refund;
 	}
 	public String getStay_name() {
 		return stay_name;
