@@ -11,9 +11,7 @@
             border-top: 1px solid #dee2e6;
             border-bottom: 1px solid #dee2e6;
             padding: 0.5rem;
-            /* p-2 */
             margin: 1rem;
-            /* m-3 */
         }
 
         .section-title {
@@ -29,7 +27,6 @@
 		    font-size: 12px;
 		    color: #666;
 		    margin-top: 15px;
-		    line-height: 20px;
 		    border-radius: 8px;
 		    box-sizing: border-box;						
 	    }
@@ -42,7 +39,7 @@
             <p>문의하신 내용은 마이페이지의 1:1 문의내역에서 확인가능합니다</p>
         </div>
         <div>
-            <form action="/d/d">
+            <form action="${pageContext.request.contextPath }/saveInquiry.inq" method="post">
                 <div class="form-section">
                     <span class="form-label">문의할 숙소</span>
                     <select>
@@ -116,7 +113,7 @@
 						- 성명, 이메일, 연락처
 						<br>
 						<br>
-						 2. 개인정보 수집 및 이용 목적 <br>
+						2. 개인정보 수집 및 이용 목적 <br>
 						- 문의에 대한 안내 및 서비스 제공
 						<br>
 						<br>
@@ -133,11 +130,33 @@
                 		<label>동의합니다.</label>
                 	</div>
                 </div>
-                <button type="submit">등록</button>
+                <button type="submit" class="btn btn-outline-primary">등록</button>
             </form>
         </div>
     </div>
     <script>
+    	document.querySelector("form").addEventListener("submit", (e)=>{
+            e.preventDefault();
+            const title = document.querySelector("#title");
+            const content = document.querySelector("#content");
+            const agreeCk = document.querySelector("#agree-ck");
+            if(title.value.trim()==""){
+                alert("제목을 입력해주세요.");
+                title.focus();
+                return;
+            }else if(content.value.trim()==""){
+                alert("내용을 입력해주세요.");
+                content.focus();
+                return;
+            }else if(!agreeCk.checked){
+                alert("개인정보 수집 및 이용에 동의해주세요.");
+                agreeCk.focus();
+                return;
+            }
+
+            alert("문의가 등록되었습니다.");
+            this.submit();
+        });
     </script>
 </body>
 </html>
