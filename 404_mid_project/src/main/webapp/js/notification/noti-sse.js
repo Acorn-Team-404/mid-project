@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	// SSE 데이터 수신 시
 	window.eventSource.onmessage = function(event) {
+		console.log("✅ SSE 연결 시작됨");
 		const notiData = JSON.parse(event.data); // JSON 배열 파싱
 
 		notiData.forEach(noti => {
