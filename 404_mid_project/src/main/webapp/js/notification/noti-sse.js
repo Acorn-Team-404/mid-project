@@ -16,8 +16,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	window.eventSource.onmessage = function(event) {
 		console.log("✅ SSE 연결 시작됨");
 		const notiData = JSON.parse(event.data); // JSON 배열 파싱
-
+		
+		
 		notiData.forEach(noti => {
+
 			const notiCard = `
 				<div class="noti-card d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25">
 					<span class="position-absolute top-0 end-0 d-inline-block rounded-circle bg-semired" style="width: 11px; height: 11px;"></span>
@@ -28,10 +30,10 @@ document.addEventListener("DOMContentLoaded", () => {
 						<div class="d-flex justify-content-between position-relative">
 							<div class="d-flex flex-column ps-3 flex-grow-1">
 								<span class="text-secondary fs-8">${noti.createdAt}</span>
-								<span class="text-semiblack fw-semibold fs-6">${noti.senderId}</span>
+								<span class="text-semiblack fw-semibold fs-6">${noti.stayName}</span>
 							</div>
 							<div class="noti-type-wrapper position-absolute end-0">
-								<span class="text-secondary fs-8">${noti.typeGroupId}</span>
+								<span class="text-secondary fs-8">${noti.type}</span>
 							</div>
 						</div>
 						<hr />

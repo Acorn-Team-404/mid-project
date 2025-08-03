@@ -70,11 +70,29 @@ public class NotiSseServlet extends HttpServlet {
                     JSONObject obj = new JSONObject();
 
                     // 데이터 삽입
-                    obj.put("createdAt", tmp.getNotiCreatedAt());
-                    obj.put("senderId", tmp.getNotiSenderNum());
-                    obj.put("typeGroupId", tmp.getNotiType());
+                    obj.put("notiNum", tmp.getNotiNum());
+                    obj.put("senderNum", tmp.getNotiSenderNum());
                     obj.put("message", tmp.getNotiMessage());
+                    obj.put("readCode", tmp.getNotiReadCode());
+                    obj.put("createdAt", tmp.getNotiCreatedAt());
+                    obj.put("typeCode", tmp.getNotiTypeCode());
+                    
+                    
+                    // 공통 추가필드
+                    obj.put("type", tmp.getNotiType());
                     obj.put("daysAgo", tmp.getNotiDaysAgo() + "일 전");
+                    
+                    
+    				// 예약 추가필드
+                    obj.put("bookCheckIn", tmp.getNotiCheckIn());
+                    obj.put("bookCheckOut", tmp.getNotiCheckOut());
+                    obj.put("stayName", tmp.getNotiStayName());
+                    
+                    
+                    // 댓글 추가필드
+                    obj.put("commentWriter", tmp.getNotiCommentWriter());
+                    obj.put("commentContent", tmp.getNotiCommentContent());
+                    
 
                     // Array에 데이터가 들어간 Object 삽입
                     jsonArray.add(obj);
