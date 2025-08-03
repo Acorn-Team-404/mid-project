@@ -1,4 +1,4 @@
-package controller.tester;
+package controller.image;
 
 import java.io.*;
 import jakarta.servlet.annotation.WebServlet;
@@ -6,10 +6,10 @@ import jakarta.servlet.http.*;
 
 import org.apache.commons.net.ftp.FTPClient;
 
-@WebServlet("/showImage")
-public class ImageServeServlet extends HttpServlet {
-
-    private static final String HOST = "danpung.myds.me";
+@WebServlet("/show.img")
+public class ShowImageServlet extends HttpServlet{
+	
+	private static final String HOST = "danpung.myds.me";
     private static final int PORT = 21;
     private static final String USER = "team404";
     private static final String PASSWORD = "#w3770AmyK@q*r";
@@ -17,7 +17,7 @@ public class ImageServeServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    	String fileName = req.getParameter("name");
+    	String fileName = req.getParameter("imageName");
     	
         System.out.println("[ImageServeServlet] 요청된 파일 이름: " + fileName);
 
@@ -59,7 +59,7 @@ public class ImageServeServlet extends HttpServlet {
             } else {
                 resp.setContentType("application/octet-stream");
             }
-
+            
             OutputStream os = resp.getOutputStream();
             byte[] buffer = new byte[4096];
             int bytesRead;

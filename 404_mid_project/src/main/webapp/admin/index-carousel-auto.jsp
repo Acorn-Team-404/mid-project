@@ -4,9 +4,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
-    List<ImageDto> carouselImages = ImageDao.getInstance().getListByTarget("index", 1); // 예: index 영역
+    List<ImageDto> carouselImages = ImageDao.getInstance().getListByTarget("index", 123); // 예: index 영역
     int size = carouselImages.size();
 %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
+</head>
+<body>
 	<% if (size > 0) { %>
 	<div id="carouselExampleIndicators" class="carousel slide">
 	  <div class="carousel-indicators">
@@ -44,3 +52,5 @@
 	<% } else { %>
 	  <p>등록된 이미지가 없습니다.</p>
 	<% } %>
+</body>
+</html>
