@@ -61,12 +61,13 @@ public class NotificationDao {
 					LEFT JOIN common_code c
 					  ON c.cc_group_id = 'NOTI_TYPE'
 					 AND c.cc_code = n.noti_type_code
-					WHERE n.noti_recipient_num = 14
+					WHERE n.noti_recipient_num = ?
+						AND n.noti_num > ?
 					ORDER BY n.noti_num ASC
 					""";
 			pstmt = conn.prepareStatement(sql);
-			//pstmt.setLong(1, usersNum);
-			//pstmt.setLong(2, lastNotiNum);
+			pstmt.setLong(1, usersNum);
+			pstmt.setLong(2, lastNotiNum);
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
@@ -77,6 +78,7 @@ public class NotificationDao {
 				dto.setNotiMessage(rs.getString("noti_message"));
 				dto.setNotiReadCode(rs.getInt("noti_read_code"));
 				dto.setNotiCreatedAt(rs.getString("noti_created_at"));
+				dto.setNotiTypeCode(rs.getInt("noti_type_code"));
 				
 				// 공통 추가필드
 				dto.setNotiType(rs.getString("noti_type"));
