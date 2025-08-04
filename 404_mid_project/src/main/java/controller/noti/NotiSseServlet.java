@@ -88,6 +88,8 @@ public class NotiSseServlet extends HttpServlet {
 
                     obj.put("type", tmp.getNotiType());
                     obj.put("daysAgo", tmp.getNotiDaysAgo() + "일 전");
+                    obj.put("readCount", tmp.getNotiReadCount());
+                    
 
                     obj.put("bookCheckIn", tmp.getNotiCheckIn());
                     obj.put("bookCheckOut", tmp.getNotiCheckOut());

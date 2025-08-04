@@ -62,7 +62,10 @@
 	      
 	      	<!-- 알림창 버튼 (로그인 세션 있을때만 출력) -->
 	      	<% if(usersId != null) {%>
-	          <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions"><i class="bi bi-bell"></i> 알림</button>
+	      		<button type="button" class="btn position-relative p-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+				  <i class="bi bi-bell-fill fs-3 text-dark"></i>
+				  <span class="noti-btn-count position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger px-2">+9</span>
+				</button>
 	      	<%} %>
 	      	
 	      </li>

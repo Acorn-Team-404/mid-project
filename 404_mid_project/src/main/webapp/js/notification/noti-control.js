@@ -27,8 +27,6 @@ async function setRead(notiCard) {
 
 document.querySelector(".offcanvas-body").addEventListener("click", function(e) {
 	const notiCard = e.target.closest(".noti-card");
-
-	console.log("클릭은 됨")
 	if (!notiCard) return;
 
 	setRead(notiCard);

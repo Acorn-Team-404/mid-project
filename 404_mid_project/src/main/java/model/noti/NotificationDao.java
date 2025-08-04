@@ -42,6 +42,9 @@ public class NotificationDao {
 					    TO_CHAR(n.noti_created_at, 'YYYY-MM-DD') AS noti_created_at,
 					    n.noti_type_code,
 					    TRUNC(SYSDATE - n.noti_created_at) AS noti_days_ago,
+					    (SELECT COUNT(noti_read_code)
+						FROM notifications
+						WHERE noti_read_code = 10) AS noti_read_count,
 					    TO_CHAR(b.book_checkin_date, 'YYYY-MM-DD') AS noti_book_checkin,
 						TO_CHAR(b.book_checkout_date, 'YYYY-MM-DD') AS noti_book_checkout,
 					    s.stay_name AS noti_stay_name,
@@ -86,6 +89,7 @@ public class NotificationDao {
 				// 공통 추가필드
 				dto.setNotiType(rs.getString("noti_type"));
 				dto.setNotiDaysAgo(rs.getString("noti_days_ago"));
+				dto.setNotiReadCount(rs.getInt("noti_read_count"));
 				
 				// 예약 추가필드
 				dto.setNotiCheckIn(rs.getString("noti_book_checkin"));

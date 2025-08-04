@@ -20,6 +20,7 @@ public class NotificationDto {
 	// private String notiImage;
 	private String notiType;
 	private String notiDaysAgo;
+	private int notiReadCount;
 	
 	
 	// 예약 타입(추가 필드)
@@ -119,6 +120,12 @@ public class NotificationDto {
 	public void setNotiDaysAgo(String notiDaysAgo) {
 		this.notiDaysAgo = notiDaysAgo;
 	}
+	public int getNotiReadCount() {
+		return notiReadCount;
+	}
+	public void setNotiReadCount(int notiReadCount) {
+		this.notiReadCount = notiReadCount;
+	}
 	public String getNotiCheckIn() {
 		return notiCheckIn;
 	}
@@ -155,6 +162,6 @@ public class NotificationDto {
 	public void setNotiCommentParentNum(String notiCommentParentNum) {
 		this.notiCommentParentNum = notiCommentParentNum;
 	}
-
+	
 	
 }

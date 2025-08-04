@@ -23,9 +23,16 @@ function initializeSSE() {
 		const notiData = JSON.parse(event.data);
 		
 		// offcanvasBody.innerHTML = ""; // 기존 알림 제거 (중복 방지)
+		
+		let notiCountNum = document.querySelector(".noti-btn-count")
 
+		if(notiCountNum == null) {console.log("비어있습니다.")} else {console.log("값이 있습니다.")}
+		
 		notiData.forEach(noti => {
 			let notiCard = "";
+			console.log(notiData[0].readCount)
+			notiCountNum.innerText = `${notiData[0].readCount}`
+			
 
 			if(noti.typeCode == 10) {
 				notiCard = `
@@ -82,8 +89,9 @@ function initializeSSE() {
 					</div>
 				`;
 			}
-
 			offcanvasBody.insertAdjacentHTML("afterbegin", notiCard);
+			
+			
 		});
 	};
 
