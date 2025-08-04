@@ -24,7 +24,7 @@
 	
 	<div class="container">
 		<div> 
-			<h4 class="text-center" style="margin-top: 50px; margin-bottom: 100px;">JOURNAL</h4>
+			<h2 class="text-center" style="margin-top: 100px; margin-bottom: 100px;">JOURNAL</h2>
 			<a class="btn btn-sm position-absolute end-0 me-5" 
 				href="form.jsp" >
 				post
