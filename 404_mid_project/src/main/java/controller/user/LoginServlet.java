@@ -45,7 +45,8 @@ public class LoginServlet extends HttpServlet {
 		if(isValid){
 			HttpSession session = request.getSession();
 			session.setAttribute("usersId", usersId);
-			session.setAttribute("usersNum", usersNum);
+			//userNum 유저고유번호는 민감한정보라 db에서 가져와야함
+			session.setAttribute("usersNum", dto.getUsersNum());
 			session.setMaxInactiveInterval(60*60);
 			System.out.println("세션 아이디: " + session.getId());
 		    System.out.println("세션에 저장된 usersId: " + session.getAttribute("usersId"));

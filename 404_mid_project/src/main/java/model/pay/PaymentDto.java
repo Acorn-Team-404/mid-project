@@ -1,37 +1,35 @@
 package model.pay;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class PaymentDto {
 	private String payNum; //결제 번호 pk
-	private String bookNum; //예약 번호 fk
-	private String orderId; //토스에서 발급된 주문 I
+	private String payBookNum; //예약 번호 fk
+	private String orderId; //토스에서 발급된 주문 Id
 	private long payUserNum; // 결제자(회원 번호)
 	private long payAmount; //결제 금액
 	
 	private String payMethodGroupId;
-	private String payMethodCode;
+	private int payMethodCode;
 	
 	private String payStatusGroupId; 
 	private int payStatusCode;
 	
-	private Date payApprovedAt;//결제 승인 시간
-	private Date payCreatedAt; //결제 생성 시간
-	private Date payPaidAt; // 실제 결제 완료 일시
+	private Timestamp payApprovedAt;//결제 승인 시간
+	private Timestamp payCreatedAt; //결제 생성 시간
+	private Timestamp payPaidAt; // 실제 결제 완료 일시
 	
-	private String payMethodName;
-	private String payStatusName;
 	public String getPayNum() {
 		return payNum;
 	}
 	public void setPayNum(String payNum) {
 		this.payNum = payNum;
 	}
-	public String getBookNum() {
-		return bookNum;
+	public String getpayBookNum() {
+		return payBookNum;
 	}
-	public void setBookNum(String bookNum) {
-		this.bookNum = bookNum;
+	public void setpayBookNum(String payBookNum) {
+		this.payBookNum = payBookNum;
 	}
 	public String getOrderId() {
 		return orderId;
@@ -57,10 +55,10 @@ public class PaymentDto {
 	public void setPayMethodGroupId(String payMethodGroupId) {
 		this.payMethodGroupId = payMethodGroupId;
 	}
-	public String getPayMethodCode() {
+	public int getPayMethodCode() {
 		return payMethodCode;
 	}
-	public void setPayMethodCode(String payMethodCode) {
+	public void setPayMethodCode(int payMethodCode) {
 		this.payMethodCode = payMethodCode;
 	}
 	public String getPayStatusGroupId() {
@@ -75,37 +73,24 @@ public class PaymentDto {
 	public void setPayStatusCode(int payStatusCode) {
 		this.payStatusCode = payStatusCode;
 	}
-	public Date getPayApprovedAt() {
+	public Timestamp getPayApprovedAt() {
 		return payApprovedAt;
 	}
-	public void setPayApprovedAt(Date payApprovedAt) {
+	public void setPayApprovedAt(Timestamp payApprovedAt) {
 		this.payApprovedAt = payApprovedAt;
 	}
-	public Date getPayCreatedAt() {
+	public Timestamp getPayCreatedAt() {
 		return payCreatedAt;
 	}
-	public void setPayCreatedAt(Date payCreatedAt) {
+	public void setPayCreatedAt(Timestamp payCreatedAt) {
 		this.payCreatedAt = payCreatedAt;
 	}
-	public Date getPayPaidAt() {
+	public Timestamp getPayPaidAt() {
 		return payPaidAt;
 	}
-	public void setPayPaidAt(Date payPaidAt) {
+	public void setPayPaidAt(Timestamp payPaidAt) {
 		this.payPaidAt = payPaidAt;
 	}
-	public String getPayMethodName() {
-		return payMethodName;
-	}
-	public void setPayMethodName(String payMethodName) {
-		this.payMethodName = payMethodName;
-	}
-	public String getPayStatusName() {
-		return payStatusName;
-	}
-	public void setPayStatusName(String payStatusName) {
-		this.payStatusName = payStatusName;
-	}
-	
 	
 	
 }

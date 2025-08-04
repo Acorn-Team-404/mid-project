@@ -1,4 +1,12 @@
+<%@page import="model.book.BookDao"%>
+<%@page import="model.book.BookDto"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+	//String bookNum = (String) request.getAttribute("bookNum");
+	//BookDto bookDto = BookDao.getInstance().getByBookNum(bookNum);
+	BookDto bookDto = BookDao.getInstance().getByBookNum("20250801-0016");
+	out.print(bookDto != null ? "예약 정보 로딩 성공" : "예약 정보 없음");
+%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -23,31 +31,31 @@
 			<div class="section section-box">
 				<h2 class="h5">숙소 정보</h2>
 				<p>
-					<strong>숙소명:</strong>
+					<strong>숙소명:</strong> <!-- 예약&숙소 조인 --> 
 				</p>
 				<p>
-					<strong>위치:</strong>
+					<strong>위치:</strong> <!-- 예약&숙소 조인 -->
 				</p>
 				<p>
-					<strong>전화번호:</strong>
+					<strong>전화번호:</strong> <!-- 예약&숙소 조인 -->
 				</p>
 			</div>
 
 			<div class="section section-box">
 				<h2 class="h5">예약 상세</h2>
 				<p>
-					<strong>예약 번호:</strong>
+					<strong>예약 번호:</strong> <%= bookDto.getBookNum() %>
 				</p>
 				<div class="row row-cols-2">
 					<div>
 						<h3 class="h6">체크인</h3>
-						<p>날짜:</p>
-						<p>시간:</p>
+						<p>날짜:</p> <%=bookDto.getBookCheckIn() %>
+						<p>시간:</p> <%=bookDto.getBookCheckInTime() %>
 					</div>
 					<div>
 						<h3 class="h6">체크아웃</h3>
-						<p>날짜:</p>
-						<p>시간:</p>
+						<p>날짜:</p><%=bookDto.getBookCheckOut() %>
+						<p>시간:</p> 공통 퇴실 시간 ~
 					</div>
 				</div>
 			</div>
@@ -55,41 +63,34 @@
 			<div class="section section-box">
 				<h2 class="h5">투숙객 정보</h2>
 				<p>
-					<strong>고객 이름:</strong>
+					<strong>고객 이름:</strong> <!-- 유저테이블조인해서 유저이름 -->
 				</p>
 				<p>
-					<strong>투숙 인원:</strong>
+					<strong>투숙 인원:</strong> <%=bookDto.getBookTotalPax() %>
 				</p>
 				<ul>
-					<li>성인:</li>
-					<li>어린이:</li>
-					<li>유아:</li>
+					<li>성인:</li> <%=bookDto.getBookAdult() %>
+					<li>어린이:</li><%=bookDto.getBookChildren() %>
+					<li>유아:</li> <%=bookDto.getBookInfant() %>
 				</ul>
 				<p>
-					<strong>객실 타입:</strong>
+					<!-- 객실 테이블과 조인해서 객실타입 가져오기-->
+					<strong>객실 타입:</strong> 
 				</p>
 				<p>
-					<strong>요청 사항:</strong>
-					안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕
-					서브웨이 스타벅스 떡볶이 안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕
-					서브웨이 스타벅스 떡볶이 에이콘 마이크 테스트 엽떡 신전 포케 삼겹살 소고기
-					안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕
-					서브웨이 스타벅스 떡볶이 안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕
-					서브웨이 스타벅스 떡볶이 안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕
-					서브웨이 스타벅스 떡볶이 안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕
-					서브웨이 스타벅스 떡볶이 안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕
-					서브웨이 스타벅스 떡볶이 안녕하세요 솰라솰라 찐차이린 기무차이린 니하오 마라탕
+					<strong>요청 사항: </strong> <%=bookDto.getBookRequest()%>
 				</p>
 			</div>
 
 			<div class="section section-box">
 				<h2 class="h5">결제 정보</h2>
 				<p>
-					<strong>금액:</strong> ₩
+					<strong>결제 수단:</strong> <!--결제테이블 조인해서 결제수단 -->
 				</p>
 				<p>
-					<strong>결제 날짜:</strong>
+					<strong>금액:</strong> <%=bookDto.getBookTotalAmount() %>
 				</p>
+				
 			</div>
 
 			<div class="section section-box">
@@ -117,6 +118,12 @@
 			</div>
 		</div>
 	</div>
+	<form action="${pageContext.request.contextPath}/pay/PaymentsServlet" method="post">
+    <input type="hidden" name="paymentKey" value="${paymentKey}">
+    <input type="hidden" name="orderId" value="${orderId}">
+    <input type="hidden" name="amount" value="${amount}">
+    <input type="hidden" name="bookNum" value="${param.bookNum}">
+	</form>
 	<script>
 	
 		//브라우저 기본 옵션 파란테두리 생성 떄문에 추가함 

@@ -16,7 +16,7 @@
 <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm py-3">
   <div class="container-fluid align-items-center flex-nowrap">
     <!-- 좌측 로고 -->
-    <a class="navbar-brand fw-bold" href="#">STAYLOG</a>
+    <a class="navbar-brand fw-bold" href="${pageContext.request.contextPath}/index.jsp">STAYLOG</a>
     <span><%=usersId %></span> <!-- 현재 세션 상태 확인을 위한 임시코드(지워도 상관없음) -->
     <span><%=usersNum %></span> <!-- 현재 세션 상태 확인을 위한 임시코드(지워도 상관없음) -->
 
