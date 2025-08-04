@@ -54,6 +54,27 @@
 		
   	</div>
 </div>
+<script>
+	const notiModal = document.getElementById("offcanvasWithBothOptions");
+
+	notiModal.addEventListener("show.bs.offcanvas", () => {
+		if (!window.eventSourceInitialized) {
+			initializeSSE();
+		} else {
+			console.log("⚠️ 이미 SSE 연결 중 - 새 연결 생략");
+		}
+	});
+	
+	
+	notiModal.addEventListener("hidden.bs.offcanvas", () => {
+	    if (window.eventSource) {
+	        window.eventSource.close();
+	        window.eventSource = null;                 // ✅ 이거 빠지면 메모리에 남아있음
+	        window.eventSourceInitialized = false;     // ✅ 이거 없으면 다시 안 연결됨
+	        console.log("🔌 SSE 연결 종료됨");
+	    }
+	});
+</script>
 
 <!-- 세션이 있을 때만 sse를 호출하는 js 호출 -->
 <%if(request.getAttribute("usersId") != null && session.getAttribute("usersId") != null) {%>
