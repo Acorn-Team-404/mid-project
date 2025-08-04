@@ -3,9 +3,9 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 	//String bookNum = (String) request.getAttribute("bookNum");
-	//BookDto bookDto = BookDao.getInstance().getByBookNum(bookNum);
-	BookDto bookDto = BookDao.getInstance().getByBookNum("20250801-0016");
-	out.print(bookDto != null ? "예약 정보 로딩 성공" : "예약 정보 없음");
+//	BookDto bookDto = BookDao.getInstance().getByBookNum(bookNum);
+	BookDto bookDto = BookDao.getInstance().getByBookNum("20250801-0018");
+	System.out.print(bookDto != null ? "예약 정보 로딩 성공" : "예약 정보 없음");
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -44,7 +44,7 @@
 			<div class="section section-box">
 				<h2 class="h5">예약 상세</h2>
 				<p>
-					<strong>예약 번호:</strong> <%= bookDto.getBookNum() %>
+					<strong>예약 번호:</strong> <%= bookDto.getBookNum()%>
 				</p>
 				<div class="row row-cols-2">
 					<div>
