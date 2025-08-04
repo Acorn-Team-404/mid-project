@@ -32,10 +32,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>마이페이지</title>
+<meta charset="UTF-8">
+<title>마이페이지</title>
   <jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     .profile-img {
       width: 120px;

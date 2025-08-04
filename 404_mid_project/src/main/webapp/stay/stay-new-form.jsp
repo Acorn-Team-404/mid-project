@@ -18,6 +18,7 @@
 <script src="https://uicdn.toast.com/editor/latest/i18n/ko-kr.js"></script>
 </head>
 <body>
+<jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
 	<form action="stay-save.jsp" method="post">
 	    <label>숙소 이름: <input type="text" name="stay_name" /></label><br>
 	    <label>숙소 주소: <input type="text" name="stay_addr" id="stay_addr" /></label><br>

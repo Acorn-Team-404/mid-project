@@ -12,7 +12,7 @@
 	request.setAttribute("usersId", usersId);
 	request.setAttribute("usersNum", usersNum);
 %>
-
+<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
 <nav class="navbar navbar-expand-lg sticky-top bg-white border-bottom shadow-sm py-3">
   <div class="container-fluid align-items-center flex-nowrap">
     <!-- 좌측 로고 -->
@@ -76,9 +76,10 @@
   </div>
 </nav>
 
-
-<!-- notification-modal.jsp (알림창 모달 include) -->
-<jsp:include page="/WEB-INF/include/notification-modal.jsp"></jsp:include>
+<% if (session.getAttribute("usersNum") != null) { %>
+	<!-- notification-modal.jsp (알림창 모달 include) -->
+	<jsp:include page="/WEB-INF/include/notification-modal.jsp"></jsp:include>
+<% } %>
 
 
 
