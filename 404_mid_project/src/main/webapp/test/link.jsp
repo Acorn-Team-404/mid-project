@@ -8,6 +8,7 @@
 <jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
 </head>
 <body>
+<jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
 	<h1>각종 링크 연결 페이지 (세션에 data 실어갈 수 있음)</h1>
 	<br />
 	<h3>이미지 업로드 링크</h2>
@@ -46,6 +47,22 @@
 				<input type="hidden" name="" value=""/>
 			</form>
 		</li>
+	</ul>
+	<br />
+	<h3>숙소 상세페이지</h3>
+	<ul>
+		<li>
+			<form action="${pageContext.request.contextPath}/stay/stay-list.jsp">
+				<button type="submit" class="btn btn-primary">숙소 list</button>
+				<input type="hidden" name="" value=""/>
+			</form>
+		</li>	
+		<li>
+			<form action="${pageContext.request.contextPath}/stay/stay-new-form.jsp">
+				<button type="submit" class="btn btn-primary">숙소 new-form</button>
+				<input type="hidden" name="" value=""/>
+			</form>
+		</li>	
 	</ul>
 </body>
 </html>

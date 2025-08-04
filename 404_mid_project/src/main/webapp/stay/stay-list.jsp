@@ -14,6 +14,7 @@
 <jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
 </head>
 <body>
+<jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
 	<div class="container">
 		<h1>숙소 관리</h1>
 		<p>총 <%=list.size() %>개의 상품</p>
