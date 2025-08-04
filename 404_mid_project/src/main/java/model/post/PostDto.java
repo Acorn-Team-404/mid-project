@@ -11,7 +11,7 @@ public class PostDto {
 	private String postCreatedAt;
 	private String postUpdatedAt;
 	private String postDeleted;
-	
+	private String usersID;
 	public int getPostNum() {
 		return postNum;
 	}
@@ -71,6 +71,12 @@ public class PostDto {
 	}
 	public void setPostDeleted(String postDeleted) {
 		this.postDeleted = postDeleted;
+	}
+	public String getUsersID() {
+		return usersID;
+	}
+	public void setUsersID(String usersID) {
+		this.usersID = usersID;
 	}
 	
 	

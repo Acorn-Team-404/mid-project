@@ -83,13 +83,15 @@ public class PostDao {
 			conn = DBConnector.getConn();
 			// 실행할 sql 문
 			String sql = """
-					SELECT *
-					FROM
-						(SELECT post_num, post_writer_num, post_title, post_content, 
-						post_views, post_stay_num, post_created_at, post_updated_at, 
-						post_deleted, post_type, users_name
-						FROM posts
-						INNER JOIN users ON post_writer_num = users.usersName)
+					SELECT post_num, post_writer_num, post_title, post_content, 
+						post_views, post_stay_num, TO_CHAR(post_created_at, 'YYYY-MM-DD') AS post_created_at, post_updated_at, 
+						post_deleted, post_type, 
+						u.users_ID
+					FROM (SELECT post_num, post_writer_num, post_title, post_content, 
+						post_views, post_stay_num, TO_CHAR(post_created_at, 'YYYY-MM-DD') AS post_created_at, post_updated_at, 
+						post_deleted, post_type
+						FROM posts)
+					JOIN users u ON post_writer_num = u.users_num
 					WHERE post_num=?
 					""";
 			pstmt = conn.prepareStatement(sql);
@@ -110,6 +112,8 @@ public class PostDao {
 				dto.setPostCreatedAt(rs.getString("post_created_at"));
 				dto.setPostUpdatedAt(rs.getString("post_updated_at"));
 				dto.setPostDeleted(rs.getString("post_deleted"));
+				dto.setUsersID(rs.getString("users_ID"));
+				
 				
 			}
 		} catch (Exception e) {
@@ -153,8 +157,11 @@ public class PostDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
+			try {
 			DBConnector.close(rs, pstmt, conn);
-		} // 하단에 return 값 넣어주셔야함!
+			} catch (Exception e) {
+			}
+		}
 		return num;
 	}
 	

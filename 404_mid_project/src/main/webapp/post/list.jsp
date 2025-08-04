@@ -8,6 +8,9 @@
 <%
     List<PostDto> list = PostDao.getInstance().selectAll();
         if (list == null) list = new ArrayList<>();
+        
+    PostDto dto=new PostDto();
+	    
     %>
 
 <!DOCTYPE html>
