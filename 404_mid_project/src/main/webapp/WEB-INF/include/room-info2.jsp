@@ -1,3 +1,5 @@
+<%@page import="controller.tester.RoomTestDao"%>
+<%@page import="model.page.StayDto"%>
 <%@page import="model.image.ImageDto"%>
 <%@page import="model.room.RoomDao"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -10,6 +12,8 @@
   //int stayNum = Integer.parseInt(request.getParameter("stayNum"));
   int stayNum = 100;
   List<RoomDto> roomList = RoomDao.getInstance().getRoomListByStayNum(stayNum);
+  
+  StayDto stay = RoomTestDao.getInstance().getByNum(stayNum);
 %>
 
 <!DOCTYPE html>
@@ -71,8 +75,10 @@
             <div class="col-md-7 p-3 d-flex flex-column justify-content-between">
               <div>
                 <h5 class="fw-bold mb-2"><%= room.getRoomName() %></h5>
+                <p class="mb-1">숙소명: <%= stay.getStayName() %></p>
                 <p class="mb-1">타입: <%= room.getRoomType() %></p>
                 <p class="mb-1">최대 인원: <%= room.getRoomPaxMax() %>명</p>
+                <p class="mb-1">가격: ₩<%= room.getRoomPrice() %></p>
                 <p class="mb-1">가격: ₩<%= room.getRoomPrice() %></p>
               </div>
               <div class="text-end">
