@@ -1,4 +1,5 @@
 <%@page import="model.page.PageDto"%>
+<%@page import="model.page.PageDao"%>
 <%@page import="model.page.StayDto"%>
 <%@page import="model.page.StayDao"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -11,7 +12,7 @@
 	StayDao dao = StayDao.getInstance();
 	
 	// 슥소 정보
-	StayDto stayDto = dao.getStay(stayNum);
+	StayDto stayDto = dao.getByNum(stayNum);
 	
 	// 페이지 정보
 	PageDto pageDto = dao.getPage(stayNum);
@@ -35,8 +36,8 @@
 	
 	<!-- 숙소 정보 -->
 	<div class="container col-8">
-		<h2 class="stay-name"><%=stayDto.getStay_name() %></h2>
-		<p class="stay-location"><%=stayDto.getStay_loc() %></p>
+		<h2 class="stay-name"><%=stayDto.getStayName() %></h2>
+		<p class="stay-location"><%=stayDto.getStayLoc() %></p>
 		<p class="stay-review">
 			<span class="reviews">★ <%=String.format("%.1f", avgStar) %>점 / 후기 <%=reviewCount %>개</span>
 		</p>
@@ -73,7 +74,7 @@
 	<!-- 숙소 소개 -->
 	<div class="container mt-5" id="info">
 		<h3>스테이 소개</h3>
-		<p><%= pageDto.getPage_content() %></p>
+		<p><%= pageDto.getPageContent() %></p>
 	</div>
 	
 	<!-- 별점 리뷰 -->
@@ -148,7 +149,7 @@
 									</tr>
 								</thead>
 							</table>
-							<%= pageDto.getPage_reserve() %>
+							<%= pageDto.getPageReserve() %>
 						</div>
 					</div>
 				</div>
@@ -160,7 +161,7 @@
 					</h2>
 					<div id="navTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
 						<div class="accordion-body">
-							<%= pageDto.getPage_guide() %>
+							<%= pageDto.getPageGuide() %>
 						</div>
 					</div>
 				</div>
@@ -172,7 +173,7 @@
 					</h2>
 					<div id="navThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
 						<div class="accordion-body">
-							<%= pageDto.getPage_refund() %>
+							<%= pageDto.getPageRefund() %>
 						</div>
 					</div>
 				</div>
