@@ -1,7 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%
-  String paymentKey = request.getParameter("paymentKey");
-  String orderId = request.getParameter("orderId");
+  Boolean success =(Boolean) request.getAttribute("paymentSuccess");
+  if (success == null) success = false;
+
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -45,10 +46,10 @@
 <body>
 
 <div class="container">
+<%if (success){ %>
   <div class="card">
     <h2>결제가 완료되었습니다.</h2>
-    <p class="info"><strong>결제 키:</strong> <%= paymentKey %></p>
-    <p class="info"><strong>주문 번호:</strong> <%= orderId %></p>
+    
     <p>예약한 숙소 명</p>
     <p>예약한 방번호</p>
     <p>예약한 인원 수</p>
@@ -65,8 +66,11 @@
         <a href="${pageContext.request.contextPath}/my-page.jsp" class="btn btn-dark w-100">예약내역 보기</a>
       </div>
     </div>
-
   </div>
+  <%} else { %>
+  <h2>결제를 실패했습니다.</h2>
+  <p>
+  <%} %>
 </div>
 
 </body>

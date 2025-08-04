@@ -1,5 +1,7 @@
 package model.book;
 
+import java.sql.Timestamp;
+
 public class BookDto {
 	// 예약 번호
 	private String bookNum;
@@ -36,9 +38,9 @@ public class BookDto {
 	// 예약 상태
 	private int bookStatusCode;
 	// 예약 날짜
-	private String bookCreatedAt;
+	private Timestamp bookCreatedAt;
 	// 예약 수정 날짜
-	private String bookUpdatedAt;
+	private Timestamp BookUpdatedAt;
 	
 	// setter & getter
 	public String getBookNum() {
@@ -143,16 +145,16 @@ public class BookDto {
 	public void setBookStatusCode(int bookStatusCode) {
 		this.bookStatusCode = bookStatusCode;
 	}
-	public String getBookCreatedAt() {
+	public Timestamp getBookCreatedAt() {
 		return bookCreatedAt;
 	}
-	public void setBookCreatedAt(String bookCreatedAt) {
+	public void setBookCreatedAt(Timestamp bookCreatedAt) {
 		this.bookCreatedAt = bookCreatedAt;
 	}
-	public String getBookUpdatedAt() {
-		return bookUpdatedAt;
+	public Timestamp getBookUpdatedAt() {
+		return BookUpdatedAt;
 	}
-	public void setBookUpdatedAt(String bookUpdatedAt) {
-		this.bookUpdatedAt = bookUpdatedAt;
+	public void setBookUpdatedAt(Timestamp BookUpdatedAt) {
+		this.BookUpdatedAt = BookUpdatedAt;
 	}	
 }

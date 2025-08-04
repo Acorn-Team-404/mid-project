@@ -59,41 +59,48 @@ public class BookSaveServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		HttpSession session = req.getSession(false);
+
+		String usersId = (String) session.getAttribute("usersId");
+
+		if (usersId == null) {
+			res.sendRedirect("/login.jsp");
+			return;
+		}
 		
-		String usersId = (String)session.getAttribute("usersId");
 		long usersNum = UserDao.getInstance().getByUserId(usersId).getUsersNum();
-		
+
 		// DTO 세팅
 		BookDto dto = new BookDto();
-		
+
 		dto.setBookUsersNum(usersNum);
-		
+
 		// 예약 번호
-		String bookNum = BookDao.getInstance().generateBookNum();		
+		String bookNum = BookDao.getInstance().generateBookNum();
 		dto.setBookNum(bookNum);
-		
+
 		// 숙소 번호
 		int stayNum = Integer.parseInt(req.getParameter("bookStayNum"));
 		dto.setBookStayNum(stayNum);
 		// 객실 번호
 		int roomNum = Integer.parseInt(req.getParameter("bookRoomNum"));
 		dto.setBookRoomNum(roomNum);
-		
+
 		String checkIn = req.getParameter("checkIn");
 		dto.setBookCheckIn(checkIn);
-		String checkOut =  req.getParameter("checkOut");
+		String checkOut = req.getParameter("checkOut");
 		dto.setBookCheckOut(checkOut);
-		
+
 		LocalDate checkInDate = LocalDate.parse(checkIn);
 		LocalDate checkOutDate = LocalDate.parse(checkOut);
-		
+
 		long betweenDay = ChronoUnit.DAYS.between(checkInDate, checkOutDate);
-		if(betweenDay <= 0) {
+		if (betweenDay <= 0) {
 			// 체크인 날짜는 체크아웃 날짜보다 이전이어야 한다
 			req.setAttribute("errorMsg", "체크아웃 날짜는 체크인 날짜보다 늦어야 합니다");
+			req.getRequestDispatcher("/booking/booking-form.jsp").forward(req, res);
 			return;
 		}
-		
+
 		int adult = Integer.parseInt(req.getParameter("adult"));
 		dto.setBookAdult(adult);
 		int children = Integer.parseInt(req.getParameter("children"));
@@ -103,9 +110,7 @@ public class BookSaveServlet extends HttpServlet {
 		// 총 인원
 		int totalPax = adult + children + infant;
 		dto.setBookTotalPax(totalPax);
-		
-		// 추가 침대 옵션 : 기본은 0, 선택하는 경우 1
-		// extraBed / infantBed
+
 		String selectedBed = req.getParameter("selectedBed");
 		dto.setBookExtraBed(selectedBed != null && selectedBed.contains("extraBed") ? 1 : 0);
 		dto.setBookInfantBed(selectedBed != null && selectedBed.contains("infantBed") ? 1 : 0);
@@ -118,17 +123,22 @@ public class BookSaveServlet extends HttpServlet {
 		
 		int totalAmount = Integer.parseInt(req.getParameter("totalAmountValue"));
 		dto.setBookTotalAmount(totalAmount);
-		
+
 		// 예약 상태 (예약 대기)
 		dto.setBookStatusCode(10);
-		
+
 		boolean isSuccess = BookDao.getInstance().insert(dto);
-		
-		if(!isSuccess) {
+
+		if (!isSuccess) {
 			req.setAttribute("errorMsg", "예약 실패했습니다.");
-	        req.getRequestDispatcher("/booking/booking-form.jsp").forward(req, res);
-	        return;
-		} 
-	
+			req.getRequestDispatcher("/booking/booking-form.jsp").forward(req, res);
+			return;
+
+		} else {
+			// dto전체를 넘길 필요는 없고 결제 페이지에서는 bookNum으로 예약정보를 가져오는 쿼리 사용
+			res.sendRedirect(req.getContextPath() + "/pay/payments.jsp?bookNum=" + dto.getBookNum());
+
+		}
+
 	}
 }

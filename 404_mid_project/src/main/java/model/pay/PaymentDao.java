@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import model.book.BookDto;
 import model.util.DBConnector;
 
 public class PaymentDao {
@@ -21,19 +22,80 @@ public class PaymentDao {
 		return dao;
 	}
 	
+	public PaymentDto getPayByOrderId(String orderId) {
+		PaymentDto dto = null;
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		String sql = """
+				SELECT *
+				FROM PAYMENTS
+				WHERE ORDER_ID = ?
+				
+				""";
+		try {
+			conn = DBConnector.getConn();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, orderId);
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				dto = new PaymentDto();
+				dto.setPayNum(rs.getString("PAY_NUM"));
+				dto.setpayBookNum(rs.getString("PAY_BOOK_NUM"));
+				dto.setOrderId(rs.getString("ORDER_ID"));
+				dto.setPayUserNum(rs.getLong("PAY_USERS_NUM"));
+				dto.setPayAmount(rs.getLong("PAY_AMOUNT"));
+				dto.setPayMethodGroupId(rs.getString("PAY_METHOD_GROUP_ID"));
+				dto.setPayMethodCode(rs.getInt("PAY_METHOD_CODE"));
+				dto.setPayStatusGroupId(rs.getString("PAY_STATUS_GROUP_ID"));
+				dto.setPayStatusCode(rs.getInt("PAY_STATUS_CODE"));
+				dto.setPayApprovedAt(rs.getTimestamp("PAY_APPROVED_AT"));
+				dto.setPayCreatedAt(rs.getTimestamp("PAY_CREATED_AT"));
+				dto.setPayPaidAt(rs.getTimestamp("PAY_PAID_AT"));
+				
+			}
+			
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			DBConnector.close(pstmt, conn);
+		}
+		
+		return dto;
+	};
 	
-    public void insertPayment(Connection conn, String paymentKey, String orderId, int amount) throws SQLException {
+    public boolean insertPayment(Connection conn, PaymentDto payDto) throws SQLException {
+  
         String sql = """
-        		
+        		INSERT INTO PAYMENTS(pay_num,pay_book_num,order_id,pay_users_num,
+        		pay_amount,pay_method,pay_method_group_id,pay_method_code,
+        		pay_status_group_id,pay_status_code,pay_approved_at,
+        		pay_created_at,pay_paid_at)
+        		VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
         		
         		""";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            //pstmt.setString(1, paymentKey);
-            //pstmt.setString(2, orderId);
-            //pstmt.setInt(3, amount);
-            //pstmt.executeUpdate();
-        }
+            pstmt.setString(1, payDto.getPayNum());
+            pstmt.setString(2, payDto.getpayBookNum());
+            pstmt.setString(3, payDto.getOrderId());
+            pstmt.setLong(4, payDto.getPayUserNum()); //왜 혼자 long -> String
+            pstmt.setLong(5, payDto.getPayAmount());
+            pstmt.setString(6, payDto.getPayMethodGroupId());
+            pstmt.setInt(7, payDto.getPayMethodCode());
+            pstmt.setString(8, payDto.getPayStatusGroupId());
+            pstmt.setInt(9, payDto.getPayStatusCode());
+            pstmt.setTimestamp(10, payDto.getPayApprovedAt());
+            pstmt.setTimestamp(11,payDto.getPayCreatedAt());
+            pstmt.setTimestamp(12, payDto.getPayPaidAt());
+            int res = pstmt.executeUpdate();
+            
+            return res == 1;
+        } 
+         
     }
     
     //결제 번호 생성 메서드
