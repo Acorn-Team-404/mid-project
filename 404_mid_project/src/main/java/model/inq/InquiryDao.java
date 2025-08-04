@@ -63,7 +63,7 @@ public class InquiryDao {
 	}
 	
 	//usersNum 으로 전체 목록 리턴하는 메소드
-	public List<InquiryDto> selectAll(Long userNum){
+	public List<InquiryDto> selectAll(Long usersNum){
 		List<InquiryDto> list=new ArrayList<>();
 		//필요한 객체를 담을 지역변수를 미리 만든다.
 		Connection conn = null;
@@ -76,12 +76,12 @@ public class InquiryDao {
 				SELECT inq_num, inq_title, inq_content, inq_type, stay_name, inq_created_at, inq_is_answered, inq_answer, inq_answered_at
 				FROM inquiry
 				LEFT JOIN stay ON inq_stay_num=stay_num
-				WHERE users_num = ?
+				WHERE inq_users_num = ?
 				ORDER BY inq_num DESC
 			""";
 			pstmt = conn.prepareStatement(sql);
 			//? 에 값 바인딩
-			pstmt.setLong(1, userNum);
+			pstmt.setLong(1, usersNum);
 			// select 문 실행하고 결과를 ResultSet 으로 받아온다
 			rs = pstmt.executeQuery();
 			//반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 리턴해줄 객체에 담는다
@@ -116,7 +116,7 @@ public class InquiryDao {
 	}
 	
 	//특정 기간에 해당하는 row 만 select 해서 리턴하는 메소드
-	public List<InquiryDto> selectByCreatedAt(String startDate, String endDate){
+	public List<InquiryDto> selectByCreatedAt(Long usersNum, String startDate, String endDate){
 		List<InquiryDto> list=new ArrayList<>();
 		//필요한 객체를 담을 지역변수를 미리 만든다.
 		Connection conn = null;
@@ -129,13 +129,16 @@ public class InquiryDao {
 				SELECT inq_num, inq_title, inq_content, inq_type, stay_name, inq_created_at, inq_is_answered, inq_answer, inq_answered_at
 				FROM inquiry
 				LEFT JOIN stay ON inq_stay_num=stay_num
-				WHERE inq_created_at >= TO_DATE(?, 'YYYY-MM-DD') AND inq_created_at < TO_DATE(?, 'YYYY-MM-DD')+1
+				WHERE inq_users_num = ?
+					AND inq_created_at >= TO_DATE(?, 'YYYY-MM-DD')
+					AND inq_created_at < TO_DATE(?, 'YYYY-MM-DD')+1
 				ORDER BY inq_num DESC
 			""";
 			pstmt = conn.prepareStatement(sql);
 			//? 에 값 바인딩
-			pstmt.setString(1, startDate);
-			pstmt.setString(2, endDate);
+			pstmt.setLong(1, usersNum);
+			pstmt.setString(2, startDate);
+			pstmt.setString(3, endDate);
 			// select 문 실행하고 결과를 ResultSet 으로 받아온다
 			rs = pstmt.executeQuery();
 			//반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 리턴해줄 객체에 담는다

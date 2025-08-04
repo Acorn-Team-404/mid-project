@@ -372,4 +372,46 @@ public class UserDao {
 		}
 	}
 	
+	//회원 이름, 전화번호, 이메일만 조회
+	public UserDto getBasicInfoById(String usersId) {
+		UserDto dto=null;
+		//필요한 객체를 담을 지역변수를 미리 만든다.
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = new DBConnector().getConn();
+			//실행할 sql문
+			String sql = """
+				SELECT users_name, users_email, users_phone
+				FROM users
+				WHERE users_id=?
+			""";
+			pstmt = conn.prepareStatement(sql);
+			//? 에 값 바인딩
+			pstmt.setString(1, usersId);
+			// select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			//반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 리턴해줄 객체에 담는다
+			while (rs.next()) {
+				dto=new UserDto();
+				dto.setUsersName(rs.getString("users_name"));
+				dto.setUsersEmail(rs.getString("users_email"));
+				dto.setUsersPhone(rs.getString("users_phone"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (rs != null)
+					rs.close();
+				if (pstmt != null)
+					pstmt.close();
+				if (conn != null)
+					conn.close();
+			} catch (Exception e) {
+			}
+		}
+		return dto;
+	}
 }
