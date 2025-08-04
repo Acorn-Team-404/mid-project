@@ -73,9 +73,10 @@
   </div>
 </nav>
 
-
-<!-- notification-modal.jsp (알림창 모달 include) -->
-<jsp:include page="/WEB-INF/include/notification-modal.jsp"></jsp:include>
+<% if (session.getAttribute("usersNum") != null) { %>
+	<!-- notification-modal.jsp (알림창 모달 include) -->
+	<jsp:include page="/WEB-INF/include/notification-modal.jsp"></jsp:include>
+<% } %>
 
 
 
