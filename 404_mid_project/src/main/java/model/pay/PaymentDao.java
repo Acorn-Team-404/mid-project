@@ -71,18 +71,17 @@ public class PaymentDao {
   
         String sql = """
         		INSERT INTO PAYMENTS(pay_num,pay_book_num,order_id,pay_users_num,
-        		pay_amount,pay_method,pay_method_group_id,pay_method_code,
+        		pay_amount,pay_method_group_id,pay_method_code,
         		pay_status_group_id,pay_status_code,pay_approved_at,
         		pay_created_at,pay_paid_at)
-        		VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
-        		
+        		VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
         		""";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, payDto.getPayNum());
             pstmt.setString(2, payDto.getpayBookNum());
             pstmt.setString(3, payDto.getOrderId());
-            pstmt.setLong(4, payDto.getPayUserNum()); //왜 혼자 long -> String
+            pstmt.setLong(4, payDto.getPayUserNum()); 
             pstmt.setLong(5, payDto.getPayAmount());
             pstmt.setString(6, payDto.getPayMethodGroupId());
             pstmt.setInt(7, payDto.getPayMethodCode());
@@ -93,7 +92,8 @@ public class PaymentDao {
             pstmt.setTimestamp(12, payDto.getPayPaidAt());
             int res = pstmt.executeUpdate();
             
-            return res == 1;
+
+           return res == 1;
         } 
          
     }
