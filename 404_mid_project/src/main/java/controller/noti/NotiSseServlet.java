@@ -50,7 +50,7 @@ public class NotiSseServlet extends HttpServlet {
         	System.out.println("SSE 연결 시작됨 - usersNum: " + usersNum + ", 시간: " + new java.util.Date());
         	
         	if (!retrySent) {
-        	    out.write("retry: 30000\n");
+        	    out.write("retry: 60000\n");
         	    out.flush();  // 즉시 브라우저에 전송
         	    retrySent = true;
         	}
@@ -116,7 +116,7 @@ public class NotiSseServlet extends HttpServlet {
         	}
         	
             try {
-                Thread.sleep(30000); // 30초 대기
+                Thread.sleep(60000); // 60초 대기
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); // 상태만 복구
                 System.err.println("SSE 쓰레드 인터럽트 발생. 연결 유지");
