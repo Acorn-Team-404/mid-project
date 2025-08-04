@@ -29,6 +29,64 @@ public class BookDao {
    public static BookDao getInstance() {
       return dao;
    }
+
+   // 사용자의 모든 예약 목록을 조회하기
+   public List<BookDto> getByUserNum(long userNum){
+	   List<BookDto> list = new ArrayList<BookDto>();
+	   
+	   // 필요한 객체를 담을 지역변수를 미리 만든다.
+	// ex) List<DTO> list=new ArrayList<>();
+	BookDto dto = null;
+	Connection conn = null;
+	PreparedStatement pstmt = null;
+	ResultSet rs = null;
+	try {
+		conn = DBConnector.getConn();
+		// 실행할 sql 문
+		String sql = """
+				SELECT *
+				FROM BOOKING
+				WHERE BOOK_USERS_NUM = ?
+				ORDER BY BOOK_CREATED_AT DESC
+				""";
+		pstmt = conn.prepareStatement(sql);
+		// ? 에 값 바인딩
+		pstmt.setLong(1, userNum);
+		// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+		rs = pstmt.executeQuery();
+		// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+		// 단일 : if  /  다중 : while
+		while (rs.next()) {
+	          dto = new BookDto();
+	          dto.setBookNum(rs.getString("BOOK_NUM"));
+	          dto.setBookUsersNum(rs.getLong("BOOK_USERS_NUM"));
+	          dto.setBookRoomNum(rs.getInt("BOOK_ROOM_NUM"));
+	          dto.setBookStayNum(rs.getInt("BOOK_STAY_NUM"));
+	          dto.setBookCheckIn(rs.getString("BOOK_CHECKIN_DATE"));
+	          dto.setBookCheckOut(rs.getString("BOOK_CHECKOUT_DATE"));
+	          dto.setBookAdult(rs.getInt("BOOK_ADULT"));
+	          dto.setBookChildren(rs.getInt("BOOK_CHILDREN"));
+	          dto.setBookInfant(rs.getInt("BOOK_INFANT"));
+	          dto.setBookTotalPax(rs.getInt("BOOK_TOTAL_PAX"));
+	          dto.setBookExtraBed(rs.getInt("BOOK_EXTRA_BED"));
+	          dto.setBookInfantBed(rs.getInt("BOOK_INFANT_BED"));
+	          dto.setBookCheckInTime(rs.getString("BOOK_CHECKIN_TIME"));
+	          dto.setBookRequest(rs.getString("BOOK_REQUEST"));
+	          dto.setBookTotalAmount(rs.getInt("BOOK_TOTAL_AMOUNT"));
+	          dto.setBookStatusGroupId(rs.getString("BOOK_STATUS_GROUP_ID"));
+	          dto.setBookStatusCode(rs.getInt("BOOK_STATUS_CODE"));
+	          dto.setBookCreatedAt(rs.getTimestamp("BOOK_CREATED_AT"));
+	          dto.setBookUpdatedAt(rs.getTimestamp("BOOK_UPDATED_AT"));
+	          
+	          list.add(dto);
+		}
+	} catch (Exception e) {
+		e.printStackTrace();
+	} finally {
+		DBConnector.close(rs, pstmt, conn);
+	} // 하단에 return 값 넣어주셔야함!
+	return list;
+   }
    
    //예약번호로 DB에서 예약내역 조회하기
    public BookDto getByBookNum(String bookNum) {
