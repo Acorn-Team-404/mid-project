@@ -56,6 +56,7 @@ public class UsersServlet extends HttpServlet {
 			    out.print("success");
 			} else {
 			    alertAndBack(out, "인증번호가 틀렸습니다.");
+			    return;
 			}
 			
 			session.removeAttribute("authCode");
@@ -76,6 +77,7 @@ public class UsersServlet extends HttpServlet {
 			try {
 			    MailUtil.sendEmail(usersEmail, authCode);//메일 전송, 에러날 수 있음...
 			    session.setAttribute("authCode", authCode);//에러없을 때 세션 저장
+			    session.setAttribute("emailVerified", false);
 			    response.getWriter().print("success");//클라이언트에 성공 응답
 			} catch (Exception e) {
 			    response.getWriter().print("fail"); //에러났을 때 fail
