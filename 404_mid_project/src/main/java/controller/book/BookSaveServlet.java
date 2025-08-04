@@ -97,7 +97,7 @@ public class BookSaveServlet extends HttpServlet {
 		if (betweenDay <= 0) {
 			// 체크인 날짜는 체크아웃 날짜보다 이전이어야 한다
 			req.setAttribute("errorMsg", "체크아웃 날짜는 체크인 날짜보다 늦어야 합니다");
-			req.getRequestDispatcher("/booking/booking-form.jsp").forward(req, res);
+			req.getRequestDispatcher("/booking/booking-page.jsp").forward(req, res);
 			return;
 		}
 

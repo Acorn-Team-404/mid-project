@@ -4,7 +4,7 @@
 <%
 	//String bookNum = (String) request.getAttribute("bookNum");
 	//BookDto bookDto = BookDao.getInstance().getByBookNum(bookNum);
-	BookDto bookDto = BookDao.getInstance().getByBookNum("20250801-0016");
+	BookDto bookDto = BookDao.getInstance().getByBookNum("20250801-0017");
 	out.print(bookDto != null ? "예약 정보 로딩 성공" : "예약 정보 없음");
 %>
 <!DOCTYPE html>
