@@ -172,10 +172,10 @@
 
                     <div class="mb-4">
                         <strong>객실 이름 :</strong> <span id="selectedRoomNameDisplay"></span><br/>
-                        <strong>객실 가격 :</strong> <span id="roomPrice">선택하세요</span><br />
+                        <strong>객실 가격 :</strong> ₩ <span id="roomPrice">선택하세요</span><br />
                         <strong>추가 침대 :</strong> <span id="bedOption"></span><br/>
                         <strong>도착 시간 :</strong> <span id="checkInOption"></span><br/>
-                        <strong>총액 :</strong> <span id="totalAmount"></span>
+                        <strong>총액 :</strong> ₩ <span id="totalAmount"></span>
                     </div>
 
                     <!-- JS에서 설정한 값을 서블릿에 넘기기 위한 hidden input들 -->
