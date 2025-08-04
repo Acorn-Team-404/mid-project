@@ -29,8 +29,8 @@ function initializeSSE() {
 
 			if(noti.typeCode == 10) {
 				notiCard = `
-					<div class="noti-card d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25">
-						<span class="position-absolute top-0 end-0 d-inline-block rounded-circle bg-semired" style="width: 11px; height: 11px;"></span>
+					<div class="noti-card d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25" data-noti-num="${noti.notiNum}">
+						<span class="read-dot ${noti.readCode === 11 ? 'd-none' : ''} position-absolute top-0 end-0 d-inline-block rounded-circle bg-semired" style="width: 11px; height: 11px;"></span>
 						<div class="noti-img-wrapper ratio ratio-1x1">
 							<img class="img-fluid object-fit-cover rounded-3" src="https://picsum.photos/id/237/200/300" alt="" />
 						</div>
@@ -58,8 +58,8 @@ function initializeSSE() {
 			
 			if(noti.typeCode == 20) {
 				notiCard = `
-					<div class="noti-card d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25">
-						<span class="position-absolute top-0 end-0 d-inline-block rounded-circle bg-semired" style="width: 11px; height: 11px;"></span>
+					<div class="noti-card d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25" data-noti-num="${noti.notiNum}">
+						<span class="read-dot ${noti.readCode === 11 ? 'd-none' : ''} position-absolute top-0 end-0 d-inline-block rounded-circle bg-semired" style="width: 11px; height: 11px;"></span>
 						<div class="noti-img-wrapper ratio ratio-1x1">
 							<img class="img-fluid object-fit-cover rounded-3" src="https://picsum.photos/id/237/200/300" alt="" />
 						</div>
