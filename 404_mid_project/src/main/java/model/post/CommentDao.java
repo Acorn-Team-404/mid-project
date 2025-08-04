@@ -1,4 +1,4 @@
-package model.post;
+ package model.post;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,7 +19,7 @@ public class CommentDao {
 	}
 	
 	// 댓글 리스트
-	public List<CommentDto> selectList(int parentNum){
+	public List<CommentDto> selectAll(int parentNum){
 		List<CommentDto> list = new ArrayList<CommentDto>();
 		Connection conn = null;
 		PreparedStatement pstmt = null;
