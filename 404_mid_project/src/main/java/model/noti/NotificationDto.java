@@ -9,7 +9,7 @@ public class NotificationDto {
 	private int notiTypeCode;
 	private String notiTargetGroupId;
 	private int notiTargetTypeCode;
-	private long notiTargetNum;
+	private String notiTargetNum;
 	private String notiMessage;
 	private String notiReadGroupId;
 	private int notiReadCode;
@@ -77,10 +77,10 @@ public class NotificationDto {
 	public void setNotiTargetTypeCode(int notiTargetTypeCode) {
 		this.notiTargetTypeCode = notiTargetTypeCode;
 	}
-	public long getNotiTargetNum() {
+	public String getNotiTargetNum() {
 		return notiTargetNum;
 	}
-	public void setNotiTargetNum(long notiTargetNum) {
+	public void setNotiTargetNum(String notiTargetNum) {
 		this.notiTargetNum = notiTargetNum;
 	}
 	public String getNotiMessage() {

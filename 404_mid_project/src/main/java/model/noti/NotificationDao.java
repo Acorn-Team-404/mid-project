@@ -173,7 +173,7 @@ public class NotificationDao {
 			pstmt.setLong(2, dto.getNotiSenderNum());
 			pstmt.setInt(3, dto.getNotiTypeCode());
 			pstmt.setInt(4, dto.getNotiTargetTypeCode());
-			pstmt.setLong(5, dto.getNotiTargetNum());
+			pstmt.setString(5, dto.getNotiTargetNum());
 			pstmt.setString(6, dto.getNotiMessage());
 
 			rowCount = pstmt.executeUpdate();

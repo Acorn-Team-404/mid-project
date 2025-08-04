@@ -29,7 +29,7 @@ public class NotiCommentServlet extends HttpServlet {
 			long notiSenderNum = Long.valueOf(req.getParameter("notiSenderNum"));
 			int notiTypeCode = Integer.parseInt(req.getParameter("notiTypeCode"));
 			int notiTargetTypeCode = Integer.parseInt(req.getParameter("notiTargetTypeCode"));
-			long notiTargetNum = Long.valueOf(req.getParameter("notiTargetNum"));
+			String notiTargetNum = req.getParameter("notiTargetNum");
 			String notiMessage = req.getParameter("notiMessage");
 			
 	
