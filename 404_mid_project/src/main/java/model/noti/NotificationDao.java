@@ -203,7 +203,7 @@ public class NotificationDao {
 	
 	
 	
-	public boolean NotiGetByDelete(long notiNum) {
+	public boolean notiDelete(long notiNum) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		// 변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
@@ -234,7 +234,7 @@ public class NotificationDao {
 	}
 	
 	
-	public boolean setRead(long notiNum) {
+	public boolean notiSetRead(long notiNum) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		// 변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
