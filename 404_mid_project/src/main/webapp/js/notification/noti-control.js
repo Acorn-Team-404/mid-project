@@ -2,7 +2,7 @@ const contextPath = "/" + window.location.pathname.split("/")[1];
 
 async function setRead(notiCard) {
   const notiNum = notiCard.dataset.notiNum;
-  const readDot = document.querySelector(".read-dot")
+  const readDot = notiCard.querySelector(".read-dot")
   try {
     const response = await fetch(contextPath + '/setRead.noti', {
       method: 'POST',
@@ -35,10 +35,3 @@ document.querySelector(".offcanvas-body").addEventListener("click", function(e) 
 });
 
 
-/*document.querySelectorAll(".noti-card").forEach((notiCard) => {
-	notiCard.addEventListener("click", () => {
-		console.log("클릭은 됨")
-		setRead(notiCard);
-	})
-})
-*/
