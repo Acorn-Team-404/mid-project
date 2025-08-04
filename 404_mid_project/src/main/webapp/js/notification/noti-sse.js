@@ -6,7 +6,12 @@ if (typeof window.eventSource === "undefined") {
 	window.eventSource = null;
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  initializeSSE();
+});
+
 function initializeSSE() {
+
 	if (window.eventSourceInitialized) {
 		console.log("🔁 SSE 이미 연결됨 - 중복 연결 방지");
 		return;
@@ -31,7 +36,12 @@ function initializeSSE() {
 		notiData.forEach(noti => {
 			let notiCard = "";
 			console.log(notiData[0].readCount)
-			notiCountNum.innerText = `${notiData[0].readCount}`
+			if(notiData[0].readCount == 0) {
+				notiCountNum.classList.add("d-none")
+			} else {
+				notiCountNum.classList.remove("d-none")
+				notiCountNum.innerText = `${notiData[0].readCount}`
+			}
 			
 
 			if(noti.typeCode == 10) {
@@ -98,4 +108,6 @@ function initializeSSE() {
 	window.eventSource.onerror = function(e) {
 		console.error("❌ SSE 연결 에러 발생", e);
 	};
+	
+
 }

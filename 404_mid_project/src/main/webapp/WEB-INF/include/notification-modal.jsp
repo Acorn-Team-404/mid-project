@@ -54,6 +54,7 @@
 		
   	</div>
 </div>
+
 <script>
 	const notiModal = document.getElementById("offcanvasWithBothOptions");
 
@@ -75,6 +76,7 @@
 	    }
 	});
 </script>
+
 
 <!-- 세션이 있을 때만 sse를 호출하는 js 호출 -->
 <%if(request.getAttribute("usersId") != null && session.getAttribute("usersId") != null) {%>
