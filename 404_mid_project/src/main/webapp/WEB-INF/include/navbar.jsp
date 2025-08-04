@@ -12,7 +12,7 @@
 	request.setAttribute("usersId", usersId);
 	request.setAttribute("usersNum", usersNum);
 %>
-
+<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
 <nav class="navbar navbar-expand-lg sticky-top bg-white border-bottom shadow-sm py-3">
   <div class="container-fluid align-items-center flex-nowrap">
     <!-- 좌측 로고 -->
