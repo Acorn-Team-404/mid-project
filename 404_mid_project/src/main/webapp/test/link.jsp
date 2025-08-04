@@ -35,9 +35,9 @@
 	<h3>객실 예약페이지</h3>
 	<ul>
 		<li>
-			<form action="${pageContext.request.contextPath}/booking/booking-page.jsp">
+			<form action="${pageContext.request.contextPath}/booking/submit">
 				<button type="submit" class="btn btn-primary">객실 예약</button>
-				<input type="hidden" name="" value=""/>
+				<input type="hidden" name="stayNum" value="100"/>
 			</form>
 		</li>
 		<li>

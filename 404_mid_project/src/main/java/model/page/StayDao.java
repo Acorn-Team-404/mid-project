@@ -221,19 +221,18 @@ public class StayDao {
 	
 	// 숙소 정보 가져오기
     public StayDto getByNum(long stayNum) {
-    	StayDto dto = null;
-    	
-    	Connection conn = null;
-    	PreparedStatement pstmt = null;
-    	ResultSet rs = null;
+       StayDto dto = null;
+       
+       Connection conn = null;
+       PreparedStatement pstmt = null;
+       ResultSet rs = null;
         try {
-        	conn = DBConnector.getConn();
+            conn = new DBConnector().getConn();
             // 실행할 sql 문
             String sql = """
-                SELECT stay_num, s.users_num, stay_name, stay_addr, stay_loc, stay_lat, stay_long, stay_phone, stay_facilities, stay_update_at, u.users_name
-				FROM stay s
-				INNER JOIN users u ON s.users_num=u.users_num
-				WHERE stay_num=?
+                SELECT *
+                FROM stay
+                WHERE stay_num = ?
             """;
             pstmt = conn.prepareStatement(sql);
             // ? 에 바인딩
@@ -243,22 +242,21 @@ public class StayDao {
             // 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 리턴해 줄 객체에 담는다
             if (rs.next()) {
                 dto = new StayDto();
-                dto.setStayNum(rs.getLong("stay_num"));
-                dto.setUsersNum(rs.getLong("users_num"));
                 dto.setStayName(rs.getString("stay_name"));
-                dto.setStayAddr(rs.getString("stay_addr"));
                 dto.setStayLoc(rs.getString("stay_loc"));
-                dto.setStayLat(rs.getString("stay_lat"));
-                dto.setStayLong(rs.getString("stay_long"));
-                dto.setStayPhone(rs.getString("stay_phone"));
-                dto.setStayUpdateAt(rs.getString("stay_update_at"));
-                dto.setStayFacilities(rs.getString("stay_facilities"));
-                dto.setUsersName(rs.getString("users_name"));
+                dto.setStayNum(rs.getLong("stay_num"));
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-        	DBConnector.close(rs, pstmt, conn);
+            try {
+                if (rs != null)
+                   rs.close();
+                if (pstmt != null)
+                   pstmt.close();
+                if (conn != null)
+                   conn.close();
+            } catch (Exception e) {}
         }
         return dto;
     }

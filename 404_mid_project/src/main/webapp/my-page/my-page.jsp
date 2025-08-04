@@ -1,5 +1,34 @@
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="model.user.UserDto"%>
+<%@page import="model.user.UserDao"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+	String usersId = (String) session.getAttribute("usersId");
 
+	// 미 로그인 시 로그인 페이지로 리다이렉트
+	if (usersId == null) {
+	    response.sendRedirect(request.getContextPath() + "/user/login-form.jsp");
+	    return;
+	}
+
+	UserDao userDao = UserDao.getInstance();
+	UserDto user = userDao.getByUserId(usersId);
+
+	// user 객체 null 체크
+	if (user == null) {
+	    response.sendRedirect(request.getContextPath() + "/user/login-form.jsp");
+	    return;
+	}
+	
+	// 전화번호 포맷방식 변경 (예: 01012345678 → 010-1234-5678)
+	String rawPhone = user.getUsersPhone();
+	String formattedPhone = rawPhone;
+	if (rawPhone != null && rawPhone.matches("\\d{11}")) {
+	    formattedPhone = rawPhone.replaceAll("(\\d{3})(\\d{4})(\\d{4})", "$1-$2-$3");
+	}
+
+	request.setAttribute("user", user);
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -56,7 +85,7 @@
               <tr>
                 <th>전화번호</th>
                 <td>
-                  ${formattedPhone} <!-- 이렇게 가져와야 010-0000-0000 형태로 나와서 우선 해보는 중 -->
+                  <%= formattedPhone %> <!-- servlet -> jsp 변환 후 적용방식 -->
                   <a href="${pageContext.request.contextPath}/my-page/update-phone.jsp" class="btn btn-outline-secondary btn-sm ms-2">변경하기</a>
                 </td>
               </tr>
@@ -69,11 +98,12 @@
 
           <!-- 프로필 이미지 -->
           <div class="col-md-4 text-center">
-            <img src="${pageContext.request.contextPath}/images/${user.usersProfileImage}" alt="프로필 이미지" class="profile-img mb-3" />
-            <form action="${pageContext.request.contextPath}/update-profile-image" method="post" enctype="multipart/form-data">
-              <input type="file" name="profileImage" accept="image/*" class="form-control form-control-sm mb-2" />
-              <button type="submit" class="btn btn-sm btn-outline-primary">업로드</button>
-            </form>
+            <img src="${pageContext.request.contextPath}/show.img?imageName=<%=user.getUsersProfileImage() %>" alt="프로필 이미지" class="profile-img mb-3" />
+            <form action="${pageContext.request.contextPath}/profile.img" method="post" enctype="multipart/form-data">
+						  <input type="hidden" name="target_id" value="${user.usersNum}" />
+						  <input type="file" name="uploadFile" accept="image/*" class="form-control form-control-sm mb-2" />
+						  <button type="submit" class="btn btn-sm btn-outline-primary">업로드</button>
+						</form>
           </div>
         </div>
       </div>

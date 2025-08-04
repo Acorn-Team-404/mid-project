@@ -1,4 +1,3 @@
-// 1. 인원 수 계산 및 hidden 값 세팅
 const pax = {
     adult : parseInt(document.querySelector("#adult").value) || 0,
     children : parseInt(document.querySelector("#children").value) || 0,

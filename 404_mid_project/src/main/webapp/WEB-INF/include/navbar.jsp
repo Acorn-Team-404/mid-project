@@ -44,7 +44,7 @@
 	     	 <a class="nav-link text-dark text-nowrap" href="list.post">JOURNAL</a>
 	      </li>
 	      <li class="nav-item mx-2">
-	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/my-page">MYPAGE</a>
+	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/my-page/my-page.jsp">MYPAGE</a>
 	      </li>
 	      <li class="nav-item mx-2">
 	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/pay/payments.jsp">PAY</a>
@@ -53,7 +53,7 @@
 	      	<a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/dbtest">DBTest</a>
 	      </li>
 	      <li class="nav-item mx-2">
-	      	<a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/booking/booking-page.jsp">BOOK</a>
+	      	<a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/test/link.jsp">LINK</a>
 	      </li>
 	      <li class="nav-item mx-3">
 	        <div class="vr"></div> <!-- 세로 구분선 -->
