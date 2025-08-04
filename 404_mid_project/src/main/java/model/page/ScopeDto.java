@@ -1,55 +1,55 @@
 package model.page;
 
 public class ScopeDto {
-	private long scope_num;
-	private long stay_num;
-	private long user_num;
-	private int scope_star;
-	private String scope_content;
-	private String scope_created_at;
-	private String scope_delete;
+	private long scopeNum;
+	private long stayNum;
+	private long userNum;
+	private int scopeStar;
+	private String scopeContent;
+	private String scopeCreatedAt;
+	private String scopeDelete;
 	
-	
-	public long getScope_num() {
-		return scope_num;
+	// setter, getter
+	public long getScopeNum() {
+		return scopeNum;
 	}
-	public void setScope_num(long scope_num) {
-		this.scope_num = scope_num;
+	public void setScopeNum(long scopeNum) {
+		this.scopeNum = scopeNum;
 	}
-	public long getStay_num() {
-		return stay_num;
+	public long getStayNum() {
+		return stayNum;
 	}
-	public void setStay_num(long stay_num) {
-		this.stay_num = stay_num;
+	public void setStayNum(long stayNum) {
+		this.stayNum = stayNum;
 	}
-	public long getUser_num() {
-		return user_num;
+	public long getUserNum() {
+		return userNum;
 	}
-	public void setUser_num(long user_num) {
-		this.user_num = user_num;
+	public void setUserNum(long userNum) {
+		this.userNum = userNum;
 	}
-	public int getScope_star() {
-		return scope_star;
+	public int getScopeStar() {
+		return scopeStar;
 	}
-	public void setScope_star(int scope_star) {
-		this.scope_star = scope_star;
+	public void setScopeStar(int scopeStar) {
+		this.scopeStar = scopeStar;
 	}
-	public String getScope_content() {
-		return scope_content;
+	public String getScopeContent() {
+		return scopeContent;
 	}
-	public void setScope_content(String scope_content) {
-		this.scope_content = scope_content;
+	public void setScopeContent(String scopeContent) {
+		this.scopeContent = scopeContent;
 	}
-	public String getScope_created_at() {
-		return scope_created_at;
+	public String getScopeCreatedAt() {
+		return scopeCreatedAt;
 	}
-	public void setScope_created_at(String scope_created_at) {
-		this.scope_created_at = scope_created_at;
+	public void setScopeCreatedAt(String scopeCreatedAt) {
+		this.scopeCreatedAt = scopeCreatedAt;
 	}
-	public String getScope_delete() {
-		return scope_delete;
+	public String getScopeDelete() {
+		return scopeDelete;
 	}
-	public void setScope_delete(String scope_delete) {
-		this.scope_delete = scope_delete;
+	public void setScopeDelete(String scopeDelete) {
+		this.scopeDelete = scopeDelete;
 	}
 }
