@@ -41,7 +41,7 @@
 	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/user/login-form.jsp">LOGIN</a>
 	      </li>
 	      <li class="nav-item mx-2">
-	     	 <a class="nav-link text-dark text-nowrap" href="list.post">JOURNAL</a>
+	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/post/list.jsp">JOURNAL</a>
 	      </li>
 	      <li class="nav-item mx-2">
 	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/my-page/my-page.jsp">MYPAGE</a>

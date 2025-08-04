@@ -12,7 +12,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.websocket.Session;
 import model.post.CommentDao;
 import model.post.CommentDto;
 import model.post.PostDao;
@@ -69,7 +68,7 @@ public class PostServlet extends HttpServlet{
 			 */
 			 
 			//댓글 목록을 DB에서 읽어오기
-			List<CommentDto> commentList=CommentDao.getInstance().selectList(num);
+			List<CommentDto> commentList=CommentDao.getInstance().selectAll(num);
 			
 						
 			// jsp
@@ -97,8 +96,8 @@ public class PostServlet extends HttpServlet{
 			dto.setPostTitle(req.getParameter("title"));
 			dto.setPostContent(req.getParameter("content"));
 			dao.insert(dto);
-			res.sendRedirect("list.post");
 			
+			req.getRequestDispatcher("/post/list.jsp").forward(req, res);
 			
 					
 		// 5. 게시글 업데이트

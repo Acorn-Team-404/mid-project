@@ -87,7 +87,7 @@ public class BookDao {
 
             UPDATE BOOKING
             SET book_status_code = ?
-            WHERE BOOK_STATUS_GROUP_ID = "예약상태"
+            WHERE BOOK_STATUS_GROUP_ID = 'RESERVATION_STATUS'
             AND BOOK_NUM = ?
 
             """;
@@ -101,7 +101,7 @@ public class BookDao {
    // 결제 실패시 예약 정보 삭제하는 메서드
    public void deleteByBookNum(String bookNum) {
        String sql = """
-             DELETE FROM BOOK
+             DELETE FROM BOOKING
              WHERE BOOK_NUM = ?
              """;
        try (Connection conn = DBConnector.getConn();
