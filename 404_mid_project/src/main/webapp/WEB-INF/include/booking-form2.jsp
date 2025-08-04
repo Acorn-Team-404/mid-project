@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <div class="container my-5">
-        <form action="${pageContext.request.contextPath}/booking/submit" method="post" id="bookingForm">
-            <div class="row g-5">
+ <!--   <div class="container my-5"> -->
+        <%-- <form action="${pageContext.request.contextPath}/booking/submit" method="post" id="bookingForm">
+            <div class="row g-5"> --%>
 
                 <!-- 왼쪽: 예약자 정보 -->
                 <div class="col-md-7">
@@ -137,6 +137,6 @@
                         <button type="submit" class="btn btn-primary w-100">예약하기</button>
                     </div>
                 </div>
-            </div>
-        </form>
-    </div>
+         <!--    </div>
+        </form> -->
+<!--     </div> -->

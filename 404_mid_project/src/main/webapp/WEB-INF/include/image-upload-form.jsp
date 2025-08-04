@@ -2,13 +2,16 @@
     pageEncoding="UTF-8"%>
 <%
   // imageAction 값이 지정되지 않았다면 기본값 설정
-  String imageAction = (String) request.getAttribute("imageAction");
+  String imageAction = request.getParameter("imageAction");
   if (imageAction == null || imageAction.trim().isEmpty()) {
-    imageAction = "index";
+    imageAction = "none";
   }
 %>
 
 <form id="uploadForm" method="post" action="<%= request.getContextPath() %>/<%= imageAction %>.img" enctype="multipart/form-data">
+	<div class="mb-3">
+		<strong>업로드 Target_type: <%=imageAction %></strong>
+	</div>
   <div class="mb-3">
     <label class="form-label">타겟 ID</label>
     <input type="number" name="target_id" class="form-control" value="1" required>

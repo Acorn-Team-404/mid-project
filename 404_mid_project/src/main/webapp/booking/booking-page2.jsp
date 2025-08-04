@@ -14,8 +14,14 @@
 </head>
 <body>
 	<jsp:include page="/WEB-INF/include/navbar.jsp" />
-	<jsp:include page="/WEB-INF/include/room-info2.jsp"></jsp:include>
-	<jsp:include page="/WEB-INF/include/booking-form.jsp"></jsp:include>
+	<div class="container my-5">
+		<form action="${pageContext.request.contextPath}/booking/submit" method="post" id="bookingForm">
+		  <div class="row g-5">
+		<jsp:include page="/WEB-INF/include/room-info2.jsp"></jsp:include>
+		<jsp:include page="/WEB-INF/include/booking-form.jsp"></jsp:include>
+			</div>
+		</form>
+	</div>
 	<script src="${pageContext.request.contextPath}/js/booking/book.js"></script>
 	<script src="${pageContext.request.contextPath}/js/booking/info.js"></script>
 </body>
