@@ -3,6 +3,7 @@ package controller.book;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,42 +13,49 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.book.BookDao;
 import model.book.BookDto;
+import model.page.StayDao;
+import model.page.StayDto;
+import model.room.RoomDao;
+import model.room.RoomDto;
 import model.user.UserDao;
 import model.user.UserDto;
 
 @WebServlet("/booking/submit")
 public class BookSaveServlet extends HttpServlet {
-
-	@Override
+	
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		// 세션에서 로그인 사용자 정보 가져오기
-		HttpSession session = req.getSession(false);
-		String usersId = (session != null) ? (String) session.getAttribute("usersId") : null;
-		if (usersId == null) {
-			res.sendRedirect("/login.jsp");
-			return;
-		}
-		// 세션에서 회원의 아이디 가져오기
-		UserDto user = UserDao.getInstance().getByUserId(usersId);
+	    HttpSession session = req.getSession();    
+	    String usersId = (String) session.getAttribute("usersId");
 
-		if (user != null) {
-			req.setAttribute("usersNum", user.getUsersNum());
-			req.setAttribute("usersName", user.getUsersName());
-			req.setAttribute("email", user.getUsersEmail());
-			req.setAttribute("phone", user.getUsersPhone());
+	    if (usersId != null) {
+			UserDto dto = UserDao.getInstance().getByUserId(usersId);
+			if (dto != null) {
+				req.setAttribute("usersId", dto.getUsersId());
+				req.setAttribute("usersName", dto.getUsersName());
+				req.setAttribute("email", dto.getUsersEmail());
+				req.setAttribute("phone", dto.getUsersPhone());
+			}
 		}
-		req.getRequestDispatcher("/booking/booking-form.jsp").forward(req, res);
+	    
+	    String stayNumStr = req.getParameter("stayNum");
+	    System.out.println("bookStayNum parameter: " + stayNumStr);
 
-		// 숙소 정보 가져오기
-		/*
-		 * int stayNum = 세션이나 파라미터로 받기 List<RoomDto> roomList =
-		 * RoomDao.getInstance().getRoomsByStayNum(stayNum);
-		 * 
-		 * req.setAttribute("roomList", roomList); req.setAttribute("bookStayNum",
-		 * stayNum);
-		 */
+	    if (stayNumStr != null && !stayNumStr.isEmpty()) {
+	        int stayNum = Integer.parseInt(stayNumStr);
+
+	        // 숙소 정보 가져오기
+	        StayDto stay = StayDao.getInstance().getByNum(stayNum);
+	        req.setAttribute("stay", stay);
+
+	        // 객실 목록 가져오기
+	        List<RoomDto> roomList = RoomDao.getInstance().getRoomListByStayNum(stayNum);
+	        req.setAttribute("roomList", roomList);
+	    }
+	        
+		// 최종적으로 booking-page.jsp로 forward
+	    req.getRequestDispatcher("/booking/booking-page.jsp").forward(req, res);
 	}
-
+	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		HttpSession session = req.getSession(false);
@@ -103,38 +111,17 @@ public class BookSaveServlet extends HttpServlet {
 		int totalPax = adult + children + infant;
 		dto.setBookTotalPax(totalPax);
 
-		// 추가 침대 옵션 : 기본은 0, 선택하는 경우 1
-		String[] beds = req.getParameterValues("bed");
-		int extraBed = 0;
-		int infantBed = 0;
-		if (beds != null) {
-			for (String bed : beds) {
-				if ("extraBed".equals(bed))
-					extraBed = 1;
-				if ("infantBed".equals(bed))
-					infantBed = 1;
-			}
-		}
-
-		dto.setBookExtraBed(extraBed);
-		dto.setBookInfantBed(infantBed);
-
-		String checkInTime = req.getParameter("checkInTime");
+		String selectedBed = req.getParameter("selectedBed");
+		dto.setBookExtraBed(selectedBed != null && selectedBed.contains("extraBed") ? 1 : 0);
+		dto.setBookInfantBed(selectedBed != null && selectedBed.contains("infantBed") ? 1 : 0);
+		
 		String bookRequest = req.getParameter("bookRequest");
-		dto.setBookCheckInTime(checkInTime);
 		dto.setBookRequest(bookRequest);
-
-		// 총 결제 금액 계산 공식 dao 만들어서 넣기 ~
-		int roomPrice = BookDao.getInstance().getRoomPrice(roomNum);
-
-		// roomNum 잘못되거나 DB문제 있어서 0원 리턴 방지
-		if (roomPrice <= 0) {
-			req.setAttribute("errorMsg", "객실 요금 정보를 가져올 수 없습니다.");
-			req.getRequestDispatcher("/booking/booking-form.jsp").forward(req, res);
-			return;
-		}
-
-		int totalAmount = (int) (roomPrice * betweenDay);
+		
+		String selectedCheckInTime = req.getParameter("selectedCheckInTime");
+		dto.setBookCheckInTime(selectedCheckInTime);
+		
+		int totalAmount = Integer.parseInt(req.getParameter("totalAmountValue"));
 		dto.setBookTotalAmount(totalAmount);
 
 		// 예약 상태 (예약 대기)

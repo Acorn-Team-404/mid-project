@@ -32,11 +32,11 @@
             <tbody>
                 <%for (StayDto stay : list) { %>
                 <tr>
-                    <td><%=stay.getStay_num() %></td>
+                    <td><%=stay.getStayNum() %></td>
                     <td></td>
-                    <td><%=stay.getStay_name() %></td>
-                    <td><%=stay.getStay_addr() %></td>
-                    <td><%=stay.getStay_update_at() %></td>
+                    <td><%=stay.getStayName() %></td>
+                    <td><%=stay.getStayAddr() %></td>
+                    <td><%=stay.getStayUpdateAt() %></td>
                 </tr>
                 <%} %>
             </tbody>

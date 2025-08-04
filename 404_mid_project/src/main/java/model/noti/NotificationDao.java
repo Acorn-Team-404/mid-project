@@ -23,6 +23,86 @@ public class NotificationDao {
 	
 	
 	
+	
+	public List<NotificationDto> notiSelectAfter(long usersNum, long lastNotiNum) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		List<NotificationDto> list = new ArrayList<>(); // row를 담을 빈 배열
+
+		try {
+			conn = DBConnector.getConn();
+			String sql = """
+					SELECT 
+					    n.noti_num, 
+					    NVL(n.noti_sender_num, 0) AS noti_sender_num,
+					    c.cc_description AS noti_type,
+					    n.noti_message, 
+					    n.noti_read_code, 
+					    n.noti_created_at,
+					    n.noti_type_code,
+					    TRUNC(SYSDATE - n.noti_created_at) AS noti_days_ago,
+					    b.book_checkin_date AS noti_book_checkin,
+					    b.book_checkout_date AS noti_book_checkout,
+					    s.stay_name AS noti_stay_name,
+					    comm.comment_content AS noti_comment_content,
+					    comm.comment_parent_num AS noti_comment_parent_num,
+					    comm.comment_writer AS noti_comment_writer
+					FROM notifications n
+					LEFT JOIN booking b
+					  ON n.noti_type_code = 10 
+					 AND n.noti_target_num = b.book_num
+					LEFT JOIN stay s
+					  ON n.noti_type_code = 10 
+					  AND b.book_stay_num = s.stay_num
+					LEFT JOIN comments comm
+					  ON n.noti_type_code = 20 
+					 AND n.noti_sender_num = comm.comment_writer
+					LEFT JOIN common_code c
+					  ON c.cc_group_id = 'NOTI_TYPE'
+					 AND c.cc_code = n.noti_type_code
+					WHERE n.noti_recipient_num = ?
+						AND n.noti_num > ?
+					ORDER BY n.noti_num ASC
+					""";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setLong(1, usersNum);
+			pstmt.setLong(2, lastNotiNum);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				NotificationDto dto = new NotificationDto();
+				// 사진도 추가해야함
+				dto.setNotiNum(rs.getLong("noti_num"));
+				dto.setNotiSenderNum(rs.getLong("noti_sender_num"));
+				dto.setNotiMessage(rs.getString("noti_message"));
+				dto.setNotiReadCode(rs.getInt("noti_read_code"));
+				dto.setNotiCreatedAt(rs.getString("noti_created_at"));
+				dto.setNotiTypeCode(rs.getInt("noti_type_code"));
+				
+				// 공통 추가필드
+				dto.setNotiType(rs.getString("noti_type"));
+				dto.setNotiDaysAgo(rs.getString("noti_days_ago"));
+				
+				// 예약 추가필드
+				dto.setNotiCheckIn(rs.getString("noti_book_checkin"));
+				dto.setNotiCheckOut(rs.getString("noti_book_checkout"));
+				dto.setNotiStayName(rs.getString("noti_stay_name"));
+				
+				
+				list.add(dto);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		}
+		return list;
+	}
+	
+	
+	
 	// 전체 알림 목록을 반환하는 메서드
 	public List<NotificationDto> notiSelectByUsersNum(long usersNum) {
 		Connection conn = null;
@@ -93,7 +173,7 @@ public class NotificationDao {
 			pstmt.setLong(2, dto.getNotiSenderNum());
 			pstmt.setInt(3, dto.getNotiTypeCode());
 			pstmt.setInt(4, dto.getNotiTargetTypeCode());
-			pstmt.setLong(5, dto.getNotiTargetNum());
+			pstmt.setString(5, dto.getNotiTargetNum());
 			pstmt.setString(6, dto.getNotiMessage());
 
 			rowCount = pstmt.executeUpdate();

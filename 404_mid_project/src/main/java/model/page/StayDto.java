@@ -1,27 +1,27 @@
 package model.page;
 
 public class StayDto {
-	private long stay_num;
+	private long stayNum;
 	private long usersNum;
-	private String stay_name;
-	private String stay_addr;
-	private String stay_loc;
-	private String stay_lat;
-	private String stay_long;
-	private String stay_phone;
-	private String stay_update_at;
-	private String stay_delete;
-	private String stay_facilities;
+	private String stayName;
+	private String stayAddr;
+	private String stayLoc;
+	private String stayLat;
+	private String stayLong;
+	private String stayPhone;
+	private String stayUpdateAt;
+	private String stayDelete;
+	private String stayFacilities;
 	
 	private String usersName;
-
 	
-	public long getStay_num() {
-		return stay_num;
+	// setter, getter
+	public long getStayNum() {
+		return stayNum;
 	}
 
-	public void setStay_num(long stay_num) {
-		this.stay_num = stay_num;
+	public void setStayNum(long stayNum) {
+		this.stayNum = stayNum;
 	}
 
 	public long getUsersNum() {
@@ -32,76 +32,76 @@ public class StayDto {
 		this.usersNum = usersNum;
 	}
 
-	public String getStay_name() {
-		return stay_name;
+	public String getStayName() {
+		return stayName;
 	}
 
-	public void setStay_name(String stay_name) {
-		this.stay_name = stay_name;
+	public void setStayName(String stayName) {
+		this.stayName = stayName;
 	}
 
-	public String getStay_addr() {
-		return stay_addr;
+	public String getStayAddr() {
+		return stayAddr;
 	}
 
-	public void setStay_addr(String stay_addr) {
-		this.stay_addr = stay_addr;
+	public void setStayAddr(String stayAddr) {
+		this.stayAddr = stayAddr;
 	}
 
-	public String getStay_loc() {
-		return stay_loc;
+	public String getStayLoc() {
+		return stayLoc;
 	}
 
-	public void setStay_loc(String stay_loc) {
-		this.stay_loc = stay_loc;
+	public void setStayLoc(String stayLoc) {
+		this.stayLoc = stayLoc;
 	}
 
-	public String getStay_lat() {
-		return stay_lat;
+	public String getStayLat() {
+		return stayLat;
 	}
 
-	public void setStay_lat(String stay_lat) {
-		this.stay_lat = stay_lat;
+	public void setStayLat(String stayLat) {
+		this.stayLat = stayLat;
 	}
 
-	public String getStay_long() {
-		return stay_long;
+	public String getStayLong() {
+		return stayLong;
 	}
 
-	public void setStay_long(String stay_long) {
-		this.stay_long = stay_long;
+	public void setStayLong(String stayLong) {
+		this.stayLong = stayLong;
 	}
 
-	public String getStay_phone() {
-		return stay_phone;
+	public String getStayPhone() {
+		return stayPhone;
 	}
 
-	public void setStay_phone(String stay_phone) {
-		this.stay_phone = stay_phone;
+	public void setStayPhone(String stayPhone) {
+		this.stayPhone = stayPhone;
 	}
 
-	public String getStay_update_at() {
-		return stay_update_at;
+	public String getStayUpdateAt() {
+		return stayUpdateAt;
 	}
 
-	public void setStay_update_at(String stay_update_at) {
-		this.stay_update_at = stay_update_at;
+	public void setStayUpdateAt(String stayUpdateAt) {
+		this.stayUpdateAt = stayUpdateAt;
 	}
 
-	public String getStay_delete() {
-		return stay_delete;
+	public String getStayDelete() {
+		return stayDelete;
 	}
 
-	public void setStay_delete(String stay_delete) {
-		this.stay_delete = stay_delete;
+	public void setStayDelete(String stayDelete) {
+		this.stayDelete = stayDelete;
 	}
 
-	public String getStay_facilities() {
-		return stay_facilities;
+	public String getStayFacilities() {
+		return stayFacilities;
 	}
 
-	public void setStay_facilities(String stay_facilities) {
-		this.stay_facilities = stay_facilities;
+	public void setStayFacilities(String stayFacilities) {
+		this.stayFacilities = stayFacilities;
 	}
 
 	public String getUsersName() {

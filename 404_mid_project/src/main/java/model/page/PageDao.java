@@ -18,10 +18,10 @@ public class PageDao {
 		return dao;
 	}
 	
-	// 글 키워드
-	public int getCountByKeyword(String keyword) {
+	// 글 전체 카운트
+	public int getCount() {
 		int count=0;
-
+				
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -29,7 +29,8 @@ public class PageDao {
 			conn = DBConnector.getConn();
 			// 실행할 sql 문
 			String sql = """
-				
+				SELECT COUNT(*) AS count
+				FROM page
 			""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 값 바인딩
@@ -38,8 +39,8 @@ public class PageDao {
 			rs = pstmt.executeQuery();
 			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
 			// 단일 : if  /  다중 : while
-			while (rs.next()) {
-
+			if (rs.next()) {
+				count=rs.getInt("count");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -48,86 +49,7 @@ public class PageDao {
 		} // 하단에 return 값 넣어주셔야함!
 		return count;
 	}
-	
-	// 글 수정
-		public boolean update(PageDto dto) {
-			Connection conn = null;
-			PreparedStatement pstmt = null;
-			// 변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
-			int rowCount = 0;
-
-			try {
-				conn = DBConnector.getConn();
-				String sql = """
-					UPDATE page
-					SET page_content=?, page_reserve=?, page_guide=?, page_refund=?
-					WHERE page_num=?
-				""";
-				pstmt = conn.prepareStatement(sql);
-				// ? 에 순서대로 필요한 값 바인딩
-				pstmt.setString(1, dto.getPage_content());
-				pstmt.setString(2, dto.getPage_reserve());
-				pstmt.setString(3, dto.getPage_guide());
-				pstmt.setString(4, dto.getPage_refund());
-				pstmt.setLong(5, dto.getPage_num());
-				// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
-				rowCount = pstmt.executeUpdate();
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				// 닫을 땐 실행되는 순서의 역순으로 닫아야 함
-				try {
-					if (pstmt != null)
-						pstmt.close();
-					if (conn != null)
-						conn.close();
-				} catch (Exception e) {}
-			}
-			// 변화된 rowCount 값을 조사해서 작업의 성공 여부를 알아낼 수 있다
-			if (rowCount > 0) {
-				return true; // 작업 성공이라는 의미에서 true 리턴하기
-			} else {
-				return false; // 작업 실패라는 의미에서 false 리턴하기
-			}
-		}
 		
-		// 글 삭제
-		public boolean deleteByNum(int num) {
-			Connection conn = null;
-			PreparedStatement pstmt = null;
-			// 변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
-			int rowCount = 0;
-
-			try {
-				conn = DBConnector.getConn();
-				String sql = """
-					DELETE FROM page
-					WHERE num=?
-				""";
-				pstmt = conn.prepareStatement(sql);
-				// ? 에 순서대로 필요한 값 바인딩
-				pstmt.setInt(1, num);
-				// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
-				rowCount = pstmt.executeUpdate();
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				// 닫을 땐 실행되는 순서의 역순으로 닫아야 함
-				try {
-					if (pstmt != null)
-						pstmt.close();
-					if (conn != null)
-						conn.close();
-				} catch (Exception e) {}
-			}
-			// 변화된 rowCount 값을 조사해서 작업의 성공 여부를 알아낼 수 있다
-			if (rowCount > 0) {
-				return true; // 작업 성공이라는 의미에서 true 리턴하기
-			} else {
-				return false; // 작업 실패라는 의미에서 false 리턴하기
-			}
-		}
-	
 	// 글 전체 가져오기
 	public List<PageDto> selectAll(){
 		List<PageDto> list=new ArrayList<>();
@@ -139,11 +61,11 @@ public class PageDao {
 			conn = DBConnector.getConn();
 			// 실행할 sql 문
 			String sql = """
-				SELECT page_num, stay_name, user_name, page_created_at
+				SELECT page_num, stay_name, users_name, page_created_at
 				FROM page p
-				INNER JOIN users u ON p.user_num=u.user_num
+				INNER JOIN users u ON p.users_num=u.users_num
 				INNER JOIN stay s ON p.stay_num=s.stay_num
-				ORDER BY num DESC
+				ORDER BY page_num DESC
 			""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 값 바인딩
@@ -153,7 +75,13 @@ public class PageDao {
 			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
 			// 단일 : if  /  다중 : while
 			while (rs.next()) {
-
+				PageDto dto=new PageDto();
+				dto.setPageNum(rs.getLong("page_num"));
+				dto.setStayName(rs.getString("stay_name"));
+				dto.setUsersName(rs.getString("users_name"));
+				dto.setPageCreatedAt(rs.getString("page_created_at"));
+					
+				list.add(dto);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -161,6 +89,156 @@ public class PageDao {
 			DBConnector.close(rs, pstmt, conn);
 		} // 하단에 return 값 넣어주셔야함!
 		return list;
+	}
+	
+	// 검색 키워드에 부합하는 글의 갯수를 리턴
+	public int getCountByKeyword(String keyword) {
+		int count=0;
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			// 실행할 sql 문
+			String sql = """
+				SELECT COUNT(*) AS count
+				FROM page p
+				JOIN stay s ON p.stay_num = s.stay_num
+				WHERE (s.stay_name LIKE '%' || ? || '%' OR p.page_content LIKE '%' || ? || '%' OR s.stay_loc LIKE '%' || ? || '%')
+			""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 값 바인딩
+			pstmt.setString(1, keyword);
+			pstmt.setString(2, keyword);
+			pstmt.setString(3, keyword);
+			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+			// 단일 : if  /  다중 : while
+			if (rs.next()) {
+				count=rs.getInt("count");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		} // 하단에 return 값 넣어주셔야함!
+		return count;
+	}
+	
+	// 검색 키워드에 해당하는 row 만 select 해서 리턴하는 메소드
+	public List<PageDto> searchByKeyword(PageDto dto){
+		List<PageDto> list=new ArrayList<>();
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			// 실행할 sql 문
+			String sql = """
+				SELECT p.page_num, s.stay_name, u.users_name, p.page_created_at
+				FROM page p
+				JOIN stay s ON p.stay_num = s.stay_num
+				JOIN users u ON p.users_num = u.users_num
+				WHERE (s.stay_name LIKE '%' || ? || '%' OR p.page_content LIKE '%' || ? || '%' OR s.stay_loc LIKE '%' || ? || '%')
+				ORDER BY p.page_num DESC
+			""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 값 바인딩
+			String keyword = dto.getKeyword();
+			pstmt.setString(1, keyword);
+			pstmt.setString(2, keyword);
+			pstmt.setString(3, keyword);
+			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+			// 단일 : if  /  다중 : while
+			while (rs.next()) {
+				// 커서가 위치한 곳의 회원 정보를 저장할 BoardDto 객체 생성
+				PageDto dto2=new PageDto();
+				// ResultSet 으로부터 얻어낸 회원 번호를 BoardDto 객체의 setter 메소드를 이용해서 dto 에 저장
+				dto2.setPageNum(rs.getLong("page_num"));
+				dto2.setStayName(rs.getString("stay_name"));
+				dto2.setUsersName(rs.getString("users_name"));
+				dto2.setPageCreatedAt(rs.getString("page_created_at"));
+				// 회원 한 명의 정보가 담긴 새로운 BoardDto 객체의 참조값을 List 에 누적시키기
+				list.add(dto2);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		} // 하단에 return 값 넣어주셔야함!
+		return list;
+	}
+	
+	// 글 수정
+	public boolean update(PageDto dto) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		// 변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
+		int rowCount = 0;
+
+		try {
+			conn = DBConnector.getConn();
+			String sql = """
+				UPDATE page
+				SET page_content=?, page_reserve=?, page_guide=?, page_refund=?, page_update_at=SYSDATE
+				WHERE page_num=?
+			""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 순서대로 필요한 값 바인딩
+			pstmt.setString(1, dto.getPageContent());
+			pstmt.setString(2, dto.getPageReserve());
+			pstmt.setString(3, dto.getPageGuide());
+			pstmt.setString(4, dto.getPageRefund());
+			pstmt.setLong(5, dto.getPageNum());
+			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
+			rowCount = pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(pstmt, conn);
+		}
+		// 변화된 rowCount 값을 조사해서 작업의 성공 여부를 알아낼 수 있다
+		if (rowCount > 0) {
+			return true; // 작업 성공이라는 의미에서 true 리턴하기
+		} else {
+			return false; // 작업 실패라는 의미에서 false 리턴하기
+		}
+	}
+		
+	// 글 삭제
+	public boolean deleteByNum(long num) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		// 변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
+		int rowCount = 0;
+
+		try {
+			conn = DBConnector.getConn();
+			String sql = """
+				DELETE FROM page
+				WHERE page_num=?
+			""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 순서대로 필요한 값 바인딩
+			pstmt.setLong(1, num);
+			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
+			rowCount = pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(pstmt, conn);
+		}
+		// 변화된 rowCount 값을 조사해서 작업의 성공 여부를 알아낼 수 있다
+		if (rowCount > 0) {
+			return true; // 작업 성공이라는 의미에서 true 리턴하기
+		} else {
+			return false; // 작업 실패라는 의미에서 false 리턴하기
+		}
 	}
 	
 	// 글 하나의 정보 불러오기
@@ -174,9 +252,9 @@ public class PageDao {
 			conn = DBConnector.getConn();
 			// 실행할 sql 문
 			String sql = """
-				SELECT stay_name, user_name, page_content, page_reserve, page_guide, page_refund
+				SELECT stay_name, users_name, u.users_id, page_content, page_reserve, page_guide, page_refund
 				FROM page p
-				INNER JOIN users u ON p.user_num=u.user_num
+				INNER JOIN users u ON p.users_num=u.users_num
 				INNER JOIN stay s ON p.stay_num=s.stay_num
 				WHERE page_num=?
 			""";
@@ -189,13 +267,14 @@ public class PageDao {
 			// 단일 : if  /  다중 : while
 			if (rs.next()) {
 				dto=new PageDto();
-				dto.setPage_num(num);
-				dto.setStay_name(rs.getString("stay_name"));
-				dto.setUser_name(rs.getString("user_name"));
-				dto.setPage_content(rs.getString("page_content"));
-				dto.setPage_reserve(rs.getString("page_reserve"));
-				dto.setPage_guide(rs.getString("page_guide"));
-				dto.setPage_refund(rs.getString("page_refund"));
+				dto.setPageNum(num);
+				dto.setStayName(rs.getString("stay_name"));
+				dto.setUsersName(rs.getString("users_name"));
+				dto.setUsersId(rs.getString("users_id"));
+				dto.setPageContent(rs.getString("page_content"));
+				dto.setPageReserve(rs.getString("page_reserve"));
+				dto.setPageGuide(rs.getString("page_guide"));
+				dto.setPageRefund(rs.getString("page_refund"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -226,7 +305,7 @@ public class PageDao {
 			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
 			// 단일 : if  /  다중 : while
 			if (rs.next()) {
-				num=rs.getInt("num");
+				num=rs.getLong("num");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -247,30 +326,25 @@ public class PageDao {
 			conn = DBConnector.getConn();
 			// 
 			String sql = """
-				INSERT INTO Page
-				(page_num, stay_num, user_num, page_content, page_created_at, page_reserve, page_guide, page_refund)
-				VALUES(SEQ_page.NEXTVAL, ?, ?, ?, SYSDATE, ?, ?, ?)
+				INSERT INTO page
+				(page_num, stay_num, users_num, page_content, page_created_at, page_reserve, page_guide, page_refund)
+				VALUES (?, ?, ?, ?, SYSDATE, ?, ?, ?)
 			""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 순서대로 필요한 값 바인딩
-			pstmt.setLong(1, dto.getStay_num());
-			pstmt.setLong(2, dto.getUser_num());
-			pstmt.setString(3, dto.getPage_content());
-			pstmt.setString(4, dto.getPage_reserve()); 
-			pstmt.setString(5, dto.getPage_guide());
-			pstmt.setString(6, dto.getPage_refund());
+			pstmt.setLong(1, dto.getPageNum());
+			pstmt.setLong(2, dto.getStayNum());
+			pstmt.setLong(3, dto.getUsersNum());
+			pstmt.setString(4, dto.getPageContent());
+			pstmt.setString(5, dto.getPageReserve()); 
+			pstmt.setString(6, dto.getPageGuide());
+			pstmt.setString(7, dto.getPageRefund());
 			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
 			rowCount = pstmt.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			// 닫을 땐 실행되는 순서의 역순으로 닫아야 함
-			try {
-				if (pstmt != null)
-					pstmt.close();
-				if (conn != null)
-					conn.close();
-			} catch (Exception e) {}
+			DBConnector.close(pstmt, conn);
 		}
 		// 변화된 rowCount 값을 조사해서 작업의 성공 여부를 알아낼 수 있다
 		if (rowCount > 0) {

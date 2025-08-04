@@ -13,12 +13,12 @@
 	request.setAttribute("usersNum", usersNum);
 %>
 
-<nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm py-3">
+<nav class="navbar navbar-expand-lg sticky-top bg-white border-bottom shadow-sm py-3">
   <div class="container-fluid align-items-center flex-nowrap">
     <!-- 좌측 로고 -->
     <a class="navbar-brand fw-bold" href="${pageContext.request.contextPath}/index.jsp">STAYLOG</a>
     <span><%=usersId %></span> <!-- 현재 세션 상태 확인을 위한 임시코드(지워도 상관없음) -->
-    <span><%=usersNum %></span> <!-- 현재 세션 상태 확인을 위한 임시코드(지워도 상관없음) -->
+    <span>[<%=usersNum %>]</span> <!-- 현재 세션 상태 확인을 위한 임시코드(지워도 상관없음) -->
 
     <!-- 검색창 -->
     <form class="d-flex mx-4 flex-grow-1" role="search">
@@ -51,6 +51,9 @@
 	      </li>
 	      <li class="nav-item mx-2">
 	      	<a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/dbtest">DBTest</a>
+	      </li>
+	      <li class="nav-item mx-2">
+	      	<a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/booking/booking-page.jsp">BOOK</a>
 	      </li>
 	      <li class="nav-item mx-3">
 	        <div class="vr"></div> <!-- 세로 구분선 -->

@@ -9,18 +9,29 @@ public class NotificationDto {
 	private int notiTypeCode;
 	private String notiTargetGroupId;
 	private int notiTargetTypeCode;
-	private long notiTargetNum;
+	private String notiTargetNum;
 	private String notiMessage;
 	private String notiReadGroupId;
 	private int notiReadCode;
 	private String notiCreatedAt;
 	
 	
-	// 추가로 필요한 필드
-	private String notiImage;
-	private String notiStayName;
+	// 공통(추가 필드)
+	// private String notiImage;
 	private String notiType;
 	private String notiDaysAgo;
+	
+	
+	// 예약 타입(추가 필드)
+	private String notiCheckIn;
+	private String notiCheckOut;
+	private String notiStayName;
+	
+	
+	// 댓글 타입(추가 필드)
+	private String notiCommentWriter;
+	private String notiCommentContent;
+	// private String 게시글 PK??
 	
 	
 	
@@ -66,10 +77,10 @@ public class NotificationDto {
 	public void setNotiTargetTypeCode(int notiTargetTypeCode) {
 		this.notiTargetTypeCode = notiTargetTypeCode;
 	}
-	public long getNotiTargetNum() {
+	public String getNotiTargetNum() {
 		return notiTargetNum;
 	}
-	public void setNotiTargetNum(long notiTargetNum) {
+	public void setNotiTargetNum(String notiTargetNum) {
 		this.notiTargetNum = notiTargetNum;
 	}
 	public String getNotiMessage() {
@@ -96,18 +107,6 @@ public class NotificationDto {
 	public void setNotiCreatedAt(String notiCreatedAt) {
 		this.notiCreatedAt = notiCreatedAt;
 	}
-	public String getNotiImage() {
-		return notiImage;
-	}
-	public void setNotiImage(String notiImage) {
-		this.notiImage = notiImage;
-	}
-	public String getNotiStayName() {
-		return notiStayName;
-	}
-	public void setNotiStayName(String notiStayName) {
-		this.notiStayName = notiStayName;
-	}
 	public String getNotiType() {
 		return notiType;
 	}
@@ -120,4 +119,36 @@ public class NotificationDto {
 	public void setNotiDaysAgo(String notiDaysAgo) {
 		this.notiDaysAgo = notiDaysAgo;
 	}
+	public String getNotiCheckIn() {
+		return notiCheckIn;
+	}
+	public void setNotiCheckIn(String notiCheckIn) {
+		this.notiCheckIn = notiCheckIn;
+	}
+	public String getNotiCheckOut() {
+		return notiCheckOut;
+	}
+	public void setNotiCheckOut(String notiCheckOut) {
+		this.notiCheckOut = notiCheckOut;
+	}
+	public String getNotiStayName() {
+		return notiStayName;
+	}
+	public void setNotiStayName(String notiStayName) {
+		this.notiStayName = notiStayName;
+	}
+	public String getNotiCommentWriter() {
+		return notiCommentWriter;
+	}
+	public void setNotiCommentWriter(String notiCommentWriter) {
+		this.notiCommentWriter = notiCommentWriter;
+	}
+	public String getNotiCommentContent() {
+		return notiCommentContent;
+	}
+	public void setNotiCommentContent(String notiCommentcontent) {
+		this.notiCommentContent = notiCommentcontent;
+	}
+	
+	
 }

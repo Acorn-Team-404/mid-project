@@ -1,99 +1,138 @@
 package model.page;
 
 public class PageDto {
-	private long page_num;
-	private long stay_num;
-	private long user_num;
-	private String page_content;
-	private String page_created_at;
-	private String page_update_at;
-	private String page_delete;
-	private String page_reserve;
-	private String page_guide;
-	private String page_refund;
+	private long pageNum;
+	private long stayNum;
+	private long usersNum;
+	private String pageContent;
+	private String pageCreatedAt;
+	private String pageUpdateAt;
+	private String pageDelete;
+	private String pageReserve;
+	private String pageGuide;
+	private String pageRefund;
 	
 	// 숙소 정보, 작성자, 키워드
-	private String stay_name;
-	private String user_name;
+	private String stayName;
+	private String usersName;
+	private String usersId;
 	private String keyword;
 	
+	// 페이징 처리를 위한 필드
+	private int startRowNum;
+	private int endRowNum;
+		
+	// 이전글, 다음글
+	private int prevNum;
+	private int nextNum;
+	
 	// setter, getter
-	public long getPage_num() {
-		return page_num;
+	public long getPageNum() {
+		return pageNum;
 	}
-	public void setPage_num(long page_num) {
-		this.page_num = page_num;
+	public void setPageNum(long pageNum) {
+		this.pageNum = pageNum;
 	}
-	public long getStay_num() {
-		return stay_num;
+	public long getStayNum() {
+		return stayNum;
 	}
-	public void setStay_num(long stay_num) {
-		this.stay_num = stay_num;
+	public void setStayNum(long stayNum) {
+		this.stayNum = stayNum;
 	}
-	public long getUser_num() {
-		return user_num;
+	public long getUsersNum() {
+		return usersNum;
 	}
-	public void setUser_num(long user_num) {
-		this.user_num = user_num;
+	public void setUsersNum(long usersNum) {
+		this.usersNum = usersNum;
 	}
-	public String getPage_content() {
-		return page_content;
+	public String getPageContent() {
+		return pageContent;
 	}
-	public void setPage_content(String page_content) {
-		this.page_content = page_content;
+	public void setPageContent(String pageContent) {
+		this.pageContent = pageContent;
 	}
-	public String getPage_created_at() {
-		return page_created_at;
+	public String getPageCreatedAt() {
+		return pageCreatedAt;
 	}
-	public void setPage_created_at(String page_created_at) {
-		this.page_created_at = page_created_at;
+	public void setPageCreatedAt(String pageCreatedAt) {
+		this.pageCreatedAt = pageCreatedAt;
 	}
-	public String getPage_update_at() {
-		return page_update_at;
+	public String getPageUpdateAt() {
+		return pageUpdateAt;
 	}
-	public void setPage_update_at(String page_update_at) {
-		this.page_update_at = page_update_at;
+	public void setPageUpdateAt(String pageUpdateAt) {
+		this.pageUpdateAt = pageUpdateAt;
 	}
-	public String getPage_delete() {
-		return page_delete;
+	public String getPageDelete() {
+		return pageDelete;
 	}
-	public void setPage_delete(String page_delete) {
-		this.page_delete = page_delete;
+	public void setPageDelete(String pageDelete) {
+		this.pageDelete = pageDelete;
 	}
-	public String getPage_reserve() {
-		return page_reserve;
+	public String getPageReserve() {
+		return pageReserve;
 	}
-	public void setPage_reserve(String page_reserve) {
-		this.page_reserve = page_reserve;
+	public void setPageReserve(String pageReserve) {
+		this.pageReserve = pageReserve;
 	}
-	public String getPage_guide() {
-		return page_guide;
+	public String getPageGuide() {
+		return pageGuide;
 	}
-	public void setPage_guide(String page_guide) {
-		this.page_guide = page_guide;
+	public void setPageGuide(String pageGuide) {
+		this.pageGuide = pageGuide;
 	}
-	public String getPage_refund() {
-		return page_refund;
+	public String getPageRefund() {
+		return pageRefund;
 	}
-	public void setPage_refund(String page_refund) {
-		this.page_refund = page_refund;
+	public void setPageRefund(String pageRefund) {
+		this.pageRefund = pageRefund;
 	}
-	public String getStay_name() {
-		return stay_name;
+	public String getStayName() {
+		return stayName;
 	}
-	public void setStay_name(String stay_name) {
-		this.stay_name = stay_name;
+	public void setStayName(String stayName) {
+		this.stayName = stayName;
 	}
-	public String getUser_name() {
-		return user_name;
+	public String getUsersName() {
+		return usersName;
 	}
-	public void setUser_name(String user_name) {
-		this.user_name = user_name;
+	public void setUsersName(String usersName) {
+		this.usersName = usersName;
+	}
+	public String getUsersId() {
+		return usersId;
+	}
+	public void setUsersId(String usersId) {
+		this.usersId = usersId;
 	}
 	public String getKeyword() {
 		return keyword;
 	}
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
+	}
+	public int getStartRowNum() {
+		return startRowNum;
+	}
+	public void setStartRowNum(int startRowNum) {
+		this.startRowNum = startRowNum;
+	}
+	public int getEndRowNum() {
+		return endRowNum;
+	}
+	public void setEndRowNum(int endRowNum) {
+		this.endRowNum = endRowNum;
+	}
+	public int getPrevNum() {
+		return prevNum;
+	}
+	public void setPrevNum(int prevNum) {
+		this.prevNum = prevNum;
+	}
+	public int getNextNum() {
+		return nextNum;
+	}
+	public void setNextNum(int nextNum) {
+		this.nextNum = nextNum;
 	}
 }

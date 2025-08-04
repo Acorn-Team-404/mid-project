@@ -201,7 +201,7 @@ public class UserDao {
          conn = DBConnector.getConn();
          //실행할 sql문
          String sql = """
-            SELECT users_num, users_id, users_name, users_pw, users_email, users_phone, users_birth, users_profile_image, users_role, users_updated_at, users_created_at
+            SELECT users_num, users_id, users_name, users_pw, users_email, users_phone, TO_CHAR(users_birth, 'YYYY-MM-DD') AS users_birth, users_profile_image, users_role, users_updated_at, users_created_at
             FROM users
             WHERE users_id=?
          """;
@@ -222,6 +222,7 @@ public class UserDao {
             dto.setUsersEmail(rs.getString("users_email"));
             dto.setUsersPhone(rs.getString("users_phone"));
             dto.setUsersBirth(rs.getString("users_birth"));
+            dto.setUsersProfileImage(rs.getString("users_profile_image"));
    
          }
       } catch (Exception e) {

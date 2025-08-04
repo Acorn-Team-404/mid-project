@@ -7,11 +7,16 @@
 <html>
 <head>
 <meta charset="UTF-8">
+  <jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user/signup-form.css">
 <title>user/signup-form</title>
 </head>
 <body>
-	<div class="container">
-		<h1>회원가입</h1>
+	<div class="container mt-5 mb-5" style="max-width: 500px;">
+		<h1>J O I N</h1>
+		<h2>회원가입</h2>	
+		
 		<form action="${pageContext.request.contextPath}/signup.user" method="post" autocapitalize="off">
 			
 			<div>
@@ -45,7 +50,7 @@
 				<button type="button" onclick="sendEmailAuth()">인증 코드 보내기</button>
 				
 				<input type="text" name="inputCode" id="inputCode" placeholder="인증코드 입력.." required>
-				<button type="button" onclick="verifycode()">인증 코드 확인</button>
+				<button type="button" onclick="verifyCode()">인증 코드 확인</button>
 			</div>
 			
 			<div>
@@ -70,13 +75,19 @@
 	
 	//이메일 인증 눌렀는지..
 	document.querySelector("form").addEventListener("submit", function(e) {
-		const verified = <%= verified != null && verified ? "true" : "false" %>;
-		if (!verified) {
-			e.preventDefault();
-			alert("이메일 인증을 먼저 완료해주세요.");
-		}
-	});
+	    const idCheck = document.getElementById("checkIdAction").value;
 	
+	    if (idCheck !== "on") {
+	        e.preventDefault();
+	        alert("아이디 중복확인을 해주세요.");
+	        return;
+	    }
+	
+	    if (!emailVerified) {
+	        e.preventDefault();
+	        alert("이메일 인증을 먼저 완료해주세요.");
+	    }
+	});
 		
 	//인증번호 보내기, 버튼 누르면
 	function sendEmailAuth() {
@@ -93,20 +104,27 @@
 
 	
 	//인증확인 눌렀을 때
-	function verifyCode() {
-	    var code = document.getElementById("inputCode").value;
-	    fetch("/${pageContext.request.contextPath}/VerifyCode.user", {
-	        method: "POST",
-	        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-	        body: "inputCode=" + encodeURIComponent(code)
-	    }).then(resp => resp.text()).then(text => {
-	        if (text === "success") {
-	            alert("인증 완료");
-	        } else {
-	            alert("인증 실패");
-	        }
-	    });
-	}
+    function verifyCode() {
+        var code = document.getElementById("inputCode").value;
+
+        fetch(contextPath + "/VerifyCode.user", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: "inputCode=" + encodeURIComponent(code)
+        })
+        .then(resp => resp.text())
+        .then(text => {
+            console.log("서버 응답:", text); // 디버깅용
+
+            if (text === "success") {
+                alert("이메일 인증 성공!");
+                emailVerified = true; 
+            } else {
+                alert("인증번호가 틀렸습니다.");
+                emailVerified = false;
+            }
+        });
+    }
 	
 	
 	

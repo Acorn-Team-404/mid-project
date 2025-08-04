@@ -1,10 +1,8 @@
-<%@page import="model.room.RoomDto"%>
-<%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <div class="container my-5">
-        <form action="${pageContext.request.contextPath}/booking/submit" method="post" id="bookingForm">
-            <div class="row g-5">
+ <!--   <div class="container my-5"> -->
+        <%-- <form action="${pageContext.request.contextPath}/booking/submit" method="post" id="bookingForm">
+            <div class="row g-5"> --%>
 
                 <!-- 왼쪽: 예약자 정보 -->
                 <div class="col-md-7">
@@ -13,7 +11,7 @@
                         <input type="hidden" name="usersNum" id="userNum" value="${usersNum}"/>
 
                         <div class="mb-3">
-                            <label for="usersName" class="form-label">이름</label>
+                            <label for="name" class="form-label">이름</label>
                             <p>${usersName}</p>
                             <input type="hidden" name="usersName" id="userName" value="${usersName}"/>
                         </div>
@@ -76,36 +74,22 @@
                 <!-- 오른쪽: 예약 요약 -->
                 <div class="col-md-5">
                     <div class="right-container-fixed">
-                        <!-- <input type="hidden" name="bookStayNum" id="bookStayNum" value="100"/> -->
-                         <input type="hidden" name="bookStayNum" id="bookStayNum" value="${stay.stay_num}" />
-					
-						<!-- <label for="bookRoomNum">객실 선택</label>
-						<select id="bookRoomNum" name="bookRoomNum">
-							<option value="" disabled selected hidden>객실을 선택하세요</option>
+                        <input type="hidden" name="bookStayNum" id="bookStayNum" value="100"/>
+						
+						<label for="bookRoomNum">객실 선택</label>
+							<select id="bookRoomNum" name="bookRoomNum">
 							<option value="1">스탠다드 객실</option>
 							<option value="2">트윈 객실</option>
 							<option value="3">패밀리 객실</option>
-						</select> -->
-						
-						<select name="bookRoomNum" id="bookRoomNum" class="form-select">
-						    <option value="" disabled selected>객실을 선택하세요</option>
-						    <% 
-						       List<RoomDto> roomList = (List<RoomDto>) request.getAttribute("roomList");
-						       if(roomList != null && !roomList.isEmpty()) {
-						           for(RoomDto room : roomList) {
-						    %>
-						        <option value="<%= room.getRoomNum() %>" data-price="<%= room.getRoomPrice() %>" data-name="<%= room.getRoomName() %>">
-						            <%= room.getRoomName() %>
-						        </option>
-						    <% 
-						           }
-						       } else { 
-						    %>
-						        <option disabled>객실 정보가 없습니다</option>
-						    <% } %>
 						</select>
-
-			
+						
+                        <!-- <label for="bookRoomNum" class="form-label">객실 선택</label>
+                        <select id="bookRoomNum" name="bookRoomNum" class="form-select">
+                          <c:forEach var="room" items="${roomList}">
+                            <option value="${room.roomNum}" data-price="${room.price}">${room.roomName}</option>
+                          </c:forEach>
+                        </select>-->
+                        
                         <div class="mb-3 mt-3">
                             <label for="checkIn" class="form-label">체크인 날짜</label>
                             <input type="date" name="checkIn" id="checkIn" class="form-control"/>
@@ -143,25 +127,16 @@
                         </div>
 
                         <div class="mb-4">
-                            <!-- 객실명도 표시 -->
-							<strong>객실 이름:</strong> <span id="selectedRoomNameDisplay"></span><br/>
-							<!-- <strong>객실 요금:</strong> <span id="roomPrice"></span><br/>-->
-							<strong>객실 가격:</strong> <i class="bi bi-currency-dollar"></i><span id="roomPrice">선택하세요</span><br />
-							<strong>추가 침대:</strong> <span id="bedOption"></span><br/>
-							<strong>도착 시간:</strong> <span id="checkInOption"></span><br/>
-							<strong>총액:</strong>
-							<input type="text" name="totalAmount" id="totalAmount" class="form-control mt-1" readonly/>
+                            <strong>객실 요금:</strong> <span id="roomPrice"></span><br/>
+                            <strong>추가 침대:</strong> <span id="bedOption"></span><br/>
+                            <strong>도착 시간:</strong> <span id="checkInOption"></span><br/>
+                            <strong>총액:</strong>
+                            <input type="text" name="totalAmount" id="totalAmount" class="form-control mt-1" readonly/>
                         </div>
-                        
-                        <!-- JS에서 설정한 값을 서블릿에 넘기기 위한 hidden input들 -->
-						<input type="hidden" name="selectedBed" id="selectedBed" value=""/>
-						<input type="hidden" name="selectedCheckInTime" id="selectedCheckInTime" value="standard"/>
-						<input type="hidden" name="totalAmountValue" id="totalAmountValue" value="0"/>
-                        
-                        
+
                         <button type="submit" class="btn btn-primary w-100">예약하기</button>
                     </div>
                 </div>
-            </div>
-        </form>
-    </div>
+         <!--    </div>
+        </form> -->
+<!--     </div> -->
