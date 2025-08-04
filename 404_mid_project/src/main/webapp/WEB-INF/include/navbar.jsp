@@ -52,6 +52,9 @@
 	      <li class="nav-item mx-2">
 	      	<a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/dbtest">DBTest</a>
 	      </li>
+	      <li class="nav-item mx-2">
+	      	<a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/booking/booking-page.jsp">BOOK</a>
+	      </li>
 	      <li class="nav-item mx-3">
 	        <div class="vr"></div> <!-- 세로 구분선 -->
 	      </li>

@@ -6,7 +6,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
+import model.room.RoomDao;
+import model.room.RoomDto;
 import model.util.DBConnector;
 
 public class BookDao {
@@ -39,15 +43,16 @@ public class BookDao {
 	           pstmt.executeUpdate();
 	       }
 	   }
+	
 	// 해당 숙소의 객실 목록
-	/*public List<RoomDto> getRoomByStayNum(int stayNum){
+	public List<RoomDto> getRoomByStayNum(int stayNum){
 		List<RoomDto> list = new ArrayList<>();
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		String sql = """
-			SELECT room_num, room_name
+			SELECT room_num, room_name, room_price
 			FROM room
 			WHERE room_stay_num = ?
 			""";
@@ -59,6 +64,7 @@ public class BookDao {
 				RoomDto dto = new RoomDto();
 				dto.setRoomNum(rs.getInt("room_num"));
 				dto.setRoomName(rs.getString("room_name"));
+				dto.setRoomPrice(rs.getInt("room_price"));
 				list.add(dto);
 			}
 		} catch (Exception e) {
@@ -67,8 +73,8 @@ public class BookDao {
 	        DBConnector.close(rs, pstmt, conn);
 	    }
 	    return list;
-	}*/
-	
+	}
+		
 	// 예약 번호 생성 메소드
 	public String generateBookNum() {
 		String bookNum = null;
