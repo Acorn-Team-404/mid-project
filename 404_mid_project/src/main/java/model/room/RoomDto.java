@@ -28,6 +28,30 @@ public class RoomDto {
 	// 객실 설명
 	private String roomContent;
 	
+	// 숙소명 s.STAY_NAME 
+	private String roomStayName;
+	// 숙소 편의시설 s.STAY_FACILITIES
+	private String roomStayFacilities;
+	
+	// setter&getter for s.STAY_NAME, s.STAY_FACILITIES
+	public void setRoomStayName(String roomStayName) {
+		this.roomStayName = roomStayName;
+	}
+	
+	public String getRoomStayName() {
+		return roomStayName;
+	}
+	
+	public void setRoomStayFacilities(String roomStayFacilities) {
+		this.roomStayFacilities = roomStayFacilities;
+	}
+	
+	public String getRoomStayFacilities() {
+		return roomStayFacilities;
+	}
+	
+
+	
 	// setter & getter
 	public long getRoomNum() {
 		return roomNum;
@@ -107,5 +131,7 @@ public class RoomDto {
 	public void setRoomContent(String roomContent) {
 		this.roomContent = roomContent;
 	}
+
+	
 
 }
