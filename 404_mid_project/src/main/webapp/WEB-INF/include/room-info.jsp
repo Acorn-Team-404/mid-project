@@ -9,6 +9,9 @@
   // 예시: 현재 숙소 번호를 파라미터로 받는다고 가정
   //int stayNum = Integer.parseInt(request.getParameter("stayNum"));
   int stayNum = 100;
+  //List<RoomDto> roomList = RoomDao.getInstance().getRoomListByStayNum(stayNum);
+  
+  //
   List<RoomDto> roomList = RoomDao.getInstance().getRoomListByStayNum(stayNum);
 %>
 
@@ -77,6 +80,7 @@
             <div class="col-md-7 p-3 d-flex flex-column justify-content-between">
               <div>
                 <h5 class="fw-bold mb-2"><%= room.getRoomName() %></h5>
+                <p class="mb-1">숙소명: <%= room.getRoomStayName() %></p>
                 <p class="mb-1">타입: <%= room.getRoomType() %></p>
                 <p class="mb-1">최대 인원: <%= room.getRoomPaxMax() %>명</p>
                 <p class="mb-1">가격: ₩<%= room.getRoomPrice() %></p>
