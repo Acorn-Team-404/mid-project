@@ -13,7 +13,6 @@
 <head>
 <meta charset="UTF-8">
 <title>/booking/</title>
-<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/book-mina/room-info.css" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/book-kcr/booking-page.css" />
 </head>

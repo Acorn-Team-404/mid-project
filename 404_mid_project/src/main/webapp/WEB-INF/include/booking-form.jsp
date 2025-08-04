@@ -36,26 +36,26 @@
 
                             <label class="form-label">추가 침대</label><br/>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="bed" value="extraBed" id="extraBed"/>
+                                <input class="form-check-input" type="checkbox" name="bed" value="extraBed" id="extraBed" data-label="간이 침대"/>
                                 <label class="form-check-label" for="extraBed">간이 침대</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="bed" value="infantBed" id="infantBed"/>
+                                <input class="form-check-input" type="checkbox" name="bed" value="infantBed" id="infantBed" data-label="유아 침대"/>
                                 <label class="form-check-label" for="infantBed">유아 침대</label>
                             </div>
 
                             <div class="mt-3">
                                 <label class="form-label">도착</label><br/>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="checkInTime" value="standard" id="checkInStandard" checked/>
+                                    <input class="form-check-input" type="radio" name="checkInTime" value="standard" id="checkInStandard" checked data-label="정규 시간"/>
                                     <label class="form-check-label" for="checkInStandard">정규 시간</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="checkInTime" value="early" id="checkInEarly"/>
+                                    <input class="form-check-input" type="radio" name="checkInTime" value="early" id="checkInEarly" data-label="이른 체크인"/>
                                     <label class="form-check-label" for="checkInEarly">이른 체크인</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="checkInTime" value="late" id="checkInLate"/>
+                                    <input class="form-check-input" type="radio" name="checkInTime" value="late" id="checkInLate" data-label="늦은 도착"/>
                                     <label class="form-check-label" for="checkInLate">늦은 도착</label>
                                 </div>
                             </div>
@@ -166,143 +166,143 @@
         </form>
     </div>
     <script>
-	    const pax = {
-	    	    adult : parseInt(document.querySelector("#adult").value) || 0,
-	    	    children : parseInt(document.querySelector("#children").value) || 0,
-	    	    infant : parseInt(document.querySelector("#infant").value) || 0
-	    	};
+		document.addEventListener("DOMContentLoaded", function () {
+    const pax = {
+        adult: parseInt(document.querySelector("#adult").value) || 0,
+        children: parseInt(document.querySelector("#children").value) || 0,
+        infant: parseInt(document.querySelector("#infant").value) || 0
+    };
 
-    	const updateUI = () => {
-    	    document.querySelector("#adultCount").textContent = pax.adult;
-    	    document.querySelector("#childrenCount").textContent = pax.children;
-    	    document.querySelector("#infantCount").textContent = pax.infant;
-    	    document.querySelector("#totPerson").textContent = pax.adult + pax.children + pax.infant;
+    const updateUI = () => {
+        document.querySelector("#adultCount").textContent = pax.adult;
+        document.querySelector("#childrenCount").textContent = pax.children;
+        document.querySelector("#infantCount").textContent = pax.infant;
+        document.querySelector("#totPerson").textContent = pax.adult + pax.children + pax.infant;
 
-    	    document.querySelector("#adult").value = pax.adult;
-    	    document.querySelector("#children").value = pax.children;
-    	    document.querySelector("#infant").value = pax.infant;
-    	};
+        document.querySelector("#adult").value = pax.adult;
+        document.querySelector("#children").value = pax.children;
+        document.querySelector("#infant").value = pax.infant;
+    };
 
-    	window.changeCount = (type, delta) => {
-    	    if (pax.hasOwnProperty(type)) {
-    	        pax[type] = Math.max(0, pax[type] + delta);
-    	        updateUI();
-    	        calculateTotalAmount();
-    	        updateSummaryBox();
-    	    }
-    	};
+    window.changeCount = (type, delta) => {
+        if (pax.hasOwnProperty(type)) {
+            pax[type] = Math.max(0, pax[type] + delta);
+            updateUI();
+            calculateTotalAmount();
+            updateSummaryBox();
+        }
+    };
 
-    	// 초기 상태에 표시 여부 제어 변수
-    	let isBedTouched = false;
-    	let isCheckInTimeTouched = false;
+    // 표시 여부 제어 플래그
+    let isBedTouched = false;
+    let isCheckInTimeTouched = false;
 
-    	// 2. 침대 옵션 체크박스 -> hidden input 세팅 + 표시 갱신
-    	document.querySelectorAll('input[name="bed"]').forEach(cb => {
-    	    cb.addEventListener('change', () => {
-    	        isBedTouched = true;
-    	        const selectedBeds = Array.from(document.querySelectorAll('input[name="bed"]:checked'))
-    	            .map(b => b.value);
-    	        document.querySelector('#selectedBed').value = selectedBeds.join(',');
-    	        updateSummaryBox();
-    	    });
-    	});
+    // ✅ 침대 체크박스
+    document.querySelectorAll('input[name="bed"]').forEach(cb => {
+        cb.addEventListener('change', () => {
+            isBedTouched = true;
+            const selected = Array.from(document.querySelectorAll('input[name="bed"]:checked'))
+                .map(cb => cb.value);
+            document.querySelector("#selectedBed").value = selected.join(",");
+            updateSummaryBox();
+        });
+    });
 
-    	// 3. 체크인 시간 라디오 -> hidden input 세팅 + 표시 갱신
-    	document.querySelectorAll('input[name="checkInTime"]').forEach(radio => {
-    	    radio.addEventListener('change', () => {
-    	        isCheckInTimeTouched = true;
-    	        document.querySelector('#selectedCheckInTime').value = radio.value;
-    	        updateSummaryBox();
-    	    });
-    	});
+    // ✅ 체크인 라디오
+    document.querySelectorAll('input[name="checkInTime"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            isCheckInTimeTouched = true;
+            document.querySelector('#selectedCheckInTime').value = radio.value;
+            updateSummaryBox();
+        });
+    });
 
-    	// 4. 총액 계산용 함수
-    	function calculateTotalAmount() {
-    	    const pricePerDay = getSelectedRoomPrice();
-    	    const days = calculateStayDays();
-    	    const total = pricePerDay * days;
-    	    document.querySelector('#totalAmountValue').value = total;
-    	    document.querySelector('#totalAmount').value = total > 0 ? total.toLocaleString() + '원' : "";
-    	}
+    // ✅ 총액 계산
+    function calculateTotalAmount() {
+        const pricePerDay = getSelectedRoomPrice();
+        const days = calculateStayDays();
+        const total = pricePerDay * days;
+        document.querySelector('#totalAmountValue').value = total;
+        document.querySelector('#totalAmount').value = total > 0 ? total.toLocaleString() + '원' : "";
+    }
 
-    	// 객실 가격 가져오기
-    	function getSelectedRoomPrice() {
-    	    const select = document.querySelector('#bookRoomNum');
-    	    if (!select || !select.value) return 0; // 선택 안 된 경우
-    	    const selectedOption = select.options[select.selectedIndex];
-    	    const price = selectedOption.getAttribute('data-price');
-    	    return price ? parseInt(price, 10) : 0;
-    	}
+    function getSelectedRoomPrice() {
+        const select = document.querySelector('#bookRoomNum');
+        if (!select || !select.value) return 0;
+        const selectedOption = select.options[select.selectedIndex];
+        const price = selectedOption.getAttribute('data-price');
+        return price ? parseInt(price, 10) : 0;
+    }
 
-    	// 숙박일 계산
-    	function calculateStayDays() {
-    	    const checkIn = document.querySelector('#checkIn').value;
-    	    const checkOut = document.querySelector('#checkOut').value;
-    	    if (!checkIn || !checkOut) return 0;
-    	    const inDate = new Date(checkIn);
-    	    const outDate = new Date(checkOut);
-    	    const diff = (outDate - inDate) / (1000 * 60 * 60 * 24);
-    	    return diff > 0 ? diff : 0;
-    	}
+    function calculateStayDays() {
+        const checkIn = document.querySelector('#checkIn').value;
+        const checkOut = document.querySelector('#checkOut').value;
+        if (!checkIn || !checkOut) return 0;
+        const inDate = new Date(checkIn);
+        const outDate = new Date(checkOut);
+        const diff = (outDate - inDate) / (1000 * 60 * 60 * 24);
+        return diff > 0 ? diff : 0;
+    }
 
-    	// 요약 박스 업데이트
-    	function updateSummaryBox() {
-    	    // 침대
-    	    const beds = Array.from(document.querySelectorAll('input[name="bed"]:checked')).map(cb => {
-    	        if (cb.value === "extraBed") return "간이 침대";
-    	        if (cb.value === "infantBed") return "유아 침대";
-    	        return "";
-    	    }).filter(Boolean);
+    // ✅ 요약 박스 업데이트 (data-label 방식)
+    function updateSummaryBox() {
+        // ➤ 침대 옵션
+        const beds = Array.from(document.querySelectorAll('input[name="bed"]:checked'))
+            .map(cb => cb.dataset.label || "")
+            .filter(Boolean);
+        document.querySelector("#bedOption").textContent = isBedTouched
+            ? (beds.length > 0 ? beds.join(", ") : "없음")
+            : "";
 
-    	    document.querySelector("#bedOption").textContent = isBedTouched
-    	        ? (beds.length > 0 ? beds.join(", ") : "없음")
-    	        : "";
+        // ➤ 체크인 시간
+        const checkInRadio = document.querySelector('input[name="checkInTime"]:checked');
+        const checkInLabel = checkInRadio?.dataset.label || "";
+        document.querySelector("#checkInOption").textContent = isCheckInTimeTouched ? checkInLabel : "";
 
-    	    // 체크인 시간
-    	    const checkInRadio = document.querySelector('input[name="checkInTime"]:checked');
-    	    const checkInLabel = checkInRadio ? document.querySelector(`label[for="${checkInRadio.id}"]`).textContent : "";
-    	    document.querySelector("#checkInOption").textContent = isCheckInTimeTouched ? checkInLabel : "";
+        // ➤ 총 인원
+        const totPerson = pax.adult + pax.children + pax.infant;
+        document.querySelector("#totPerson").textContent = totPerson;
+    }
 
-    	    // 인원
-    	    document.querySelector("#totPerson").textContent = pax.adult + pax.children + pax.infant;
-    	}
+    // ✅ 객실명/가격 표시
+    function updateRoomInfo() {
+        const select = document.querySelector("#bookRoomNum");
+        const nameEl = document.querySelector("#selectedRoomNameDisplay");
+        const priceEl = document.querySelector("#roomPrice");
 
-    	// 객실명과 가격 표시 함수
-    	function updateRoomInfo() {
-    	    const roomSelect = document.querySelector("#bookRoomNum");
-    	    if (!roomSelect.value) {
-    	        document.querySelector("#selectedRoomNameDisplay").textContent = "선택하세요";
-    	        document.querySelector("#roomPrice").textContent = "0 원";
-    	        return;
-    	    }
-    	    
-    	    const selectedOption = roomSelect.options[roomSelect.selectedIndex];
-    	    const name = selectedOption.getAttribute("data-name");
-    	    const price = selectedOption.getAttribute("data-price");
-    		console.log("선택 객실:", name, price);
+        if (!select.value) {
+            nameEl.textContent = "선택하세요";
+            priceEl.textContent = "0 원";
+            return;
+        }
 
-    	    document.querySelector("#selectedRoomNameDisplay").textContent = name;
-    	    document.querySelector("#roomPrice").textContent = Number(price).toLocaleString() + " 원";
-    	}
+        const selectedOption = select.options[select.selectedIndex];
+        const name = selectedOption.getAttribute("data-name");
+        const price = selectedOption.getAttribute("data-price");
 
-    	// 이벤트 바인딩
-    	document.querySelector("#bookRoomNum").addEventListener("change", () => {
-    	    updateRoomInfo();
-    	    calculateTotalAmount();
-    	    updateSummaryBox();
-    	});
-    	document.querySelector("#checkIn").addEventListener("change", () => {
-    	    calculateTotalAmount();
-    	    updateSummaryBox();
-    	});
-    	document.querySelector("#checkOut").addEventListener("change", () => {
-    	    calculateTotalAmount();
-    	    updateSummaryBox();
-    	});
+        nameEl.textContent = name;
+        priceEl.textContent = Number(price).toLocaleString() + " 원";
+    }
 
-    	// 초기 실행
-    	updateUI();
-    	updateRoomInfo();
-    	calculateTotalAmount();
-    	updateSummaryBox();
-    </script>
+    // ✅ 이벤트 바인딩
+    document.querySelector("#bookRoomNum").addEventListener("change", () => {
+        updateRoomInfo();
+        calculateTotalAmount();
+        updateSummaryBox();
+    });
+    document.querySelector("#checkIn").addEventListener("change", () => {
+        calculateTotalAmount();
+        updateSummaryBox();
+    });
+    document.querySelector("#checkOut").addEventListener("change", () => {
+        calculateTotalAmount();
+        updateSummaryBox();
+    });
+
+    // ✅ 초기 실행
+    updateUI();
+    updateRoomInfo();
+    calculateTotalAmount();
+    updateSummaryBox();
+		});
+</script>
