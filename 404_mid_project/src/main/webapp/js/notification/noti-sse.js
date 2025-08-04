@@ -54,6 +54,8 @@ function initializeSSE() {
 				`;
 			}
 
+
+			
 			if(noti.typeCode == 20) {
 				notiCard = `
 					<div class="noti-card d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25">

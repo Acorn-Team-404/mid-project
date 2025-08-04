@@ -39,7 +39,7 @@ public class NotificationDao {
 					    c.cc_description AS noti_type,
 					    n.noti_message, 
 					    n.noti_read_code, 
-					    n.noti_created_at,
+					    TO_CHAR(n.noti_created_at, 'YYYY-MM-DD') AS noti_created_at,
 					    n.noti_type_code,
 					    TRUNC(SYSDATE - n.noti_created_at) AS noti_days_ago,
 					    TO_CHAR(b.book_checkin_date, 'YYYY-MM-DD') AS noti_book_checkin,
@@ -47,20 +47,23 @@ public class NotificationDao {
 					    s.stay_name AS noti_stay_name,
 					    comm.comment_content AS noti_comment_content,
 					    comm.comment_parent_num AS noti_comment_parent_num,
-					    comm.comment_writer AS noti_comment_writer
+					    users.users_id AS noti_comment_writer
 					FROM notifications n
 					LEFT JOIN booking b
-					  ON n.noti_type_code = 10 
-					 AND n.noti_target_num = b.book_num
+					  	ON n.noti_type_code = 10 
+					 	AND n.noti_target_num = b.book_num
 					LEFT JOIN stay s
-					  ON n.noti_type_code = 10 
-					  AND b.book_stay_num = s.stay_num
+					  	ON n.noti_type_code = 10 
+					  	AND b.book_stay_num = s.stay_num
 					LEFT JOIN comments comm
-					  ON n.noti_type_code = 20 
-					 AND n.noti_sender_num = comm.comment_writer
+					  	ON n.noti_type_code = 20 
+					 	AND n.noti_sender_num = comm.comment_writer
+					LEFT JOIN users
+						ON n.noti_type_code = 20
+						AND n.noti_sender_num = users.users_num
 					LEFT JOIN common_code c
-					  ON c.cc_group_id = 'NOTI_TYPE'
-					 AND c.cc_code = n.noti_type_code
+					  	ON c.cc_group_id = 'NOTI_TYPE'
+					 	AND c.cc_code = n.noti_type_code
 					WHERE n.noti_recipient_num = ?
 						AND n.noti_num > ?
 					ORDER BY n.noti_num ASC
@@ -88,6 +91,12 @@ public class NotificationDao {
 				dto.setNotiCheckIn(rs.getString("noti_book_checkin"));
 				dto.setNotiCheckOut(rs.getString("noti_book_checkout"));
 				dto.setNotiStayName(rs.getString("noti_stay_name"));
+				
+				// 댓글 추가필드
+				dto.setNotiCommentContent(rs.getString("noti_comment_content"));
+				dto.setNotiCommentParentNum(rs.getString("noti_comment_parent_num"));
+				dto.setNotiCommentWriter(rs.getString("noti_comment_writer"));
+				
 				
 				
 				list.add(dto);
@@ -224,5 +233,36 @@ public class NotificationDao {
 		}
 	}
 	
+	
+	public boolean setRead(long notiNum) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		// 변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
+		int rowCount = 0;
+		try {
+			conn = DBConnector.getConn();
+			String sql = """
+					UPDATE notifications
+					SET noti_read_code = 11
+					WHERE noti_num = ?
+					""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 순서대로 필요한 값 바인딩
+			pstmt.setLong(1, notiNum);
+			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
+			rowCount = pstmt.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(pstmt, conn);
+		}
+		// 작업의 성공 여부 (변화된 row 의 갯수로 판단)
+		if (rowCount > 0) {
+			return true; // 작업 성공
+		} else {
+			return false; // 작업 실패
+		}
+	}
 			
 }

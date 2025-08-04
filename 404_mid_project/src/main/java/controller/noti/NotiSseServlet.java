@@ -95,6 +95,7 @@ public class NotiSseServlet extends HttpServlet {
 
                     obj.put("commentWriter", tmp.getNotiCommentWriter());
                     obj.put("commentContent", tmp.getNotiCommentContent());
+                    obj.put("commentParentNum", tmp.getNotiCommentParentNum());
 
                     jsonArray.add(obj);
                 }

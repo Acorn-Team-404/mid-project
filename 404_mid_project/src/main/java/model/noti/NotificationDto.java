@@ -31,7 +31,7 @@ public class NotificationDto {
 	// 댓글 타입(추가 필드)
 	private String notiCommentWriter;
 	private String notiCommentContent;
-	// private String 게시글 PK??
+	private String notiCommentParentNum;
 	
 	
 	
@@ -146,9 +146,15 @@ public class NotificationDto {
 	public String getNotiCommentContent() {
 		return notiCommentContent;
 	}
-	public void setNotiCommentContent(String notiCommentcontent) {
-		this.notiCommentContent = notiCommentcontent;
+	public void setNotiCommentContent(String notiCommentContent) {
+		this.notiCommentContent = notiCommentContent;
 	}
-	
+	public String getNotiCommentParentNum() {
+		return notiCommentParentNum;
+	}
+	public void setNotiCommentParentNum(String notiCommentParentNum) {
+		this.notiCommentParentNum = notiCommentParentNum;
+	}
+
 	
 }
