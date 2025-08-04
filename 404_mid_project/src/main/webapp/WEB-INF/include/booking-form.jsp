@@ -137,11 +137,11 @@
                     </div>
 
                     <div class="mb-4">
-                        <strong>객실 이름:</strong> <span id="selectedRoomNameDisplay"></span><br/>
-                        <strong>객실 가격:</strong> <i class="bi bi-currency-dollar"></i><span id="roomPrice">선택하세요</span><br />
-                        <strong>추가 침대:</strong> <span id="bedOption"></span><br/>
-                        <strong>도착 시간:</strong> <span id="checkInOption"></span><br/>
-                        <strong>총액:</strong> <span id="totalAmount"></span>
+                        <strong>객실 이름 :</strong> <span id="selectedRoomNameDisplay"></span><br/>
+                        <strong>객실 가격 :</strong> <span id="roomPrice">선택하세요</span><br />
+                        <strong>추가 침대 :</strong> <span id="bedOption"></span><br/>
+                        <strong>도착 시간 :</strong> <span id="checkInOption"></span><br/>
+                        <strong>총액 :</strong> <span id="totalAmount"></span>
                     </div>
 
                     <!-- JS에서 설정한 값을 서블릿에 넘기기 위한 hidden input들 -->
@@ -219,7 +219,6 @@
 	        const days = calculateStayDays();
 	        const total = pricePerDay * days;
 	        document.querySelector('#totalAmountValue').value = total;
-	        document.querySelector('#totalAmount').textContent = total > 0 ? total.toLocaleString() + '원' : "";
 	    }
 	
 	    function getSelectedRoomPrice() {
@@ -250,23 +249,21 @@
 	
 	        const bedOption = document.querySelector("#bedOption");
 	        if (bedOption) {
-	            bedOption.textContent = isBedTouched
-	                ? (beds.length > 0 ? beds.join(", ") : "없음")
-	                : "";
+	            bedOption.textContent = beds.length > 0 ? beds.join(", ") : "선택된 옵션이 없습니다";
 	        }
 	
-	        // 체크인 시간
+	        // 체크인 시간 옵션: 기본값은 '정규 시간'
 	        const checkInRadio = document.querySelector('input[name="checkInTime"]:checked');
 	        const checkInOption = document.querySelector("#checkInOption");
-	
-	        let checkInLabel = "";
+
+	        let checkInLabel = "정규 시간";  // 기본값
 	        if (checkInRadio) {
-	        	const labelEl = checkInRadio.closest('.form-check')?.querySelector('label');
+	            const labelEl = checkInRadio.closest('.form-check')?.querySelector('label');
 	            if (labelEl) checkInLabel = labelEl.textContent;
 	        }
-	
+
 	        if (checkInOption) {
-	            checkInOption.textContent = isCheckInTimeTouched ? checkInLabel : "";
+	            checkInOption.textContent = checkInLabel;
 	        }
 	
 	        // 총 인원
@@ -275,12 +272,20 @@
 	        if (totPersonEl) {
 	            totPersonEl.textContent = totPerson;
 	        }
+	        
+	        // 총액 표시
+	        const totalAmountEl = document.querySelector("#totalAmount");
+	        const totalAmountValue = parseInt(document.querySelector("#totalAmountValue").value, 10) || 0;
+	        if (totalAmountEl) {
+	            totalAmountEl.textContent = totalAmountValue.toLocaleString() + " 원";
+	        }
+
 	    }
 	
 	    function updateRoomInfo() {
 	        const roomSelect = document.querySelector("#bookRoomNum");
 	        if (!roomSelect.value) {
-	            document.querySelector("#selectedRoomNameDisplay").textContent = "선택하세요";
+	            document.querySelector("#selectedRoomNameDisplay").textContent = "선택된 객실이 없습니다";
 	            document.querySelector("#roomPrice").textContent = "0 원";
 	            return;
 	        }
