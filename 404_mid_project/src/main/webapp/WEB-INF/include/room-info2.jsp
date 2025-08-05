@@ -82,7 +82,7 @@
                 <p class="mb-1">가격: ₩<%= room.getRoomPrice() %></p>
               </div>
               <div class="text-end">
-                <button class="btn btn-dark"
+                <button class="btn btn-dark btn-room-select"
                         onclick="selectRoom('<%= room.getRoomNum() %>', '<%= room.getRoomName() %>', <%= room.getRoomPrice() %>)">
                   객실 선택
                 </button>

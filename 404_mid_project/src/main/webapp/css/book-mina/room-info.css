@@ -7,31 +7,19 @@
     margin-bottom: 0.5rem;
 }
 
-/* 카드 전체 */
-.room-card {
+/* 카드 스타일: 예약자 정보 카드와 통일 */
+/* .room-card {
     background-color: #ffffff;
     border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
     transition: transform 0.2s ease;
 }
+
 .room-card:hover {
     transform: scale(1.01);
-}
-
-/* 선택한 카드 모달창으로 객실 상세 정보 */
-.selected-card {
-    border: 2px solid #007bff;
-    box-shadow: 0 0 10px rgba(0, 123, 255, 0.2);
-}
-
-.room-detail {
-    background-color: #f8f9fa;
-    padding: 15px;
-    border-radius: 8px;
-    font-size: 14px;
-}
+} */
 
 
 /* 이미지 */
@@ -54,3 +42,4 @@
 .btn-room-select:hover {
     background-color: #444;
 }
+
