@@ -380,7 +380,7 @@ public class UserDao {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
-			conn = new DBConnector().getConn();
+			conn = DBConnector.getConn();
 			//실행할 sql문
 			String sql = """
 				SELECT users_name, users_email, users_phone
@@ -393,7 +393,7 @@ public class UserDao {
 			// select 문 실행하고 결과를 ResultSet 으로 받아온다
 			rs = pstmt.executeQuery();
 			//반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 리턴해줄 객체에 담는다
-			while (rs.next()) {
+			if (rs.next()) {
 				dto=new UserDto();
 				dto.setUsersName(rs.getString("users_name"));
 				dto.setUsersEmail(rs.getString("users_email"));
@@ -402,15 +402,7 @@ public class UserDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (rs != null)
-					rs.close();
-				if (pstmt != null)
-					pstmt.close();
-				if (conn != null)
-					conn.close();
-			} catch (Exception e) {
-			}
+			DBConnector.close(rs, pstmt, conn);
 		}
 		return dto;
 	}

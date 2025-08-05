@@ -27,7 +27,7 @@ public class FaqDao {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
-			conn = new DBConnector().getConn();
+			conn = DBConnector.getConn();
 			//실행할 sql문
 			String sql = """
 				SELECT faq_question, faq_answer
@@ -50,15 +50,7 @@ public class FaqDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (rs != null)
-					rs.close();
-				if (pstmt != null)
-					pstmt.close();
-				if (conn != null)
-					conn.close();
-			} catch (Exception e) {
-			}
+			DBConnector.close(rs, pstmt, conn);
 		}
 		return list;
 	}
@@ -70,7 +62,7 @@ public class FaqDao {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
-			conn = new DBConnector().getConn();
+			conn = DBConnector.getConn();
 			//실행할 sql문
 			String sql = """
 				SELECT faq_question, faq_answer
@@ -92,15 +84,7 @@ public class FaqDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (rs != null)
-					rs.close();
-				if (pstmt != null)
-					pstmt.close();
-				if (conn != null)
-					conn.close();
-			} catch (Exception e) {
-			}
+			DBConnector.close(rs, pstmt, conn);
 		}
 		return list;
 	}
