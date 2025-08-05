@@ -123,8 +123,11 @@ public class ImageUpload extends HttpServlet {
 			/* alertMessages.append("총 성공 파일 수: ").append(successCount); */
             ftp.logout();
             // 파일명에 따른 오류 방지용 HTML 이스케이프
-            String safeMessage = alertMessages.toString().replace("'", "\\'");
-            out.println("<script>alert('" + safeMessage + "'); history.back();</script>");
+			/*
+			 * String safeMessage = alertMessages.toString().replace("'", "\\'");
+			 * out.println("<script>alert('" + safeMessage +
+			 * "'); history.back();</script>");
+			 */
 
         } catch (Exception e) {
             e.printStackTrace(out);
