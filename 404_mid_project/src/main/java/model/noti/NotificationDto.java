@@ -35,6 +35,25 @@ public class NotificationDto {
 	private String notiCommentParentNum;
 	
 	
+	// 문의 타입(추가 필드)
+	private String notiInqTitle;
+	private String notiInqContent;
+	
+	
+	public String getNotiInqTitle() {
+		return notiInqTitle;
+	}
+	public void setNotiInqTitle(String notiInqTitle) {
+		this.notiInqTitle = notiInqTitle;
+	}
+	
+	public String getNotiInqContent() {
+		return notiInqContent;
+	}
+	public void setNotiInqContent(String notiInqContent) {
+		this.notiInqContent = notiInqContent;
+	}
+	
 	
 	public long getNotiNum() {
 		return notiNum;
