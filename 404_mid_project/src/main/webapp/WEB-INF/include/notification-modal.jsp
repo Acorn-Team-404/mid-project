@@ -58,8 +58,22 @@
 <script>
 	const notiModal = document.getElementById("offcanvasWithBothOptions");
 
+	/*notiModal.addEventListener("show.bs.offcanvas", () => {
+		if (!window.eventSourceInitialized) {
+			initializeSSE();
+		} else {
+			console.log("⚠️ 이미 SSE 연결 중 - 새 연결 생략");
+		}
+	});
+	*/
+	
+	
 	notiModal.addEventListener("show.bs.offcanvas", () => {
 		if (!window.eventSourceInitialized) {
+			// 알림 목록 초기화
+			const offcanvasBody = document.querySelector(".offcanvas-body");
+			if (offcanvasBody) offcanvasBody.innerHTML = "";
+
 			initializeSSE();
 		} else {
 			console.log("⚠️ 이미 SSE 연결 중 - 새 연결 생략");
