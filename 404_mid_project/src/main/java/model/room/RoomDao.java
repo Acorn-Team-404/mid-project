@@ -5,8 +5,11 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,7 +34,9 @@ public class RoomDao {
 		return dao;
 	}
 	
-	// 동일한 숙소 번호(stayNum)에 해당하는 객실 리스트 & 숙소명 함께 조회
+	
+	
+	// 숙소 번호(stayNum)에 해당하는 모든 객실 정보(객실 리스트 & 숙소명, 숙소위치, 숙소 전화번호 함께) 조회
 	public List<RoomDto> getRoomListByStayNum(int stayNum) {
 		List<RoomDto> list = new ArrayList<>();
 		Connection conn = null;
@@ -64,12 +69,13 @@ public class RoomDao {
 				dto.setRoomChildrenMax(rs.getInt("room_children_max"));
 				dto.setRoomInfantMax(rs.getInt("room_infant_max"));
 				dto.setRoomPaxMax(rs.getInt("room_pax_max"));
-				dto.setRoomCheckIn(rs.getString("room_checkin_date"));
-				dto.setRoomCheckOut(rs.getString("room_checkout_date"));
+				dto.setRoomCheckIn(rs.getTimestamp("room_checkin_date"));
+				dto.setRoomCheckOut(rs.getTimestamp("room_checkout_date"));
 				dto.setRoomBlockDate(rs.getString("room_block_date"));
 				dto.setRoomContent(rs.getString("room_content"));
 				dto.setRoomStayName(rs.getString("room_stay_name"));
 				dto.setRoomStayFacilities(rs.getString("room_stay_facilities"));
+				//dto.set
 
 				list.add(dto);
 			}
@@ -84,9 +90,8 @@ public class RoomDao {
 	}
 	
 	
-
 	
-	// 선택한 특정 객실의 객실 정보 조회
+	// 선택한 특정 객실의 객실 상세정보 조회
 	public List<RoomDto> getRoomListByRoomNum(long roomNum) {
 		// 필요한 객체를 담을 지역변수를 미리 만든다.
 		List<RoomDto> list = new ArrayList<>();
@@ -121,8 +126,8 @@ public class RoomDao {
 	            dto.setRoomChildrenMax(rs.getInt("room_children_max"));
 	            dto.setRoomInfantMax(rs.getInt("room_infant_max"));
 	            dto.setRoomPaxMax(rs.getInt("room_pax_max"));
-	            dto.setRoomCheckIn(rs.getString("room_checkin_date"));
-	            dto.setRoomCheckOut(rs.getString("room_checkout_date"));
+	            dto.setRoomCheckIn(rs.getTimestamp("room_checkin_date"));
+	            dto.setRoomCheckOut(rs.getTimestamp("room_checkout_date"));
 	            dto.setRoomBlockDate(rs.getString("room_block_date"));
 	            dto.setRoomContent(rs.getString("room_content"));
 	            

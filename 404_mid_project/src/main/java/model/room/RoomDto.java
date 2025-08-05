@@ -1,5 +1,7 @@
 package model.room;
 
+import java.sql.Timestamp;
+
 public class RoomDto {
 	// 객실 번호
 	private long roomNum;
@@ -20,35 +22,35 @@ public class RoomDto {
 	// 객실 내 최대 인원 수
 	private int roomPaxMax;
 	// 객실 체크인 날짜
-	private String roomCheckIn;
+	private Timestamp roomCheckIn;
 	// 객실 체크아웃 날짜
-	private String roomCheckOut;
+	private Timestamp roomCheckOut;
 	// 객실 예약 불가 날짜
 	private String roomBlockDate;
 	// 객실 설명
 	private String roomContent;
 	
+	// [ JOIN 한 STAY 테이블 필드 ]
 	// 숙소명 s.STAY_NAME 
 	private String roomStayName;
 	// 숙소 편의시설 s.STAY_FACILITIES
 	private String roomStayFacilities;
+
 	
-	// setter&getter for s.STAY_NAME, s.STAY_FACILITIES
-	public void setRoomStayName(String roomStayName) {
-		this.roomStayName = roomStayName;
-	}
-	
+	// [ setter & getter : JOIN 한 STAY 테이블 필드 ]
 	public String getRoomStayName() {
 		return roomStayName;
 	}
-	
-	public void setRoomStayFacilities(String roomStayFacilities) {
-		this.roomStayFacilities = roomStayFacilities;
+	public void setRoomStayName(String roomStayName) {
+		this.roomStayName = roomStayName;
 	}
-	
 	public String getRoomStayFacilities() {
 		return roomStayFacilities;
 	}
+	public void setRoomStayFacilities(String roomStayFacilities) {
+		this.roomStayFacilities = roomStayFacilities;
+	}
+
 	
 
 	
@@ -107,16 +109,16 @@ public class RoomDto {
 	public void setRoomPaxMax(int roomPaxMax) {
 		this.roomPaxMax = roomPaxMax;
 	}
-	public String getRoomCheckIn() {
+	public Timestamp getRoomCheckIn() {
 		return roomCheckIn;
 	}
-	public void setRoomCheckIn(String roomCheckIn) {
+	public void setRoomCheckIn(Timestamp roomCheckIn) {
 		this.roomCheckIn = roomCheckIn;
 	}
-	public String getRoomCheckOut() {
+	public Timestamp getRoomCheckOut() {
 		return roomCheckOut;
 	}
-	public void setRoomCheckOut(String roomCheckOut) {
+	public void setRoomCheckOut(Timestamp roomCheckOut) {
 		this.roomCheckOut = roomCheckOut;
 	}
 	public String getRoomBlockDate() {
