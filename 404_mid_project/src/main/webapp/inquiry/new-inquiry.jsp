@@ -56,13 +56,29 @@
 </head>
 <body>
 	<jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
+	<div class="modal fade" id="alertModal" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+	    	<div class="modal-content">
+	    		<div class="modal-header">
+	       			<h5 class="modal-title">알림</h5>
+	        		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+	      		</div>
+	      		<div class="modal-body" id="alertModalBody">
+	        		<!-- 메시지 삽입 -->
+	      		</div>
+	      		<div class="modal-footer">
+	        		<button type="button" class="btn btn-primary" data-bs-dismiss="modal">확인</button>
+	      		</div>
+	    	</div>
+	  	</div>
+	</div>	
 	<div class="container">
         <div class="text-center mt-5 mb-5">
             <h1 class="pb-4">문의하기</h1>
             <p>문의하신 내용은 마이페이지의 1:1 문의내역에서 확인가능합니다</p>
         </div>
         <div>
-            <form action="${pageContext.request.contextPath }/saveInquiry.inq" method="post">
+            <form action="${pageContext.request.contextPath }/saveInquiry.inq" method="post" id="saveForm">
                 <div class="form-section">
                     <span class="form-label">문의할 숙소</span>
                     <select name="stayNum">
@@ -158,29 +174,36 @@
     </div>
     <jsp:include page="/WEB-INF/include/footer.jsp"></jsp:include>
     <script>
-    	const form = document.querySelector("form");
+	    const showAlertModal = (message) => {
+	        const modalBody = document.getElementById("alertModalBody");
+	        modalBody.textContent = message;
+	        const modal = new bootstrap.Modal(document.getElementById("alertModal"));
+	        modal.show();
+	    };
+    	const form = document.querySelector("#saveForm");
     	form.addEventListener("submit", (e)=>{
             e.preventDefault();
             const title = document.querySelector("#title");
             const content = document.querySelector("#content");
             const agreeCk = document.querySelector("#agree-ck");
             if(title.value.trim()==""){
-                alert("제목을 입력해주세요.");
+            	showAlertModal("제목을 입력해주세요.");
                 title.focus();
                 return;
             }else if(content.value.trim()==""){
-                alert("내용을 입력해주세요.");
+            	showAlertModal("내용을 입력해주세요.");
                 content.focus();
                 return;
             }else if(!agreeCk.checked){
-                alert("개인정보 수집 및 이용에 동의해주세요.");
+            	showAlertModal("개인정보 수집 및 이용에 동의해주세요.");
                 agreeCk.focus();
                 return;
             }
 
-            alert("문의가 등록되었습니다.");
+            showAlertModal("문의가 등록되었습니다.");
             form.submit();
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 </body>
 </html>

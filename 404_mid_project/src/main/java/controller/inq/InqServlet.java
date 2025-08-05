@@ -37,7 +37,7 @@ public class InqServlet extends HttpServlet{
 			String content=req.getParameter("content");
 			
 			InquiryDto dto=new InquiryDto();
-			dto.setStayNum(stayNum);
+			dto.setStayNum(stayNum==0 ? null : stayNum);
 			dto.setUsersNum(userNum);
 			dto.setTitle(title);
 			dto.setContent(content);

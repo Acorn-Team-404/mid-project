@@ -27,7 +27,7 @@ public class InquiryDao {
 		//변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
 		int rowCount = 0;
 		try {
-			conn = new DBConnector().getConn();
+			conn = DBConnector.getConn();
 			String sql = """
 				INSERT INTO inquiry
 				(inq_num, inq_stay_num, inq_users_num, inq_title, inq_content, inq_type)
@@ -35,7 +35,7 @@ public class InquiryDao {
 			""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 순서대로 필요한 값 바인딩
-			pstmt.setLong(1, dto.getStayNum());
+			pstmt.setObject(1, dto.getStayNum());
 			pstmt.setLong(2, dto.getUsersNum());
 			pstmt.setString(3, dto.getTitle());
 			pstmt.setString(4, dto.getContent());
@@ -45,13 +45,7 @@ public class InquiryDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (pstmt != null)
-					pstmt.close();
-				if (conn != null)
-					conn.close();
-			} catch (Exception e) {
-			}
+			DBConnector.close(pstmt, conn);
 		}
 
 		//변화된 rowCount 값을 조사해서 작업의 성공 여부를 알아 낼수 있다.
@@ -63,14 +57,14 @@ public class InquiryDao {
 	}
 	
 	//usersNum 으로 전체 목록 리턴하는 메소드
-	public List<InquiryDto> selectAll(Long usersNum){
+	public List<InquiryDto> selectByUser(Long usersNum){
 		List<InquiryDto> list=new ArrayList<>();
 		//필요한 객체를 담을 지역변수를 미리 만든다.
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
-			conn = new DBConnector().getConn();
+			conn = DBConnector.getConn();
 			//실행할 sql문
 			String sql = """
 				SELECT inq_num, inq_title, inq_content, inq_type, stay_name, inq_created_at, inq_is_answered, inq_answer, inq_answered_at
@@ -102,17 +96,100 @@ public class InquiryDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (rs != null)
-					rs.close();
-				if (pstmt != null)
-					pstmt.close();
-				if (conn != null)
-					conn.close();
-			} catch (Exception e) {
-			}
+			DBConnector.close(rs, pstmt, conn);
 		}
 		return list;
+	}
+	
+	// 특정 회원이 문의한 전체 글의 개수 리턴하는 메소드
+	public long getCountByUser(Long usersNum) {
+		long count=0;
+		//필요한 객체를 담을 지역변수를 미리 만든다.
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			//실행할 sql문
+			String sql = """
+				SELECT COUNT(*) AS count
+				FROM inquiry
+				WHERE inq_users_num = ?				
+			""";
+			pstmt = conn.prepareStatement(sql);
+			//? 에 값 바인딩
+			pstmt.setLong(1, usersNum);
+			// select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			//반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 리턴해줄 객체에 담는다
+			if (rs.next()) {
+				count=rs.getLong("count");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		}
+		return count;
+	}
+	
+	// 특정 page 에 해당하는 row 만 select 해서 리턴하는 메소드
+	// InquiryDto 객체에 startRowNum 과 endRowNum 을 담아와서 select
+	public List<InquiryDto> selectPageByUser(InquiryDto dto){
+		// 필요한 객체를 담을 지역변수를 미리 만든다.
+		List<InquiryDto> list=new ArrayList<>();
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			// 실행할 sql 문
+			String sql = """
+				SELECT *
+				FROM
+					(SELECT result1.*, ROWNUM AS rnum
+					FROM	
+						(SELECT inq_num, inq_title, inq_content, inq_type, stay_name,
+							inq_created_at, inq_is_answered, inq_answer, inq_answered_at
+						FROM inquiry
+						LEFT JOIN stay ON inq_stay_num=stay_num
+						WHERE inq_users_num = ?
+						ORDER BY inq_num DESC
+						) result1
+					)
+				WHERE rnum BETWEEN ? AND ?
+			""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 값 바인딩
+			pstmt.setLong(1, dto.getUsersNum());
+			pstmt.setLong(2, dto.getStartRowNum());
+			pstmt.setLong(3, dto.getEndRowNum());
+			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+			// 단일 : if  /  다중 : while
+			while (rs.next()) {
+				InquiryDto dto2=new InquiryDto();
+				dto2.setNum(rs.getLong("inq_num"));
+				dto2.setTitle(rs.getString("inq_title"));
+				dto2.setContent(rs.getString("inq_content"));
+				dto2.setType(rs.getString("inq_type"));
+				dto2.setStayName(rs.getString("stay_name"));
+				dto2.setCreatedAt(rs.getString("inq_created_at"));
+				dto2.setIsAnswered(rs.getLong("inq_is_answered"));
+				dto2.setAnswer(rs.getString("inq_answer"));
+				dto2.setAnsweredAt(rs.getString("inq_answered_at"));
+				
+				list.add(dto2);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		} // 하단에 return 값 넣어주셔야함!
+		return list;
+
 	}
 	
 	//특정 기간에 해당하는 row 만 select 해서 리턴하는 메소드
@@ -123,7 +200,7 @@ public class InquiryDao {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
-			conn = new DBConnector().getConn();
+			conn = DBConnector.getConn();
 			//실행할 sql문
 			String sql = """
 				SELECT inq_num, inq_title, inq_content, inq_type, stay_name, inq_created_at, inq_is_answered, inq_answer, inq_answered_at
@@ -159,16 +236,105 @@ public class InquiryDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				if (rs != null)
-					rs.close();
-				if (pstmt != null)
-					pstmt.close();
-				if (conn != null)
-					conn.close();
-			} catch (Exception e) {
-			}
+			DBConnector.close(rs, pstmt, conn);
 		}
+		return list;
+	}
+	
+	//특정 기간에 해당하는 row 의 개수를 리턴하는 메소드
+	public long getCountByCreatedAt(Long usersNum, String startDate, String endDate){
+		long count=0;
+		//필요한 객체를 담을 지역변수를 미리 만든다.
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			//실행할 sql문
+			String sql = """
+				SELECT COUNT(*) AS count
+				FROM inquiry
+				WHERE inq_users_num = ?
+					AND inq_created_at >= TO_DATE(?, 'YYYY-MM-DD')
+					AND inq_created_at < TO_DATE(?, 'YYYY-MM-DD')+1
+			""";
+			pstmt = conn.prepareStatement(sql);
+			//? 에 값 바인딩
+			pstmt.setLong(1, usersNum);
+			pstmt.setString(2, startDate);
+			pstmt.setString(3, endDate);
+			// select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			//반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 리턴해줄 객체에 담는다
+			if (rs.next()) {
+				count=rs.getLong("count");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		}
+		return count;
+	}
+	
+	// 특정 page 와 기간에 해당하는 row 만 select 해서 리턴하는 메소드
+	// InquiryDto 객체에 startRowNum 과 endRowNum 을 담아와서 select 
+	public List<InquiryDto> selectPageByCreatedAt(InquiryDto dto){
+		// 필요한 객체를 담을 지역변수를 미리 만든다.
+		List<InquiryDto> list=new ArrayList<>();
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			// 실행할 sql 문
+			String sql = """
+				SELECT *
+				FROM
+					(SELECT result1.*, ROWNUM AS rnum
+					FROM	
+						(SELECT inq_num, inq_title, inq_content, inq_type, stay_name,
+							inq_created_at, inq_is_answered, inq_answer, inq_answered_at
+						FROM inquiry
+						LEFT JOIN stay ON inq_stay_num=stay_num
+						WHERE inq_users_num = ?
+						AND inq_created_at >= TO_DATE(?, 'YYYY-MM-DD')
+						AND inq_created_at < TO_DATE(?, 'YYYY-MM-DD')+1
+						ORDER BY inq_num DESC
+						) result1
+					)
+				WHERE rnum BETWEEN ? AND ?
+			""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 값 바인딩
+			pstmt.setLong(1, dto.getUsersNum());
+			pstmt.setString(2, dto.getStartDate());
+			pstmt.setString(3, dto.getEndDate());
+			pstmt.setLong(4, dto.getStartRowNum());
+			pstmt.setLong(5, dto.getEndRowNum());
+			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+			// 단일 : if  /  다중 : while
+			while (rs.next()) {
+				InquiryDto dto2=new InquiryDto();
+				dto2.setNum(rs.getLong("inq_num"));
+				dto2.setTitle(rs.getString("inq_title"));
+				dto2.setContent(rs.getString("inq_content"));
+				dto2.setType(rs.getString("inq_type"));
+				dto2.setStayName(rs.getString("stay_name"));
+				dto2.setCreatedAt(rs.getString("inq_created_at"));
+				dto2.setIsAnswered(rs.getLong("inq_is_answered"));
+				dto2.setAnswer(rs.getString("inq_answer"));
+				dto2.setAnsweredAt(rs.getString("inq_answered_at"));
+				list.add(dto2);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		} // 하단에 return 값 넣어주셔야함!
 		return list;
 	}
 }
