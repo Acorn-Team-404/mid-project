@@ -12,7 +12,8 @@
 	request.setAttribute("usersId", usersId);
 	request.setAttribute("usersNum", usersNum);
 %>
-<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
+
+<%-- index에서 include하기 때문에 중복 방지<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include> --%>
 <nav class="navbar navbar-expand-lg sticky-top bg-white border-bottom shadow-sm py-3">
   <div class="container-fluid align-items-center flex-nowrap">
     <!-- 좌측 로고 -->
@@ -88,9 +89,10 @@
   </div>
 </nav>
 
-<% if (session.getAttribute("usersNum") != null) { %>
-	<!-- notification-modal.jsp (알림창 모달 include) -->
-	<jsp:include page="/WEB-INF/include/notification-modal.jsp"></jsp:include>
+<% 
+	// notification-modal.jsp (알림창 모달 include)
+	if (session.getAttribute("usersNum") != null) { %>
+		<jsp:include page="/WEB-INF/include/notification-modal.jsp"></jsp:include>
 <% } %>
 
 

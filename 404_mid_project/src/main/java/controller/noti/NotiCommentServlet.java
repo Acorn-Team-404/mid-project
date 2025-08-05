@@ -16,7 +16,7 @@ public class NotiCommentServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 사용자 요청 path 추출
 		String uri = req.getRequestURI();
 		String path = uri.substring(uri.lastIndexOf("/"));

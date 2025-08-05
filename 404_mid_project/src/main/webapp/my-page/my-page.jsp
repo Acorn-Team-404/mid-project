@@ -34,7 +34,7 @@
 <head>
 <meta charset="UTF-8">
 <title>마이페이지</title>
-  <jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
   <style>
     .profile-img {
       width: 120px;
@@ -46,7 +46,7 @@
   </style>
 </head>
 <body>
-
+  <jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
 <div class="container my-5">
   <h2 class="mb-4">마이페이지</h2>
   <div class="row">
