@@ -5,7 +5,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,8 +33,53 @@ public class RoomDao {
 	public static RoomDao getInstance() {
 		return dao;
 	}
-	
-	
+
+	public RoomDto getByNum(int roomNum) {
+	    RoomDto dto = null;
+	    Connection conn = null;
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+
+	    String sql = """
+	        SELECT *
+	        FROM ROOM
+	        WHERE ROOM_NUM = ?
+	    """;
+
+	    try {
+	        conn = DBConnector.getConn();
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setInt(1, roomNum);
+	        rs = pstmt.executeQuery();
+
+	        if (rs.next()) {
+	            dto = new RoomDto();
+	            dto.setRoomNum(rs.getInt("ROOM_NUM"));
+	            dto.setRoomStayNum(rs.getInt("ROOM_STAY_NUM"));
+	            dto.setRoomName(rs.getString("ROOM_NAME"));
+	            dto.setRoomType(rs.getString("ROOM_TYPE"));
+	            dto.setRoomPrice(rs.getInt("ROOM_PRICE"));
+	            dto.setRoomAdultMax(rs.getInt("ROOM_ADULT_MAX"));
+	            dto.setRoomChildrenMax(rs.getInt("ROOM_CHILDREN_MAX"));
+	            dto.setRoomInfantMax(rs.getInt("ROOM_INFANT_MAX"));
+	            dto.setRoomCheckIn(rs.getTimestamp("ROOM_CHECKIN_DATE"));
+	            dto.setRoomCheckOut(rs.getTimestamp("ROOM_CHECKOUT_DATE"));
+	            dto.setRoomBlockDate(rs.getTimestamp("ROOM_BLOCK_DATE"));
+	            dto.setRoomContent(rs.getString("ROOM_CONTENT"));
+	            dto.setRoomPaxMax(rs.getInt("ROOM_PAX_MAX"));
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        DBConnector.close(rs, pstmt, conn);
+	    }
+
+	    return dto;
+	}
+
+	// ! STAY 숙소 번호 받아오기
+	// 특정 숙소 번호(stayNum)를 받아 해당 숙소의 객실 목록을 반환하는 메서드
 	
 	// 숙소 번호(stayNum)에 해당하는 모든 객실 정보(객실 리스트 & 숙소명, 숙소위치, 숙소 전화번호 함께) 조회
 	public List<RoomDto> getRoomListByStayNum(int stayNum) {
@@ -59,24 +104,22 @@ public class RoomDao {
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				RoomDto dto = new RoomDto();
-				dto.setRoomNum(rs.getLong("room_num"));
-				dto.setRoomStayNum(rs.getInt("room_stay_num"));
-				dto.setRoomName(rs.getString("room_name"));
-				dto.setRoomType(rs.getString("room_type"));
-				dto.setRoomPrice(rs.getInt("room_price"));
-				dto.setRoomAdultMax(rs.getInt("room_adult_max"));
-				dto.setRoomChildrenMax(rs.getInt("room_children_max"));
-				dto.setRoomInfantMax(rs.getInt("room_infant_max"));
-				dto.setRoomPaxMax(rs.getInt("room_pax_max"));
-				dto.setRoomCheckIn(rs.getTimestamp("room_checkin_date"));
-				dto.setRoomCheckOut(rs.getTimestamp("room_checkout_date"));
-				dto.setRoomBlockDate(rs.getString("room_block_date"));
-				dto.setRoomContent(rs.getString("room_content"));
-				dto.setRoomStayName(rs.getString("room_stay_name"));
-				dto.setRoomStayFacilities(rs.getString("room_stay_facilities"));
-				//dto.set
-
+				RoomDto room = new RoomDto();
+				
+				dto.setRoomNum(rs.getLong("ROOM_NUM"));
+				dto.setRoomStayNum(rs.getInt("ROOM_STAY_NUM"));
+				dto.setRoomName(rs.getString("ROOM_NAME"));
+				dto.setRoomType(rs.getString("ROOM_TYPE"));
+				dto.setRoomPrice(rs.getInt("ROOM_PRICE"));
+				dto.setRoomAdultMax(rs.getInt("ROOM_ADULT_MAX"));
+				dto.setRoomChildrenMax(rs.getInt("ROOM_CHILDREN_MAX"));
+				dto.setRoomInfantMax(rs.getInt("ROOM_INFANT_MAX"));
+				dto.setRoomCheckIn(rs.getTimestamp("ROOM_CHECKIN_DATE"));
+				dto.setRoomCheckOut(rs.getTimestamp("ROOM_CHECKOUT_DATE"));
+				dto.setRoomBlockDate(rs.getTimestamp("ROOM_BLOCK_DATE"));
+				dto.setRoomContent(rs.getString("ROOM_CONTENT"));
+        dto.setRoomPaxMax(rs.getInt("ROOM_PAX_MAX"));
+				// 리스트에 Dto 추가
 				list.add(dto);
 			}
 

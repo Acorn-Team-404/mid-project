@@ -24,7 +24,50 @@ public class UserDao {
       //static 필드에 저장된 dao 의 참조값을 리턴해 준다. 
       return dao;
    }
-
+   
+   public UserDto getByUserNum(Long usersNum) {
+       
+	      UserDto dto=null;
+	      //필요한 객체를 담을 지역변수를 미리 만든다 
+	      Connection conn = null;
+	      PreparedStatement pstmt = null;
+	      ResultSet rs = null;
+	      try {
+	         conn = DBConnector.getConn();
+	         //실행할 sql문
+	         String sql = """
+	            SELECT  users_id, users_name, users_pw, users_email, users_phone, TO_CHAR(users_birth, 'YYYY-MM-DD') AS users_birth, users_profile_image, users_role, users_updated_at, users_created_at
+	            FROM users
+	            WHERE users_num=?
+	         """;
+	         pstmt = conn.prepareStatement(sql);
+	         //? 에 값 바인딩
+	         pstmt.setLong(1, usersNum);
+	         // select 문 실행하고 결과를 ResultSet 으로 받아온다
+	         rs = pstmt.executeQuery();
+	         //만일 select 되는 row 가 존재한다면
+	         if(rs.next()) {
+	            //UserDto 객체를 생성해서 
+	            dto=new UserDto();
+	            //select 된 정보를 담는다.
+	            dto.setUsersId(rs.getString("users_id"));
+	            dto.setUsersName(rs.getString("users_name"));
+	            dto.setUsersPw(rs.getString("users_pw"));
+	            dto.setUsersEmail(rs.getString("users_email"));
+	            dto.setUsersPhone(rs.getString("users_phone"));
+	            dto.setUsersBirth(rs.getString("users_birth"));
+	            dto.setUsersProfileImage(rs.getString("users_profile_image"));
+	   
+	         }
+	      } catch (Exception e) {
+	         e.printStackTrace();
+	      } finally {
+	         DBConnector.close(rs, pstmt, conn);
+	      }
+	         return dto;       
+	         
+	    }
+  
    //이메일 중복확인
    public boolean isEmailExist(String email) {
 	    boolean result = false;
@@ -42,9 +85,6 @@ public class UserDao {
 	    }
 	    return result;
 	}
-
-   
-   
    
    //비밀번호 재발급
    public boolean updateUserPassword(String userId, String hashed) {

@@ -26,7 +26,7 @@ public class RoomDto {
 	// 객실 체크아웃 날짜
 	private Timestamp roomCheckOut;
 	// 객실 예약 불가 날짜
-	private String roomBlockDate;
+	private Timestamp roomBlockDate;
 	// 객실 설명
 	private String roomContent;
 	
@@ -121,10 +121,10 @@ public class RoomDto {
 	public void setRoomCheckOut(Timestamp roomCheckOut) {
 		this.roomCheckOut = roomCheckOut;
 	}
-	public String getRoomBlockDate() {
+	public Timestamp getRoomBlockDate() {
 		return roomBlockDate;
 	}
-	public void setRoomBlockDate(String roomBlockDate) {
+	public void setRoomBlockDate(Timestamp roomBlockDate) {
 		this.roomBlockDate = roomBlockDate;
 	}
 	public String getRoomContent() {

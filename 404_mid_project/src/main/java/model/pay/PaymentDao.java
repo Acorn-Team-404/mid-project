@@ -22,6 +22,51 @@ public class PaymentDao {
 		return dao;
 	}
 	
+	public PaymentDto getPayBybookNum(String bookNum) {
+		PaymentDto dto = null;
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		String sql = """
+				SELECT *
+				FROM PAYMENTS
+				WHERE PAY_BOOK_NUM = ?
+				
+				""";
+		try {
+			conn = DBConnector.getConn();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, bookNum);
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				dto = new PaymentDto();
+				dto.setPayNum(rs.getString("PAY_NUM"));
+				dto.setpayBookNum(rs.getString("PAY_BOOK_NUM"));
+				dto.setOrderId(rs.getString("ORDER_ID"));
+				dto.setPayUserNum(rs.getLong("PAY_USERS_NUM"));
+				dto.setPayAmount(rs.getLong("PAY_AMOUNT"));
+				dto.setPayMethodGroupId(rs.getString("PAY_METHOD_GROUP_ID"));
+				dto.setPayMethodCode(rs.getInt("PAY_METHOD_CODE"));
+				dto.setPayStatusGroupId(rs.getString("PAY_STATUS_GROUP_ID"));
+				dto.setPayStatusCode(rs.getInt("PAY_STATUS_CODE"));
+				dto.setPayApprovedAt(rs.getTimestamp("PAY_APPROVED_AT"));
+				dto.setPayCreatedAt(rs.getTimestamp("PAY_CREATED_AT"));
+				dto.setPayPaidAt(rs.getTimestamp("PAY_PAID_AT"));
+				
+			}
+			
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			DBConnector.close(pstmt, conn);
+		}
+		
+		return dto;
+	};
+	
 	public PaymentDto getPayByOrderId(String orderId) {
 		PaymentDto dto = null;
 		Connection conn = null;

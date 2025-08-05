@@ -136,7 +136,10 @@ public class BookSaveServlet extends HttpServlet {
 
 		} else {
 			// dto전체를 넘길 필요는 없고 결제 페이지에서는 bookNum으로 예약정보를 가져오는 쿼리 사용
-			res.sendRedirect(req.getContextPath() + "/pay/payments.jsp?bookNum=" + dto.getBookNum());
+			BookDto bookDto = BookDao.getInstance().getByBookNum(dto.getBookNum());
+			req.setAttribute("bookDto", bookDto);
+			req.getRequestDispatcher("/pay/payments.jsp").forward(req, res);
+
 
 		}
 

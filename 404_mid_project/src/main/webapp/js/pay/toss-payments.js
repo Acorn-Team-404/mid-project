@@ -1,5 +1,9 @@
 
-let currentURL = window.location.href.replace(/[^/]*$/, '');
+let contextPath = "/404_mid_project"; 
+const servletPath = contextPath + "/pay/PaymentsServlet";
+console.log("successUrl", window.location.origin + servletPath);
+console.log("failUrl", window.location.origin + servletPath);
+console.log("contextPath is", contextPath);
 
 const amount = {
 	currency: "KRW",
@@ -44,8 +48,8 @@ async function requestPayment() {
 				amount,
 				orderId: generateRandomString(),
 				orderName: "그랜드하얏뜨", // 숙소명+ 방번호 + 인원수 + ~~@
-				successUrl: currentURL + "PaymentsServlet",
-				failUrl: currentURL + "PaymentsServlet",
+				successUrl:  window.location.origin + servletPath,
+				failUrl:  window.location.origin + servletPath,
 				customerEmail: "limchaehozzang@gmail.com",
 				customerName: "임채호",
 				// 가상계좌 안내, 퀵계좌이체 휴대폰 번호 자동 완성에 사용되는 값.
@@ -65,8 +69,8 @@ async function requestPayment() {
 				amount,
 				orderId: generateRandomString(),
 				orderName: "마라탕",
-				successUrl: currentURL + "PaymentsServlet",
-				failUrl: currentURL + "PaymentsServlet",
+				successUrl:  window.location.origin + servletPath,
+				failUrl:  window.location.origin + servletPath,
 				customerEmail: "limchaehozzang@gmail.com",
 				customerName: "기무차이린",
 				// 가상계좌 안내, 퀵계좌이체 휴대폰 번호 자동 완성에 사용되는 값.
@@ -85,8 +89,8 @@ async function requestPayment() {
 				amount,
 				orderId: generateRandomString(),
 				orderName: "찐차이린",
-				successUrl: currentURL + "PaymentsServlet",
-				failUrl: currentURL + "PaymentsServlet",
+				successUrl:  window.location.origin + servletPath,
+				failUrl:  window.location.origin + servletPath,
 				customerEmail: "limchaehozzang@gmail.com",
 				customerName: "찐차이린",
 				// 가상계좌 안내, 퀵계좌이체 휴대폰 번호 자동 완성에 사용되는 값
