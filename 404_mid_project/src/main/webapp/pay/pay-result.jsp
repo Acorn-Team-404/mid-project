@@ -63,7 +63,7 @@
         <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-dark w-100">홈으로</a>
       </div>
       <div class="col-6">
-        <a href="${pageContext.request.contextPath}/my-page.jsp" class="btn btn-dark w-100">예약내역 보기</a>
+        <a href="${pageContext.request.contextPath}/my-page/my-page.jsp" class="btn btn-dark w-100">예약내역 보기</a>
       </div>
     </div>
   </div>

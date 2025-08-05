@@ -19,10 +19,10 @@
 </head>
 <body>
 <jsp:include page="/WEB-INF/include/navbar.jsp" />
-	<form action="${pageContext.request.contextPath}/booking/submit" method="post">
-	<input type="hidden" name="bookStayNum" value="${stay.stayNum}"/>
+	
+	<%-- <input type="hidden" name="bookStayNum" value="${stay.stayNum}"/> --%>
 	<jsp:include page="/WEB-INF/include/room-info.jsp"></jsp:include>
 	<jsp:include page="/WEB-INF/include/booking-form.jsp"></jsp:include>
-	</form>
+
 </body>
 </html>

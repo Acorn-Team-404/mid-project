@@ -38,8 +38,8 @@
         <td><%= s.getStayNum() %></td>
         <td><%= s.getStayName() %></td>
         <td>
-          <form action="<%=request.getContextPath()%>/booking/booking-page.jsp"
-                method="post" style="margin:0;">
+          <form action="<%=request.getContextPath()%>/booking/submit"
+                method="get" style="margin:0;">
             <input type="hidden" name="stayNum" value="<%= s.getStayNum() %>">
             <button type="submit" class="btn btn-sm btn-primary">예약</button>
           </form>

@@ -28,21 +28,20 @@
       border-radius: 0.25rem;
     }
     .remove-btn {
-		  position: absolute;
-		  top: -0.25rem;
-		  right: -0.25rem;
-		  background-color: #ffffffcc;
-		  color: #dc3545;
-		  border: none;
-		  /* 둥근 사각형으로 변경 */
-		  border-radius: 0.25rem;
-		  width: 1.25rem;
-		  height: 1.25rem;
-		  font-size: 1rem;
-		  line-height: 1.25rem;
-		  text-align: center;
-		  cursor: pointer;
-		}
+      position: absolute;
+      top: -0.25rem;
+      right: -0.25rem;
+      background-color: #ffffffcc;
+      color: #dc3545;
+      border: none;
+      border-radius: 0.25rem;
+      width: 1.25rem;
+      height: 1.25rem;
+      font-size: 1rem;
+      line-height: 1.25rem;
+      text-align: center;
+      cursor: pointer;
+    }
     #stayDropZone { height: 250px; }
     .room-card .drop-zone { height: 150px; }
   </style>
@@ -53,7 +52,6 @@
   <h2 class="mb-4"><i class="bi bi-house-add me-2"></i>숙소 등록</h2>
   <form action="${pageContext.request.contextPath}/saveStay" method="post" enctype="multipart/form-data" id="stayForm">
     <!-- 숙소 정보 -->
-    <!-- 1. 숙소 이름과 연락처를 같은 행에 배치 -->
     <div class="row g-3 mb-3">
       <div class="col-md-6">
         <label class="form-label">숙소 이름 *</label>
@@ -64,8 +62,6 @@
         <input type="text" class="form-control" name="stay_contact" placeholder="연락처를 입력하세요">
       </div>
     </div>
-
-    <!-- 2. 지역(select)과 상세주소를 같은 행에 배치 -->
     <div class="row g-3 mb-3">
       <div class="col-md-4">
         <label class="form-label">지역 *</label>
@@ -89,8 +85,6 @@
         <input type="text" class="form-control" name="stay_address" placeholder="상세주소를 입력하세요" required>
       </div>
     </div>
-
-    <!-- 3. 위도 · 경도 입력은 기존대로 -->
     <div class="row g-3 mb-3">
       <div class="col-md-6">
         <label class="form-label">위도</label>
@@ -110,7 +104,7 @@
     <h5 class="mt-4">숙소 대표 이미지 등록</h5>
     <div class="drop-zone mb-3" id="stayDropZone">
       <span class="text-muted">이미지를 드래그하거나 클릭하세요</span>
-      <input type="file" id="stayFileInput" name="uploadFile" multiple hidden>
+      <input type="file" id="stayFileInput" name="stayUploadFile" multiple hidden>
     </div>
     <div id="stayPreview" class="d-flex flex-wrap mb-4"></div>
 
@@ -222,14 +216,14 @@
             '<input type="text" class="form-control" name="rooms[' + idx + '].roomName" required>' +
           '</div>' +
           '<div class="col-md-6">' +
-          '<label class="form-label">객실 유형</label>' +
-          '<select class="form-select" name="rooms[' + idx + '].roomType" required>' +
-            '<option value="">선택</option>' +
-            '<option value="standard">standard</option>' +
-            '<option value="twin">twin</option>' +
-            '<option value="family">family</option>' +
-          '</select>' +
-       		'</div>' +
+            '<label class="form-label">객실 유형</label>' +
+            '<select class="form-select" name="rooms[' + idx + '].roomType" required>' +
+              '<option value="">선택</option>' +
+              '<option value="standard">standard</option>' +
+              '<option value="twin">twin</option>' +
+              '<option value="family">family</option>' +
+            '</select>' +
+          '</div>' +
           '<div class="col-md-4">' +
             '<label class="form-label">가격</label>' +
             '<div class="input-group">' +
@@ -261,7 +255,7 @@
             '<label class="form-label">객실 이미지 업로드</label>' +
             '<div class="drop-zone p-3" id="roomDropZone-' + idx + '">' +
               '<span class="text-muted">이미지를 드래그하거나 클릭</span>' +
-              '<input type="file" class="d-none" id="roomFileInput-' + idx + '" name="uploadFile" multiple>' +
+              '<input type="file" class="d-none" id="roomFileInput-' + idx + '" name="roomUploadFile_' + idx + '" multiple>' +
             '</div>' +
             '<div id="roomPreview-' + idx + '" class="d-flex flex-wrap mt-2"></div>' +
           '</div>' +
@@ -291,17 +285,30 @@
     reindexRooms();
   });
 
-  // 카드 삭제 및 순서 변경 시 넘버링/네임 재정렬
+  // 카드 삭제 및 순서 변경 시 넘버링/네임/ID 재정렬
   function reindexRooms() {
     var cards = container.querySelectorAll('.room-card');
-    Array.prototype.forEach.call(cards, function(card, i) {
+    cards.forEach(function(card, i) {
+      // 1) 제목
       card.querySelector('.card-title').textContent = '객실 #' + (i + 1);
-      Array.prototype.forEach.call(card.querySelectorAll('[name]'), function(el) {
+
+      // 2) name 속성들 업데이트
+      card.querySelectorAll('[name]').forEach(function(el) {
         el.name = el.name
           .replace(/rooms\[\d+\]/, 'rooms[' + i + ']')
-          .replace(/roomImages\[\d+\]/, 'roomImages[' + i + ']');
+          .replace(/roomUploadFile_\d+/, 'roomUploadFile_' + i);
       });
+
+      // 3) ID 속성들 업데이트
+      var dz   = card.querySelector('.drop-zone');
+      var fi   = card.querySelector('input[type="file"]');
+      var prev = card.querySelector('div[id^="roomPreview-"]');
+
+      dz.id   = 'roomDropZone-' + i;
+      fi.id   = 'roomFileInput-' + i;
+      prev.id = 'roomPreview-'    + i;
     });
+
     display.innerText = cards.length;
   }
 

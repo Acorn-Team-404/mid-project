@@ -65,14 +65,24 @@ public class SaveStayServlet extends HttpServlet {
       return;
     }
 
-    // 4) 이미지 업로드(include 방식)  
-    //    form의 file-input을 모두 name="uploadFile"로 통일하세요.
-    req.getRequestDispatcher("/stay.img?target_id="+info.getStayNum())
-       .include(req, resp);
-    for (RoomDto r: info.getRooms()) {
-      req.getRequestDispatcher("/room.img?target_id="+r.getRoomNum())
-         .include(req, resp);
+    // 4) 이미지 업로드(include 방식)
+    String stayPartName = "stayUploadFile";
+    req.getRequestDispatcher(
+        "/stay.img?target_type=stay"
+      + "&target_id=" + info.getStayNum()
+      + "&partName="   + stayPartName
+    ).include(req, resp);
+
+    for (int i = 0; i < rooms.size(); i++) {
+        RoomDto r = rooms.get(i);
+        String roomPartName = "roomUploadFile_" + i;
+        req.getRequestDispatcher(
+            "/room.img?target_type=room"
+          + "&target_id=" + r.getRoomNum()
+          + "&partName="   + roomPartName
+        ).include(req, resp);
     }
+
 
     // 5) 완료 후 목록 페이지 이동
     resp.setContentType("text/html; charset=UTF-8");

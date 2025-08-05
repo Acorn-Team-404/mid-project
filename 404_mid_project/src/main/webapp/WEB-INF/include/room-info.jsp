@@ -7,8 +7,7 @@
 
 <%
   // 예시: 현재 숙소 번호를 파라미터로 받는다고 가정
-  //int stayNum = Integer.parseInt(request.getParameter("stayNum"));
-  int stayNum = 100;
+  int stayNum = Integer.parseInt(request.getParameter("stayNum"));
   List<RoomDto> roomList = RoomDao.getInstance().getRoomListByStayNum(stayNum);
   
 %>
@@ -85,7 +84,7 @@
               </div>
               <div class="text-end">
               	<!--  객실 상세보기 버튼 (모달창 띄우기) -->
-                <button class="btn btn-dark btn-room-select"
+                <button type="button" class="btn btn-dark btn-room-select"
 					data-bs-toggle="modal" data-bs-target="#roomModal<%= room.getRoomNum() %>">
 					객실 상세보기
                 </button>
