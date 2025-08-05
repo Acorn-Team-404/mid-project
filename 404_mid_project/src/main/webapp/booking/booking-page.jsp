@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%
     String usersId = (String) request.getAttribute("usersId");
+		Long stayNum = Long.parseLong(request.getParameter("stayNum"));
     /* if (usersId == null) {
         response.sendRedirect(request.getContextPath() + "/booking/submit");
         return;
@@ -18,11 +19,10 @@
 </head>
 <body>
 <jsp:include page="/WEB-INF/include/navbar.jsp" />
-	<!-- <input type="hidden" name="bookStayNum" value="\${stay.stayNum}" /> -->
-	<%-- <input type="hidden" name="bookStayNum" id="bookStayNum" value="${stay.stayNum}" /> --%>
 	
-	<input type="text" name="bookStayNum" value="100"/>
+	<%-- <input type="hidden" name="bookStayNum" value="${stay.stayNum}"/> --%>
 	<jsp:include page="/WEB-INF/include/room-info.jsp"></jsp:include>
 	<jsp:include page="/WEB-INF/include/booking-form.jsp"></jsp:include>
+
 </body>
 </html>

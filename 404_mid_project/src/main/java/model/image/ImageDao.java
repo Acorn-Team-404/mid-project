@@ -210,5 +210,44 @@ public class ImageDao {
     public ImageDto selectByLongSingleImage(String targetType, long targetId) {
         return selectSingleImage(targetType, targetId);
     }
+    
+    // target 에 따라 시퀀스 가져오는 메소드
+    public int getSequence(String targetType) {
+        int num = 0;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBConnector.getConn();
+
+            // 💡 시퀀스명 결정
+            String seqName = null;
+            if ("post".equals(targetType)) {
+                seqName = "posts_seq";
+            } else if ("room".equals(targetType)) {
+                seqName = "room_seq";
+            } else if ("index".equals(targetType)) {
+                seqName = "index_seq";
+            } else {
+                throw new IllegalArgumentException("Invalid targetType: " + targetType);
+            }
+
+            String sql = "SELECT " + seqName + ".NEXTVAL AS num FROM dual";
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                num = rs.getInt("num");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBConnector.close(rs, pstmt, conn);
+        }
+
+        return num;
+    }
 
 }
