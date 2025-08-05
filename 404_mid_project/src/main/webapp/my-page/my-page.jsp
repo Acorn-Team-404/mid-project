@@ -60,6 +60,7 @@
         <a href="${pageContext.request.contextPath}/*.post" class="list-group-item list-group-item-action">내 게시글</a> <!-- 임시로 *.post 보내는 중 -->
         <a href="${pageContext.request.contextPath}/my-page" class="list-group-item list-group-item-action">내 댓글</a> <!-- 임시로 마이페이지 보내는 중 -->
         <a href="${pageContext.request.contextPath}/inquiry/list.jsp" class="list-group-item list-group-item-action">문의 내역</a> <!-- 임시로 inquiry/list.jsp 보내는 중 -->
+        <a href="${pageContext.request.contextPath}/faq/list.jsp" class="list-group-item list-group-item-action">자주하는 질문</a> <!-- 임시로 faq/list.jsp 보내는 중 -->
         <a href="${pageContext.request.contextPath}/logout" onClick="confirmLogout(event)" class="list-group-item list-group-item-action text-danger">로그아웃</a>
       </div>
     </div>
