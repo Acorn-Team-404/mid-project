@@ -25,6 +25,26 @@ public class UserDao {
       return dao;
    }
 
+   //이메일 중복확인
+   public boolean isEmailExist(String email) {
+	    boolean result = false;
+	    String sql = "SELECT users_email FROM users WHERE users_email = ?";
+	    try (
+	        Connection conn = new DBConnector().getConn();
+	        PreparedStatement pstmt = conn.prepareStatement(sql)
+	    ) {
+	        pstmt.setString(1, email);
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            result = rs.next(); // 존재하면 true
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return result;
+	}
+
+   
+   
    
    //비밀번호 재발급
    public boolean updateUserPassword(String userId, String hashed) {
