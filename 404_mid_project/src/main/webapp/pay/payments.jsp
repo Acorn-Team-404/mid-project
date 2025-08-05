@@ -10,19 +10,32 @@
 <%@page import="model.book.BookDto"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-	BookDto bookDto = (BookDto) request.getAttribute("bookDto");
-	if (bookDto != null) {
-	    session.setAttribute("bookNum", bookDto.getBookNum());
-	} else {
-    	System.out.println("bookDto is null in payments.jsp");
-	}
-	System.out.print(bookDto != null ? "예약 정보 로딩 성공" : "예약 정보 없음");
-	StayDto stayDto = StayDao.getInstance().getByNum(bookDto.getBookStayNum());
-	RoomDto  roomDto = RoomDao.getInstance().getByNum(bookDto.getBookRoomNum());
-	UserDto userDto = (UserDto) UserDao.getInstance().getByUserNum(bookDto.getBookUsersNum());
-	
-	
+    BookDto bookDto = (BookDto) request.getAttribute("bookDto");
+    StayDto stayDto = null;
+    RoomDto roomDto = null;
+    UserDto userDto = null;
+
+    if (bookDto != null) {
+        session.setAttribute("bookNum", bookDto.getBookNum());
+
+        System.out.println("예약 정보 로딩 성공");
+
+        stayDto = (StayDto) request.getAttribute("stayDto");
+        System.out.println(stayDto.getStayAddr());
+        System.out.println(stayDto.getStayName());
+        System.out.println(stayDto.getStayPhone());
+        roomDto = RoomDao.getInstance().getByNum(bookDto.getBookRoomNum());
+        userDto = UserDao.getInstance().getByUserNum(bookDto.getBookUsersNum());
+
+        if (stayDto == null) {
+            System.out.println("stayDto is null in payments.jsp");
+        }
+    } else {
+        System.out.println("bookDto is null in payments.jsp");
+    }
 %>
+
+
 <!DOCTYPE html>
 <html lang="ko">
 <head
@@ -33,7 +46,6 @@
 <script>
 	window.contextPath = "${pageContext.request.contextPath}";
 </script>
-<script src="${pageContext.request.contextPath}/js/pay/toss-payments.js?v=3" defer></script>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link
@@ -47,15 +59,10 @@
 	<div class="container">
 		<div class="card">
 			<h2 class="mb-4 text-center">예약 확인 및 결제</h2>
-
-			<p>paymentKey: ${param.paymentKey}</p>
-			<p>orderId: ${payDto.orderId}</p>
-			<p>bookNum: ${bookDto.bookNum}</p>
-			
 			<div class="section section-box">
 				<h2 class="h5">숙소 정보</h2>
 				<p>
-					<strong>숙소명:</strong> <%=stayDto.getStayName() %>;
+					<strong>숙소명:</strong> <%=stayDto.getStayName() %>
 				</p>
 				<p>
 					<strong>위치:</strong> <%=stayDto.getStayAddr() %>
@@ -149,6 +156,6 @@
     <input type="hidden" name="amount" value="<%=bookDto.getBookTotalAmount()%>"/>
 	</form>
 <jsp:include page="/WEB-INF/include/footer.jsp"></jsp:include>
-
+<script src="${pageContext.request.contextPath}/js/pay/toss-payments.js?v=3"></script>
 </body>
 </html>

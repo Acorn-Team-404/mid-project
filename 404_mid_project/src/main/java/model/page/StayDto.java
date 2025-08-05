@@ -2,7 +2,7 @@ package model.page;
 
 public class StayDto {
 	private long stayNum;
-	private long usersNum;
+	private long stayUsersNum;
 	private String stayName;
 	private String stayAddr;
 	private String stayLoc;
@@ -24,12 +24,12 @@ public class StayDto {
 		this.stayNum = stayNum;
 	}
 
-	public long getUsersNum() {
-		return usersNum;
+	public long getStayUsersNum() {
+		return stayUsersNum;
 	}
 
-	public void setUsersNum(long usersNum) {
-		this.usersNum = usersNum;
+	public void setStayUsersNum(long stayUsersNum) {
+		this.stayUsersNum = stayUsersNum;
 	}
 
 	public String getStayName() {
@@ -104,11 +104,4 @@ public class StayDto {
 		this.stayFacilities = stayFacilities;
 	}
 
-	public String getUsersId() {
-		return usersId;
-	}
-
-	public void setUsersId(String usersId) {
-		this.usersId = usersId;
-	}
 }

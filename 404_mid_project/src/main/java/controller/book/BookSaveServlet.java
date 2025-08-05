@@ -137,9 +137,12 @@ public class BookSaveServlet extends HttpServlet {
 		} else {
 			// dto전체를 넘길 필요는 없고 결제 페이지에서는 bookNum으로 예약정보를 가져오는 쿼리 사용
 			BookDto bookDto = BookDao.getInstance().getByBookNum(dto.getBookNum());
+			System.out.println("bookDto.getBookStayNum(): " + bookDto.getBookStayNum());
+			StayDto stayDto = StayDao.getInstance().getByNum(bookDto.getBookStayNum());
+			System.out.println("stayDto: " + (stayDto != null ? "조회됨" : "NULL!!!"));
 			req.setAttribute("bookDto", bookDto);
+			req.setAttribute("stayDto", stayDto);
 			req.getRequestDispatcher("/pay/payments.jsp").forward(req, res);
-
 
 		}
 
