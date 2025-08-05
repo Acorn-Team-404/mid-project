@@ -3,7 +3,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <div class="container my-5">
-    <form action="${pageContext.request.contextPath}/booking/submit" method="post" id="bookingForm">
+    	<!-- 이부분 필수 -->
+    	<input type="hidden" name="bookStayNum" value="${param.stayNum}"/>
         <div class="row g-5">
             <!-- 왼쪽: 예약자 정보 -->
             <div class="col-md-7">
@@ -187,7 +188,6 @@
                 </div>
             </div>
         </div>
-    </form>
 </div>
 
 <script>
