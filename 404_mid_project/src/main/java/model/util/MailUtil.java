@@ -32,8 +32,28 @@ public class MailUtil {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromEmail));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-            message.setSubject("회원가입 이메일 인증 코드");
-            message.setText("인증 코드: " + authCode);
+            message.setSubject("STAYLOG 회원가입 이메일 인증 코드");
+     
+            String htmlContent = String.format("""
+            	    <html>
+					  <body>
+					    <div>
+					      <div style="text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 24px; color: #000000;">
+					        이메일 인증 코드
+					      </div>
+					      <p style="text-align: center;">안녕하세요 😊 STAYLOG 입니다.</p>
+					      <p style="text-align: center;">회원가입을 위한 인증 번호는 다음과 같습니다</p>
+					      <div style="font-size: 32px; font-weight: bold; letter-spacing: 6px; text-align: center; margin: 30px 0; padding: 20px; background-color: #ffffff; border: 2px dashed #c1c1c1; border-radius: 15px;">
+					        %s
+					      </div>
+					      <div style="text-align: center; font-size: 15px; font-weight: lighter; margin-bottom: 24px; color: #000000;">
+					        본 메일은 자동 발송된 메일입니다.
+					      </div>
+					    </div>
+					  </body>
+					</html>
+            	    """, authCode);
+            message.setContent(htmlContent, "text/html; charset=utf-8");
 
             Transport.send(message);
             System.out.println("이메일 전송 성공");

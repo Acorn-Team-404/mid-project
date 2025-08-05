@@ -159,8 +159,8 @@ public class StayDao {
         try {
         	conn = DBConnector.getConn();
             String sql = """
-                SELECT page_content, page_reserve, page_guide, page_refund
-                FROM page
+                SELECT page_num, page_content, page_reserve, page_guide, page_refund
+                FROM page p
                 WHERE stay_num = ?
             """;
             pstmt = conn.prepareStatement(sql);
@@ -168,6 +168,7 @@ public class StayDao {
             rs = pstmt.executeQuery();
             if (rs.next()) {
                 dto = new PageDto();
+                dto.setPageNum(rs.getLong("page_num"));
                 dto.setPageContent(rs.getString("page_content"));
                 dto.setPageReserve(rs.getString("page_reserve"));
                 dto.setPageGuide(rs.getString("page_guide"));
@@ -192,7 +193,7 @@ public class StayDao {
 			conn = DBConnector.getConn();
 			// 실행할 sql 문
 			String sql = """
-				SELECT stay_num, stay_name, stay_addr, stay_update_at
+				SELECT *
 				FROM stay
 				ORDER BY stay_num DESC
 			""";
@@ -219,6 +220,37 @@ public class StayDao {
 		return list;
 	}
 	
+	// 글 번호 미리 받기
+	public Long getSequence() {
+		long num=0;
+			
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			// 실행할 sql 문
+			String sql = """
+				SELECT stay_seq.NEXTVAL AS num FROM DUAL
+			""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 값 바인딩
+
+			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+			// 단일 : if  /  다중 : while
+			if (rs.next()) {
+				num=rs.getLong("num");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		} // 하단에 return 값 넣어주셔야함!
+		return num;
+	}
+	
 	// 숙소 정보 가져오기
     public StayDto getByNum(long stayNum) {
        StayDto dto = null;
@@ -227,12 +259,13 @@ public class StayDao {
        PreparedStatement pstmt = null;
        ResultSet rs = null;
         try {
-            conn = new DBConnector().getConn();
+        	conn = DBConnector.getConn();
             // 실행할 sql 문
             String sql = """
-                SELECT *
-                FROM stay
-                WHERE stay_num = ?
+                SELECT s.stay_num, s.stay_user_num, u.users_id, s.stay_name, s.stay_addr, s.stay_loc, s.stay_lat, s.stay_long, s.stay_phone, s.stay_facilities
+                FROM stay s
+            	JOIN users u ON s.stay_user_num = u.users_num
+                WHERE s.stay_num = ?
             """;
             pstmt = conn.prepareStatement(sql);
             // ? 에 바인딩
@@ -242,9 +275,16 @@ public class StayDao {
             // 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 리턴해 줄 객체에 담는다
             if (rs.next()) {
                 dto = new StayDto();
-                dto.setStayName(rs.getString("stay_name"));
-                dto.setStayLoc(rs.getString("stay_loc"));
                 dto.setStayNum(rs.getLong("stay_num"));
+                dto.setUsersNum(rs.getLong("stay_user_num"));
+                dto.setUsersId(rs.getString("users_id"));
+                dto.setStayName(rs.getString("stay_name"));
+                dto.setStayAddr(rs.getString("stay_addr"));
+                dto.setStayLoc(rs.getString("stay_loc"));
+                dto.setStayLat(rs.getString("stay_lat"));
+                dto.setStayLong(rs.getString("stay_long"));
+                dto.setStayPhone(rs.getString("stay_phone"));
+                dto.setStayFacilities(rs.getString("stay_facilities"));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -273,12 +313,12 @@ public class StayDao {
             // 실행할 sql 문
             String sql = """
             	INSERT INTO stay
-            	(stay_num, users_num, stay_name, stay_addr, stay_loc,
+            	(stay_num, stay_user_num, stay_name, stay_addr, stay_loc,
             	stay_lat, stay_long, stay_phone, stay_facilities, stay_update_at)
             	VALUES (stay_seq.NEXTVAL, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATE)
             """;
             pstmt = conn.prepareStatement(sql);
-            // ? 에 바인딩  
+            // ? 에 바인딩
             pstmt.setLong(1, dto.getUsersNum());
             pstmt.setString(2, dto.getStayName());
             pstmt.setString(3, dto.getStayAddr());

@@ -7,10 +7,15 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import model.page.StayDto;
+import model.pay.PaymentDto;
 import model.room.RoomDao;
 import model.room.RoomDto;
+import model.user.UserDto;
 import model.util.DBConnector;
 
 public class BookDao {
@@ -28,6 +33,64 @@ public class BookDao {
    // 참조값을 리턴해주는 static 메소드 제공
    public static BookDao getInstance() {
       return dao;
+   }
+
+   // 사용자의 모든 예약 목록을 조회하기
+   public List<BookDto> getByUserNum(long userNum){
+	   List<BookDto> list = new ArrayList<BookDto>();
+	   
+	   // 필요한 객체를 담을 지역변수를 미리 만든다.
+	// ex) List<DTO> list=new ArrayList<>();
+	BookDto dto = null;
+	Connection conn = null;
+	PreparedStatement pstmt = null;
+	ResultSet rs = null;
+	try {
+		conn = DBConnector.getConn();
+		// 실행할 sql 문
+		String sql = """
+				SELECT *
+				FROM BOOKING
+				WHERE BOOK_USERS_NUM = ?
+				ORDER BY BOOK_CREATED_AT DESC
+				""";
+		pstmt = conn.prepareStatement(sql);
+		// ? 에 값 바인딩
+		pstmt.setLong(1, userNum);
+		// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+		rs = pstmt.executeQuery();
+		// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+		// 단일 : if  /  다중 : while
+		while (rs.next()) {
+	          dto = new BookDto();
+	          dto.setBookNum(rs.getString("BOOK_NUM"));
+	          dto.setBookUsersNum(rs.getLong("BOOK_USERS_NUM"));
+	          dto.setBookRoomNum(rs.getInt("BOOK_ROOM_NUM"));
+	          dto.setBookStayNum(rs.getInt("BOOK_STAY_NUM"));
+	          dto.setBookCheckIn(rs.getString("BOOK_CHECKIN_DATE"));
+	          dto.setBookCheckOut(rs.getString("BOOK_CHECKOUT_DATE"));
+	          dto.setBookAdult(rs.getInt("BOOK_ADULT"));
+	          dto.setBookChildren(rs.getInt("BOOK_CHILDREN"));
+	          dto.setBookInfant(rs.getInt("BOOK_INFANT"));
+	          dto.setBookTotalPax(rs.getInt("BOOK_TOTAL_PAX"));
+	          dto.setBookExtraBed(rs.getInt("BOOK_EXTRA_BED"));
+	          dto.setBookInfantBed(rs.getInt("BOOK_INFANT_BED"));
+	          dto.setBookCheckInTime(rs.getString("BOOK_CHECKIN_TIME"));
+	          dto.setBookRequest(rs.getString("BOOK_REQUEST"));
+	          dto.setBookTotalAmount(rs.getInt("BOOK_TOTAL_AMOUNT"));
+	          dto.setBookStatusGroupId(rs.getString("BOOK_STATUS_GROUP_ID"));
+	          dto.setBookStatusCode(rs.getInt("BOOK_STATUS_CODE"));
+	          dto.setBookCreatedAt(rs.getTimestamp("BOOK_CREATED_AT"));
+	          dto.setBookUpdatedAt(rs.getTimestamp("BOOK_UPDATED_AT"));
+	          
+	          list.add(dto);
+		}
+	} catch (Exception e) {
+		e.printStackTrace();
+	} finally {
+		DBConnector.close(rs, pstmt, conn);
+	} // 하단에 return 값 넣어주셔야함!
+	return list;
    }
    
    //예약번호로 DB에서 예약내역 조회하기
@@ -254,6 +317,75 @@ public class BookDao {
       } else {
          return false; // 작업 실패라는 의미에서 false return
       }
+   }
+   
+   public Map<String, Object> getBookDetails(String bookNum) throws SQLException {
+	   Map<String, Object> resultMap = new HashMap<>();
+	   
+	   Connection conn = null;
+	   PreparedStatement pstmt = null;
+	   ResultSet rs = null;
+	   String sql = """
+	   		SELECT u.users_name,
+	   			   s.stay_name, s.stay_addr, s.stay_phone,
+	   			   b.book_num, b.book_checkin_date, b.book_checkout_date, b.book_checkin_time,
+	   			   b.book_adult, b.book_children, b.book_infant, b.book_request,
+	   			   r.room_name,
+	   			   p.pay_paid_at, p.pay_amount
+	   		FROM BOOKING b
+	   		JOIN USERS u ON b.book_users_num = u.users_num
+	   		JOIN STAY s ON b.book_stay_num = s.stay_num
+	   		JOIN ROOM r ON b.book_room_num = r.room_num
+	   		JOIN PAYMENTS p ON b.book_num = p.pay_book_num
+	   		WHERE b.book_num = ?
+	   		""";
+	   
+	   try {
+		   conn = DBConnector.getConn();
+		   pstmt = conn.prepareStatement(sql);
+		   pstmt.setString(1, bookNum);
+		   rs = pstmt.executeQuery();
+		   
+		   while(rs.next()) {
+			   UserDto uDto = new UserDto();
+			   StayDto sDto = new StayDto();
+			   BookDto bDto = new BookDto();
+			   RoomDto rDto = new RoomDto();
+			   PaymentDto pDto = new PaymentDto();
+			   
+			   uDto.setUsersName(rs.getString("users_name"));
+			   
+			   sDto.setStayName(rs.getString("stay_name"));
+			   sDto.setStayAddr(rs.getString("stay_addr"));
+			   sDto.setStayPhone(rs.getString("stay_phone"));			   
+			   
+			   bDto.setBookNum(rs.getString("book_num"));
+			   bDto.setBookCheckIn(rs.getString("book_checkin_date"));
+			   bDto.setBookCheckOut(rs.getString("book_checkout_date"));
+			   bDto.setBookCheckInTime(rs.getString("book_checkin_time"));
+			   bDto.setBookAdult(rs.getInt("book_adult"));
+			   bDto.setBookChildren(rs.getInt("book_children"));
+			   bDto.setBookInfant(rs.getInt("book_infant"));
+			   bDto.setBookRequest(rs.getString("book_request"));
+			   
+			   rDto.setRoomName(rs.getString("room_name"));
+			   
+			   pDto.setPayPaidAt(rs.getTimestamp("pay_paid_at"));
+			   pDto.setPayAmount(rs.getLong("pay_amount"));
+			   
+			   resultMap.put("users", uDto);
+			   resultMap.put("stay",sDto);
+			   resultMap.put("book", bDto);
+			   resultMap.put("room", rDto);
+			   resultMap.put("payment", pDto);			   
+		   }
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+	        DBConnector.close(pstmt, conn);
+		}
+	   return resultMap;		   
    }
 
 }

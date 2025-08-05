@@ -1,3 +1,6 @@
+<%@page import="model.room.RoomDao"%>
+<%@page import="java.util.List"%>
+<%@page import="model.room.RoomDto"%>
 <%@page import="model.page.PageDto"%>
 <%@page import="model.page.PageDao"%>
 <%@page import="model.page.StayDto"%>
@@ -5,21 +8,30 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
-	// get 방식 파라미터로 전달되는 숙소 번호 얻어내기
+	// get 방식 파라미터로 전달되는 글 번호, 숙소 번호 얻어내기
+	long pageNum = Long.parseLong(request.getParameter("page_num"));
 	long stayNum = Long.parseLong(request.getParameter("stay_num"));
 	
 	// 참조값 얻어오기
 	StayDao dao = StayDao.getInstance();
 	
+	// 객실 정보
+	List<RoomDto> list = RoomDao.getInstance().getRoomListByStayNum((int)stayNum);
+	
 	// 슥소 정보
 	StayDto stayDto = dao.getByNum(stayNum);
+	String stayName = stayDto.getStayName();
 	
 	// 페이지 정보
-	PageDto pageDto = dao.getPage(stayNum);
+	PageDto dto = PageDao.getInstance().getByNum(pageNum);
 	
 	// 별점 평균, 별점 수
 	double avgStar = dao.getAverageStar(stayNum);
 	int reviewCount = dao.getReviewCount(stayNum);
+	
+	// 좌표
+	double stayLat = Double.parseDouble(stayDto.getStayLat());
+	double stayLong = Double.parseDouble(stayDto.getStayLong());
 %>
 <!DOCTYPE html>
 <html>
@@ -74,13 +86,13 @@
 	<!-- 숙소 소개 -->
 	<div class="container mt-5" id="info">
 		<h3>스테이 소개</h3>
-		<p><%= pageDto.getPageContent() %></p>
+		<p><%=dto.getPageContent() %></p>
 	</div>
 	
 	<!-- 별점 리뷰 -->
 	<div class="container mt-5" id="review">
 		<h3>리뷰</h3>
-		<p>후기 <%=reviewCount%>개, 평균 ★<%=String.format("%.2f", avgStar)%></p>
+		<p>후기 <%=reviewCount %>개, 평균 ★<%=String.format("%.2f", avgStar) %></p>
 	</div>
 	
 	<!-- 카카오 맵 -->
@@ -88,17 +100,18 @@
 		<h3>위치</h3>
 		<div id="map" style="width:500px;height:400px;">
 			<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=9b6864c72d30ce2e92d016819ab66440"></script>
+			<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=9b6864c72d30ce2e92d016819ab66440"></script>
 			<script>
 				var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
 				mapOption = { 
-					center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+					center: new kakao.maps.LatLng(<%=stayLat%>, <%=stayLong%>), // 지도의 중심좌표
 					level: 3 // 지도의 확대 레벨
 				};
 	
 				var map = new kakao.maps.Map(mapContainer, mapOption);
 			
 				// 마커가 표시될 위치입니다 
-				var markerPosition  = new kakao.maps.LatLng(33.450701, 126.570667); 
+				var markerPosition  = new kakao.maps.LatLng(<%=stayLat%>, <%=stayLong%>);
 		
 				// 마커를 생성합니다
 				var marker = new kakao.maps.Marker({
@@ -108,12 +121,11 @@
 				// 마커가 지도 위에 표시되도록 설정합니다
 				marker.setMap(map);
 			
-				var iwContent = '<div style="padding:5px;">Hello World!
-									<br>
-										<a href="https://map.kakao.com/link/map/Hello World!,33.450701,126.570667" style="color:blue" target="_blank">큰지도보기</a>
-										<a href="https://map.kakao.com/link/to/Hello World!,33.450701,126.570667" style="color:blue" target="_blank">길찾기</a>
+				var iwContent = '<div style="padding:5px;"><%=stayName %><br>
+									<a href="https://map.kakao.com/link/map/<%=stayName.trim() %>,<%=stayLat %>,<%=stayLong %>" target="_blank">큰지도보기</a>
+									<a href="https://map.kakao.com/link/to/<%=stayName.trim() %>,<%=stayLat %>,<%=stayLong %>" target="_blank">길찾기</a>
 								</div>', // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
-				iwPosition = new kakao.maps.LatLng(33.450701, 126.570667); //인포윈도우 표시 위치입니다
+				iwPosition = new kakao.maps.LatLng(<%=stayLat%>, <%=stayLong%>); // 인포윈도우 표시 위치입니다
 			
 				// 인포윈도우를 생성합니다
 				var infowindow = new kakao.maps.InfoWindow({
@@ -139,7 +151,7 @@
 						</button>
 					</h2>
 					<div id="navOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-						<div id="class="accordion-body">
+						<div class="accordion-body">
 							<table>
 								<thead>
 									<tr>
@@ -148,8 +160,17 @@
 										<th>금액</th>
 									</tr>
 								</thead>
+								<tbody>
+									<%for (RoomDto room : list) { %>
+                					<tr>
+					                    <td><%=room.getRoomName() %></td>
+					                    <td>(<%=room.getRoomAdultMax() %> / <%=room.getRoomPaxMax() %>)명</td>
+					                    <td><%=String.format("%,d", room.getRoomPrice()) %></td>
+                					</tr>
+                					<%} %>
+								</tbody>
 							</table>
-							<%= pageDto.getPageReserve() %>
+							<%=dto.getPageReserve() %>
 						</div>
 					</div>
 				</div>
@@ -161,7 +182,7 @@
 					</h2>
 					<div id="navTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
 						<div class="accordion-body">
-							<%= pageDto.getPageGuide() %>
+							<%=dto.getPageGuide() %>
 						</div>
 					</div>
 				</div>
@@ -173,12 +194,15 @@
 					</h2>
 					<div id="navThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
 						<div class="accordion-body">
-							<%= pageDto.getPageRefund() %>
+							<%=dto.getPageRefund() %>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+	<script>
+	
+	</script>
 </body>
 </html>

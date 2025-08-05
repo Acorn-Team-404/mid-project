@@ -20,6 +20,7 @@ public class NotificationDto {
 	// private String notiImage;
 	private String notiType;
 	private String notiDaysAgo;
+	private int notiReadCount;
 	
 	
 	// 예약 타입(추가 필드)
@@ -31,8 +32,27 @@ public class NotificationDto {
 	// 댓글 타입(추가 필드)
 	private String notiCommentWriter;
 	private String notiCommentContent;
-	// private String 게시글 PK??
+	private String notiCommentParentNum;
 	
+	
+	// 문의 타입(추가 필드)
+	private String notiInqTitle;
+	private String notiInqContent;
+	
+	
+	public String getNotiInqTitle() {
+		return notiInqTitle;
+	}
+	public void setNotiInqTitle(String notiInqTitle) {
+		this.notiInqTitle = notiInqTitle;
+	}
+	
+	public String getNotiInqContent() {
+		return notiInqContent;
+	}
+	public void setNotiInqContent(String notiInqContent) {
+		this.notiInqContent = notiInqContent;
+	}
 	
 	
 	public long getNotiNum() {
@@ -119,6 +139,12 @@ public class NotificationDto {
 	public void setNotiDaysAgo(String notiDaysAgo) {
 		this.notiDaysAgo = notiDaysAgo;
 	}
+	public int getNotiReadCount() {
+		return notiReadCount;
+	}
+	public void setNotiReadCount(int notiReadCount) {
+		this.notiReadCount = notiReadCount;
+	}
 	public String getNotiCheckIn() {
 		return notiCheckIn;
 	}
@@ -146,8 +172,14 @@ public class NotificationDto {
 	public String getNotiCommentContent() {
 		return notiCommentContent;
 	}
-	public void setNotiCommentContent(String notiCommentcontent) {
-		this.notiCommentContent = notiCommentcontent;
+	public void setNotiCommentContent(String notiCommentContent) {
+		this.notiCommentContent = notiCommentContent;
+	}
+	public String getNotiCommentParentNum() {
+		return notiCommentParentNum;
+	}
+	public void setNotiCommentParentNum(String notiCommentParentNum) {
+		this.notiCommentParentNum = notiCommentParentNum;
 	}
 	
 	

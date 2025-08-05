@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Base64;

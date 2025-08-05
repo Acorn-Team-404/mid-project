@@ -30,6 +30,30 @@ public class RoomDto {
 	// 객실 설명
 	private String roomContent;
 	
+	// [ JOIN 한 STAY 테이블 필드 ]
+	// 숙소명 s.STAY_NAME 
+	private String roomStayName;
+	// 숙소 편의시설 s.STAY_FACILITIES
+	private String roomStayFacilities;
+
+	
+	// [ setter & getter : JOIN 한 STAY 테이블 필드 ]
+	public String getRoomStayName() {
+		return roomStayName;
+	}
+	public void setRoomStayName(String roomStayName) {
+		this.roomStayName = roomStayName;
+	}
+	public String getRoomStayFacilities() {
+		return roomStayFacilities;
+	}
+	public void setRoomStayFacilities(String roomStayFacilities) {
+		this.roomStayFacilities = roomStayFacilities;
+	}
+
+	
+
+	
 	// setter & getter
 	public long getRoomNum() {
 		return roomNum;
@@ -109,5 +133,7 @@ public class RoomDto {
 	public void setRoomContent(String roomContent) {
 		this.roomContent = roomContent;
 	}
+
+	
 
 }
