@@ -1,6 +1,6 @@
 
-let contextPath = "/404_mid_project"; 
-const servletPath = contextPath + "/pay/PaymentsServlet";
+
+const servletPath = window.contextPath + "/pay/PaymentsServlet";
 console.log("successUrl", window.location.origin + servletPath);
 console.log("failUrl", window.location.origin + servletPath);
 console.log("contextPath is", contextPath);
@@ -104,6 +104,10 @@ async function requestPayment() {
 function generateRandomString() {
 	return window.btoa(Math.random()).slice(0, 20);
 }
+
+// 전역 scope 등록
+window.selectPaymentMethod = selectPaymentMethod;
+window.requestPayment = requestPayment;
 
 for (let i = 1; i < 6; i++) {
 	console.log(i);
