@@ -50,18 +50,29 @@ public class NotiSseServlet extends HttpServlet {
         response.setHeader("Pragma", "no-cache");
         response.setDateHeader("Expires", 0);
         response.setHeader("Connection", "keep-alive");
-
-        PrintWriter out = response.getWriter();
-        long lastNotiNum = 0;
+        
+        
+        PrintWriter out = null;
+        
+        try {
+        out = response.getWriter();
+        long lastNotiNum = 0; // 마지막 알림의 번호를 기억
         boolean retrySent = false;
+        long startTime = System.currentTimeMillis(); // 연결 시간이 길어지는 걸 방지하는 타임아웃 변수
 
         while (true) {
+        	// 10분 초과 시 종료
+        	if (System.currentTimeMillis() - startTime > 1000 * 60 * 10) {
+                System.out.println("⏳ SSE 연결 시간 초과로 종료");
+                break;
+            }
+        	
             System.out.println("SSE 연결 시작됨 - usersNum: " + usersNum + ", 시간: " + new java.util.Date());
 
             if (!retrySent) {
-                out.write("retry: 60000\n");
+                out.write("retry: 60000\n"); // 연결이 끊기면 60초 후 재연결하라는 명령
                 out.flush();
-                retrySent = true;
+                retrySent = true; // 처음 한 번만 명령하도록 설정
             }
 
             List<NotificationDto> notiList = new ArrayList<>();
@@ -69,7 +80,7 @@ public class NotiSseServlet extends HttpServlet {
                 notiList = NotificationDao.getInstance().notiSelectAfter(usersNum, lastNotiNum);
             } catch (Exception e) {
                 e.printStackTrace();
-                System.err.println("🔴 알림 조회 중 예외 발생 - SSE 종료");
+                System.err.println("🔴 DAO 조회 중 예외 발생 - SSE 종료");
                 break;
             }
 
@@ -110,15 +121,16 @@ public class NotiSseServlet extends HttpServlet {
                 out.write("data: " + jsonArray.toJSONString() + "\n\n");
                 out.flush();
 
-                if (out.checkError()) {
+                if (out.checkError()) { // PrintWriter가 쓰기 실패 상태인지 확인
                     System.out.println("❌ 클라이언트 연결 끊김");
                     break;
                 }
+                
             } else {
-                out.write(": heartbeat\n\n");
+                out.write(": heartbeat\n\n"); // 브라우저와 연결 유지를 위한 write
                 out.flush();
 
-                if (out.checkError()) {
+                if (out.checkError()) { // heartbeat 쓰기 도중 에러 체크
                     System.out.println("❌ 클라이언트 연결 끊김 (heartbeat)");
                     break;
                 }
@@ -127,12 +139,19 @@ public class NotiSseServlet extends HttpServlet {
             try {
                 Thread.sleep(60000); // 60초 간격으로 polling
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                Thread.currentThread().interrupt(); // sleep() 중 인터럽트 시 쓰레드 복구
                 System.err.println("SSE 쓰레드 인터럽트 발생. 연결 유지");
             } catch (Exception e) {
                 e.printStackTrace();
                 System.err.println("SSE 예외 발생. 연결 종료");
-                break;
+                break; // 그 외 예상치 못한 예외 발생 시 루프 종료(자원 누수 방지)
+            }
+        }
+        
+        } finally {
+            if (out != null) {
+                out.close(); // 🔹 연결 종료 시 자원 해제
+                System.out.println("🔚 PrintWriter 자원 해제 완료");
             }
         }
     }
