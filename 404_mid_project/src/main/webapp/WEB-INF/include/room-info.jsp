@@ -101,10 +101,10 @@
 			      </div>
 			      <div class="modal-body">
 			        <div class="row">
-			          <div class="col-md-6">
+			          <div class="col-md-6 ">
 			            <%-- 첫 번째 이미지 보여주기 --%>
 			            <% if (imageList != null && !imageList.isEmpty()) { %>
-			              <img src="<%= request.getContextPath() %>/show.img?imageName=<%= imageList.get(0).getImageSavedName() %>" class="img-fluid room-image" alt="객실 이미지">
+			              <img src="<%= request.getContextPath() %>/show.img?imageName=<%= imageList.get(0).getImageSavedName() %>" class="img-fluid room-image rounded" alt="객실 이미지">
 			            <% } else { %>
 			              <img src="<%= request.getContextPath() %>/images/no-image.png" class="img-fluid room-image" alt="기본 이미지">
 			            <% } %>

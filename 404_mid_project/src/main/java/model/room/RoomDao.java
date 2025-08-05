@@ -104,7 +104,7 @@ public class RoomDao {
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				RoomDto room = new RoomDto();
+				RoomDto dto = new RoomDto();
 				
 				dto.setRoomNum(rs.getLong("ROOM_NUM"));
 				dto.setRoomStayNum(rs.getInt("ROOM_STAY_NUM"));
@@ -171,7 +171,7 @@ public class RoomDao {
 	            dto.setRoomPaxMax(rs.getInt("room_pax_max"));
 	            dto.setRoomCheckIn(rs.getTimestamp("room_checkin_date"));
 	            dto.setRoomCheckOut(rs.getTimestamp("room_checkout_date"));
-	            dto.setRoomBlockDate(rs.getString("room_block_date"));
+	            dto.setRoomBlockDate(rs.getTimestamp("room_block_date"));
 	            dto.setRoomContent(rs.getString("room_content"));
 	            
 				list.add(dto);

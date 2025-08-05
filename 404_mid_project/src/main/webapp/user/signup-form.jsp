@@ -201,7 +201,6 @@
 	        
 	        document.getElementById("code-box").style.display = "none";
 	        document.getElementById("resend-code").style.display = "none";
-	        document.getElementById("email").disabled = true;
 
 	        
 	        EmailCheckMessage.textContent = "이메일 인증에 성공했습니다";
