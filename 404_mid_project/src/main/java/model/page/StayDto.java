@@ -13,7 +13,7 @@ public class StayDto {
 	private String stayDelete;
 	private String stayFacilities;
 	
-	private String usersName;
+	private String usersId;
 	
 	// setter, getter
 	public long getStayNum() {
@@ -104,11 +104,11 @@ public class StayDto {
 		this.stayFacilities = stayFacilities;
 	}
 
-	public String getUsersName() {
-		return usersName;
+	public String getUsersId() {
+		return usersId;
 	}
 
-	public void setUsersName(String usersName) {
-		this.usersName = usersName;
+	public void setUsersId(String usersId) {
+		this.usersId = usersId;
 	}
 }
