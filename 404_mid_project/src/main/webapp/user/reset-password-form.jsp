@@ -4,23 +4,41 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 <title>user/reset-password-form.jsp</title>
+<style>
+	.custom-btn {
+		background-color: #d5d5d5;
+	    border: none;
+	    color: black;
+	    padding: 10px 16px;
+	    font-size: 16px;
+	    border-radius: 8px;
+	    transition: background-color 0.3s;
+	    }
+	
+	    .custom-btn:hover {
+	      background-color: #c1c2c1;
+	    }
+</style>
 </head>
 <body>
-	<div class="container">
-		<form action="${pageContext.request.contextPath}/resetPassword.user" method="post">
-			<div>
-				<label for="newUsersPassword">비밀번호</label>
-				<input type="password" name="newUsersPassword" id="newUsersPassword" required>
+	<h1 class="text-center mt-4">비밀번호 재설정</h1>
+	<div class="container mt-5 mb-5">
+		<form action="${pageContext.request.contextPath}/user/reset-password.jsp" method="post">
+			<div class="mb-4">
+				<label for="newUsersPassword" class="form-label">비밀번호</label>
+				<input type="password" name="newUsersPassword" class="form-control w-80" id="newUsersPassword" required>
 				<span id="usersPasswordMessage"></span>
 			</div>
 			
-			<div>
-				<label for="newUsersCheckPassword">비밀번호 확인</label>
-				<input type="password" name="newUsersCheckPassword" id="newUsersCheckPassword" required>
+			<div class="mb-4">
+				<label for="newUsersCheckPassword" class="form-label">비밀번호 확인</label>
+				<input type="password" name="newUsersCheckPassword" class="form-control w-80" id="newUsersCheckPassword" required>
 				<span id="usersCheckPasswordMessage"></span>
 			</div>
-			<button type="submit">비밀번호 재설정</button>
+			<button type="submit" class="btn custom-btn d-block mx-auto">비밀번호 재설정</button>
 		</form>
 	</div>
 	<script>
