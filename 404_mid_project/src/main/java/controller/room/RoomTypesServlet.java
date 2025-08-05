@@ -1,6 +1,7 @@
 package controller.room;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,9 +48,10 @@ public class RoomTypesServlet extends HttpServlet {
 		room.setRoomPaxMax(12);
 		room.setRoomPrice(440000);
 		room.setRoomContent("햇살이 잘 들어오는 모던한 거실과 넓은 주방이 있는 객실입니다.");
-		room.setRoomCheckIn("2025-08-02");
-		room.setRoomCheckOut("2025-08-03");
-		room.setRoomBlockDate("2025-08-15");
+		room.setRoomCheckIn(Timestamp.valueOf("2025-08-02 00:00:00"));
+		room.setRoomCheckOut(Timestamp.valueOf("2025-08-03 00:00:00"));
+		room.setRoomBlockDate(Timestamp.valueOf("2025-08-15 00:00:00"));
+
 
 		roomTypes.add(room);
 

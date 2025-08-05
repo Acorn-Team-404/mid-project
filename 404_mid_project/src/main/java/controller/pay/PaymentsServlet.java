@@ -44,14 +44,21 @@ public class PaymentsServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
+		System.out.println("PaymentsServlet 도착 - 요청 파라미터: " + request.getParameterMap());
 		boolean paymentSuccess = false;
 		
 		// 토스 서버에 쏴줄 파라미터들 수집하기
 		String paymentKey = request.getParameter("paymentKey");
 		String orderId = request.getParameter("orderId");
 		String amount = request.getParameter("amount");
-
+		String bookNum = (String) request.getSession().getAttribute("bookNum");
+		BookDto bookDto = BookDao.getInstance().getByBookNum(bookNum);
+		System.out.println(paymentKey);
+		System.out.println(orderId);
+		System.out.println(amount);
+		System.out.println(bookNum);
+		System.out.println(bookDto);
+		
 		String credentials = SECRET_KEY + ":";
 		// 인증헤더 구성 (Base64를 인코딩하려면 바이트 배열이여햐 하기 떄문에 byte배열로 인코딩 후 Base64 문자열로 인코딩)
 		String encodedAuth = Base64.getEncoder().encodeToString(credentials.getBytes("UTF-8"));
@@ -77,8 +84,12 @@ public class PaymentsServlet extends HttpServlet {
 		JSONObject json = new JSONObject();
 		json.put("paymentKey", paymentKey);
 		json.put("orderId", orderId);
+		amount = request.getParameter("amount");
+		if (amount == null || amount.trim().isEmpty()) {
+		    // 예외 방지용 기본값 또는 에러 처리
+		    amount = "0";  // 또는 적절한 기본 금액으로 변경
+		}
 		json.put("amount", Integer.parseInt(amount));
-		
 		// 아웃풋스트림 객체로 전송하기
 		try (OutputStream os = conn.getOutputStream()) {
 			os.write(json.toString().getBytes("UTF-8"));
@@ -94,8 +105,9 @@ public class PaymentsServlet extends HttpServlet {
 			result.append(line);
 		}
 
-		String bookNum = request.getParameter("bookNum");
-		bookNum = "20250801-0018";
+		
+		System.out.println(">> [DEBUG] 전달된 bookNum: " + bookNum);
+		
 		// 결제 승인 API 호출되는지 확인하기 + 결제정보insert + 예약정보update 트랜잭션
 		if (responseCode == 200) {
 			System.out.println("결제 승인 성공");
@@ -138,11 +150,18 @@ public class PaymentsServlet extends HttpServlet {
 				payDto.setPayAmount(amountLong);
 				payDto.setPayMethodGroupId("PAYMENT_METHOD");
 				
-				// method 값을 영어 코드로 매핑
+				// method 값을 영어 코드로 매핑 (카드 + 간편결제 모두 CARD로 묶기)
 				String methodCode;
 				switch (method) {
 				    case "카드":
-				        methodCode = "CARD";
+				    case "신한카드":
+				    case "농협카드":
+				    case "삼성카드":
+				    case "카카오페이":
+				    case "삼성페이":
+				    case "토스페이":
+				    case "간편결제":
+				        methodCode = "CARD"; // 카드, 간편결제 모두 카드로 통합
 				        break;
 				    case "계좌이체":
 				        methodCode = "TRANSFER";
@@ -154,20 +173,19 @@ public class PaymentsServlet extends HttpServlet {
 				    default:
 				        methodCode = "UNKNOWN";
 				}
-
 				switch (methodCode) {
-				    case "CARD":
-				        payDto.setPayMethodCode(10);
-				        break;
-				    case "TRANSFER":
-				        payDto.setPayMethodCode(11);
-				        break;
-				    case "MOBILE_PHONE":
-				        payDto.setPayMethodCode(12);
-				        break;
-				    default:
-				        payDto.setPayMethodCode(0); // 잘못된 결제 수단
-				}
+			    case "CARD":
+			        payDto.setPayMethodCode(10);
+			        break;
+			    case "TRANSFER":
+			        payDto.setPayMethodCode(11);
+			        break;
+			    case "MOBILE_PHONE":
+			        payDto.setPayMethodCode(12);
+			        break;
+			    default:
+			        payDto.setPayMethodCode(0); // 잘못된 결제 수단
+			}
 
 
 				payDto.setPayStatusGroupId("PAYMENT_STATUS");
@@ -188,13 +206,12 @@ public class PaymentsServlet extends HttpServlet {
 		            e.printStackTrace();
 		            if (dbConn != null) try { dbConn.rollback(); } catch (Exception rollbackEx) {}
 		            System.out.println("결제가 실패하여, 예약이 취소 되었습니다.");
-		            BookDao.getInstance().deleteByBookNum("20250801-0017"); // 예약 삭제 bookNum
+		            BookDao.getInstance().deleteByBookNum(bookNum); // 예약 삭제 bookNum
 		        } finally {
 		            if (dbConn != null) try { dbConn.close(); } catch (Exception e) {}
 		            
 		        }
-			
-		
+
 			//결제 승인 api 호출 실패
 		} else {
 			System.out.println("결제 승인 실패");
@@ -203,19 +220,22 @@ public class PaymentsServlet extends HttpServlet {
 		}
 		
 		// 결제 완료/실패 정보를 가지고 결과페이지로 포워딩
+		PaymentDto paymentDto = PaymentDao.getInstance().getPayByOrderId(orderId);
 		if (paymentSuccess) {
-			BookDto bookingDto = BookDao.getInstance().getByBookNum(bookNum);
-			PaymentDto paymentDto = PaymentDao.getInstance().getPayByOrderId(orderId);
 			
 			request.setAttribute("paymentSuccess", true);
-			request.setAttribute("booking", bookingDto);
-			request.setAttribute("payment", paymentDto);
+			request.setAttribute("bookDto", bookDto);
+			request.setAttribute("paymentDto", paymentDto);
 			
 			RequestDispatcher rd = request.getRequestDispatcher("/pay/pay-result.jsp");
 			rd.forward(request, response);
 			
 		} else {
-		    response.sendRedirect(request.getContextPath() + "/pay/pay-result.jsp?success=0");
+			 request.setAttribute("paymentSuccess", false);
+			 request.setAttribute("bookDto", bookDto);
+			request.setAttribute("paymentDto", paymentDto);
+			 RequestDispatcher rd = request.getRequestDispatcher("/pay/pay-result.jsp");
+			 rd.forward(request, response);
 		}
 
 	}
