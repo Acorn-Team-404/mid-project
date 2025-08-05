@@ -41,7 +41,16 @@ public class NotificationDao {
 					    n.noti_read_code, 
 					    TO_CHAR(n.noti_created_at, 'YYYY-MM-DD') AS noti_created_at,
 					    n.noti_type_code,
-					    TRUNC(SYSDATE - n.noti_created_at) AS noti_days_ago,
+					    CASE
+					    	WHEN (SYSDATE - n.noti_created_at) * 24 * 60 < 1 THEN '방금'
+					    	WHEN (SYSDATE - n.noti_created_at) * 24 * 60 < 60
+					    		THEN TO_CHAR(FLOOR((SYSDATE - n.noti_created_at) * 24 * 60)) || '분 전'
+					    	WHEN (SYSDATE - n.noti_created_at) < 1
+					    		THEN TO_CHAR(FLOOR((SYSDATE - n.noti_created_at) * 24)) || '시간 전'
+					    	WHEN (SYSDATE - n.noti_created_at) < 365
+					    		THEN TO_CHAR(TRUNC(SYSDATE - n.noti_created_at)) || '일 전'
+					    	ELSE TO_CHAR(TRUNC((SYSDATE - n.noti_created_at) / 365)) || '년 전'
+					    END AS noti_days_ago,
 					    (SELECT COUNT(noti_read_code)
 						FROM notifications
 						WHERE noti_read_code = 10) AS noti_read_count,

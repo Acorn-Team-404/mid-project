@@ -13,7 +13,7 @@
 	request.setAttribute("usersNum", usersNum);
 %>
 
-<!-- index에서 include하기 때문에 중복 방지<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>-->
+<%-- index에서 include하기 때문에 중복 방지<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include> --%>
 <nav class="navbar navbar-expand-lg sticky-top bg-white border-bottom shadow-sm py-3">
   <div class="container-fluid align-items-center flex-nowrap">
     <!-- 좌측 로고 -->
@@ -65,7 +65,7 @@
 	      	<% if(usersId != null) {%>
 	      		<button type="button" class="btn position-relative p-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
 				  <i class="bi bi-bell-fill fs-3 text-dark"></i>
-				  <span class="noti-btn-count position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger px-2">+9</span>
+				  <span class="noti-btn-count position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger px-2"></span>
 				</button>
 	      	<%} %>
 	      	
@@ -81,8 +81,8 @@
 </nav>
 
 <% 
+	// notification-modal.jsp (알림창 모달 include)
 	if (session.getAttribute("usersNum") != null) { %>
-		<!-- notification-modal.jsp (알림창 모달 include) -->
 		<jsp:include page="/WEB-INF/include/notification-modal.jsp"></jsp:include>
 <% } %>
 
