@@ -143,28 +143,28 @@
                         <!-- 성인 -->
                         <div class="count-box">
                             <span class="me-auto">성인<br/><small class="text-muted">만 12세 이상</small></span>
-                            <button type="button" class="btn btn-outline-secondary count-btn" onclick="changeCount('adult', -1)">−</button>
+                            <button type="button" class="btn btn-outline-secondary count-btn" onclick="changeCount('adult', -1)">-</button>
                             <span id="adultCount">2</span>
                             <input type="hidden" name="adult" id="adult" value="2" min="0"/>
-                            <button type="button" class="btn btn-outline-primary count-btn" onclick="changeCount('adult', 1)">＋</button>
+                            <button type="button" class="btn btn-outline-primary count-btn" onclick="changeCount('adult', 1)">+</button>
                         </div>
 
                         <!-- 어린이 -->
                         <div class="count-box">
                             <span class="me-auto">어린이<br/><small class="text-muted">만 2~11세</small></span>
-                            <button type="button" class="btn btn-outline-secondary count-btn" onclick="changeCount('children', -1)">−</button>
+                            <button type="button" class="btn btn-outline-secondary count-btn" onclick="changeCount('children', -1)">-</button>
                             <span id="childrenCount">0</span>
                             <input type="hidden" name="children" id="children" value="0"/>
-                            <button type="button" class="btn btn-outline-primary count-btn" onclick="changeCount('children', 1)">＋</button>
+                            <button type="button" class="btn btn-outline-primary count-btn" onclick="changeCount('children', 1)">+</button>
                         </div>
 
                         <!-- 유아 -->
                         <div class="count-box">
                             <span class="me-auto">유아<br/><small class="text-muted">만 2세 미만</small></span>
-                            <button type="button" class="btn btn-outline-secondary count-btn" onclick="changeCount('infant', -1)">−</button>
+                            <button type="button" class="btn btn-outline-secondary count-btn" onclick="changeCount('infant', -1)">-</button>
                             <span id="infantCount">0</span>
                             <input type="hidden" name="infant" id="infant" value="0"/>
-                            <button type="button" class="btn btn-outline-primary count-btn" onclick="changeCount('infant', 1)">＋</button>
+                            <button type="button" class="btn btn-outline-primary count-btn" onclick="changeCount('infant', 1)">+</button>
                         </div>
 
                         <strong class="mt-2">총 인원 : <span id="totPerson">1</span>명</strong>
@@ -311,7 +311,7 @@
 	        const totalAmountEl = document.querySelector("#totalAmount");
 	        const totalAmountValue = parseInt(document.querySelector("#totalAmountValue").value, 10) || 0;
 	        if (totalAmountEl) {
-	            totalAmountEl.textContent = totalAmountValue.toLocaleString() + " 원";
+	            totalAmountEl.textContent = totalAmountValue.toLocaleString() + "원";
 	        }
 
 	    }
@@ -320,7 +320,7 @@
 	        const roomSelect = document.querySelector("#bookRoomNum");
 	        if (!roomSelect.value) {
 	            document.querySelector("#selectedRoomNameDisplay").textContent = "선택된 객실이 없습니다";
-	            document.querySelector("#roomPrice").textContent = "0 원";
+	            document.querySelector("#roomPrice").textContent = "0원";
 	            return;
 	        }
 	
@@ -330,7 +330,7 @@
 	        console.log("선택 객실:", name, price);
 	
 	        document.querySelector("#selectedRoomNameDisplay").textContent = name;
-	        document.querySelector("#roomPrice").textContent = Number(price).toLocaleString() + " 원";
+	        document.querySelector("#roomPrice").textContent = Number(price).toLocaleString() + "원";
 	    }
 	
 	    // 이벤트 바인딩
