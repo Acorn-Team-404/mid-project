@@ -52,7 +52,7 @@ public class CommentDao {
 				dto.setCommentParentNum(rs.getInt("comment_parent_num"));
 				dto.setCommentGroupNum(rs.getInt("comment_group_num"));
 				dto.setCommentDeleted(rs.getString("comment_deleted"));
-				dto.setCommentProfileImage(rs.getString("comment_profile_image"));
+				dto.setCommentProfileImage(rs.getString("users_profile_image"));
 				dto.setCommentCreatedAt(rs.getString("comment_created_at"));
 				
 				//dto.setCommentReplyCount(rs.getInt("comment_reply_count"));
