@@ -17,12 +17,12 @@
   	//List<GalleryImageDto> images = GalleryDao.getInstance().getImageList(num);
   	//로그인된 userName (null일 가능성 있음)
   	Long usersNum = (Long) session.getAttribute("usersNum");
-  	String usersID = (String) session.getAttribute("usersID");
-  	/* if(usersID == null) {
+  	String writer = (String) session.getAttribute("usersId");
+  	if(writer == null) {
   	    // 로그인하지 않은 사용자는 댓글 작성 불가
   	    response.sendRedirect(request.getContextPath() + "/user/login-form.jsp");
   	    return;
-  	} */
+  	}
   	//댓글 목록
   	List<CommentDto> commentList = CommentDao.getInstance().selectAll(num);
   	//로그인 여부
@@ -152,7 +152,7 @@
 		            			<i class="bi bi-arrow-return-right position-absolute" style="top:0;left:-30px"></i>
 		            		<%} %>
 			            	<!-- 댓글 작성자가 로그인된 userName일 경우 삭제버튼 출력 -->
-			            	<%if(tmp.getCommentWriter().equals(usersID)) {%>
+			            	<%if(tmp.getCommentWriter().equals(writer)) {%>
 			            		<button data-num="<%=tmp.getCommentNum() %>" class="btn-close position-absolute top-0 end-0 m-2"></button>
 			            	<%} %>
 			            	<%-- <%if(tmp.getProfileImage()==null){ %>
@@ -174,7 +174,7 @@
 		                    	</div>
 		                    	<pre><%=tmp.getCommentContent() %></pre>
 		                    	<!-- 댓글 작성자가 로그인된 userName이라면 수정폼 / 아니면 댓글폼 -->
-		                    	<%if(tmp.getCommentWriter().equals(usersID)){ %>
+		                    	<%if(tmp.getCommentWriter().equals(writer)){ %>
 		                    		<!-- 수정 버튼 (본인에게만 보임) -->
 				                    <button class="btn btn-sm btn-outline-secondary edit-btn">수정</button>
 				

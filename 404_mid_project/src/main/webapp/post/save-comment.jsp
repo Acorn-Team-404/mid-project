@@ -14,13 +14,12 @@
 	//댓글의 그룹번호를 담을 변수를 미리 만들고
 	int groupNum=0;
 	//만일 댓글 그룹번호가 넘어온다연 (대댓이라면)
-	if(strGroupNum !=null){
-		//댓글의 그룹번호를 변수에 담는다.
-		groupNum=Integer.parseInt(strGroupNum);
+	if (strGroupNum != null && !strGroupNum.trim().equals("")) {
+	    groupNum = Integer.parseInt(strGroupNum);
 	}
 	
-	String writer=(String)session.getAttribute("usersId");
-	if (writer == null) {
+	String writer = (String)session.getAttribute("usersId");
+	if (writer==null) {
 		// 로그인 안 된 상태면 로그인 페이지로 리다이렉트
 		response.sendRedirect(request.getContextPath() + "/user/login-form.jsp");
 		return;
