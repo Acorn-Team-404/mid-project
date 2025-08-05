@@ -8,7 +8,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>결제 성공</title>
+  <title>결제 확인</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
@@ -63,7 +63,7 @@
         <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-dark w-100">홈으로</a>
       </div>
       <div class="col-6">
-        <a href="${pageContext.request.contextPath}/my-page.jsp" class="btn btn-dark w-100">예약내역 보기</a>
+        <a href="${pageContext.request.contextPath}/my-page/my-page.jsp" class="btn btn-dark w-100">예약내역 보기</a>
       </div>
     </div>
   </div>

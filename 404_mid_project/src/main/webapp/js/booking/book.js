@@ -42,11 +42,12 @@ document.querySelectorAll('input[name="bed"]').forEach(cb => {
 // 3. 체크인 시간 라디오 -> hidden input 세팅 + 표시 갱신
 document.querySelectorAll('input[name="checkInTime"]').forEach(radio => {
     radio.addEventListener('change', () => {
-        isCheckInTimeTouched = true;
+        // isCheckInTimeTouched = true; // 이 줄을 제거하세요
         document.querySelector('#selectedCheckInTime').value = radio.value;
         updateSummaryBox();
     });
 });
+
 
 // 4. 총액 계산용 함수
 function calculateTotalAmount() {

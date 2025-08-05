@@ -61,10 +61,10 @@ public class PageDao {
 			conn = DBConnector.getConn();
 			// 실행할 sql 문
 			String sql = """
-				SELECT page_num, stay_name, users_name, page_created_at
+				SELECT page_num, s.stay_name, u.users_name, page_created_at
 				FROM page p
-				INNER JOIN users u ON p.users_num=u.users_num
-				INNER JOIN stay s ON p.stay_num=s.stay_num
+				INNER JOIN users u ON page_users_num=u.users_num
+				INNER JOIN stay s ON p.page_stay_num=s.stay_num
 				ORDER BY page_num DESC
 			""";
 			pstmt = conn.prepareStatement(sql);
@@ -104,7 +104,7 @@ public class PageDao {
 			String sql = """
 				SELECT COUNT(*) AS count
 				FROM page p
-				JOIN stay s ON p.stay_num = s.stay_num
+				JOIN stay s ON p.page_stay_num = s.stay_num
 				WHERE (s.stay_name LIKE '%' || ? || '%' OR p.page_content LIKE '%' || ? || '%' OR s.stay_loc LIKE '%' || ? || '%')
 			""";
 			pstmt = conn.prepareStatement(sql);
@@ -127,8 +127,8 @@ public class PageDao {
 		return count;
 	}
 	
-	// 검색 키워드에 해당하는 row 만 select 해서 리턴하는 메소드
-	public List<PageDto> searchByKeyword(PageDto dto){
+	// 특정 페이지에 해당하는 row 만 select 해서 리턴 + startRowNum 과 endRowNum 을 담아와서 select
+	public List<PageDto> selectPage(PageDto dto){
 		List<PageDto> list=new ArrayList<>();
 		
 		Connection conn = null;
@@ -138,12 +138,71 @@ public class PageDao {
 			conn = DBConnector.getConn();
 			// 실행할 sql 문
 			String sql = """
-				SELECT p.page_num, s.stay_name, u.users_name, p.page_created_at
-				FROM page p
-				JOIN stay s ON p.stay_num = s.stay_num
-				JOIN users u ON p.users_num = u.users_num
-				WHERE (s.stay_name LIKE '%' || ? || '%' OR p.page_content LIKE '%' || ? || '%' OR s.stay_loc LIKE '%' || ? || '%')
-				ORDER BY p.page_num DESC
+				SELECT *
+				FROM
+					(SELECT result1.*, ROWNUM AS rnum
+					FROM
+						(SELECT p.page_num, p.page_stay_num, s.stay_name, page_content, page_reserve, page_guide, page_refund, p.page_created_at
+						FROM page p
+						JOIN stay s ON p.page_stay_num = s.stay_num
+						JOIN users u ON p.page_users_num = u.users_num
+						ORDER BY p.page_num DESC) result1)
+				WHERE rnum BETWEEN ? AND ?
+			""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 값 바인딩
+			pstmt.setInt(1, dto.getStartRowNum());
+			pstmt.setInt(2, dto.getEndRowNum());
+			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+			// 단일 : if  /  다중 : while
+			while (rs.next()) {
+				// 커서가 위치한 곳의 회원 정보를 저장할 PageDto 객체 생성
+				PageDto dto2=new PageDto();
+				// ResultSet 으로부터 얻어낸 회원 번호를 PageDto 객체의 setter 메소드를 이용해서 dto 에 저장
+				dto2.setPageNum(rs.getLong("page_num"));
+				dto2.setStayNum(rs.getLong("stay_num"));
+				dto2.setUsersNum(rs.getLong("users_num"));
+				dto2.setStayName(rs.getString("stay_name"));
+				dto2.setPageContent(rs.getString("page_content"));
+				dto2.setPageReserve(rs.getString("page_reserve"));
+				dto2.setPageGuide(rs.getString("page_guide"));
+				dto2.setPageRefund(rs.getString("page_refund"));
+				dto2.setPageCreatedAt(rs.getString("page_created_at"));
+				// 회원 한 명의 정보가 담긴 새로운 PageDto 객체의 참조값을 List 에 누적시키기
+				list.add(dto2);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		} // 하단에 return 값 넣어주셔야함!
+		return list;
+	}
+	
+	// 특정 페이지와 검색 키워드에 해당하는 row 만 select 해서 리턴 + startRowNum 과 endRowNum 을 담아와서 select
+	public List<PageDto> searchPageByKeyword(PageDto dto){
+		List<PageDto> list=new ArrayList<>();
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			// 실행할 sql 문
+			String sql = """
+				SELECT *
+				FROM
+					(SELECT result1.*, ROWNUM AS rnum
+					FROM
+						(SELECT p.page_num, s.stay_name, u.users_name, p.page_created_at
+						FROM page p
+						JOIN stay s ON p.page_stay_num = s.stay_num
+						JOIN users u ON p.page_users_num = u.users_num
+						WHERE (s.stay_name LIKE '%' || ? || '%' OR p.page_content LIKE '%' || ? || '%' OR s.stay_loc LIKE '%' || ? || '%')
+						ORDER BY p.page_num DESC) result1)
+				WHERE rnum BETWEEN ? AND ?
 			""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 값 바인딩
@@ -151,19 +210,21 @@ public class PageDao {
 			pstmt.setString(1, keyword);
 			pstmt.setString(2, keyword);
 			pstmt.setString(3, keyword);
+			pstmt.setInt(4, dto.getStartRowNum());
+	        pstmt.setInt(5, dto.getEndRowNum());
 			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
 			rs = pstmt.executeQuery();
 			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
 			// 단일 : if  /  다중 : while
 			while (rs.next()) {
-				// 커서가 위치한 곳의 회원 정보를 저장할 BoardDto 객체 생성
+				// 커서가 위치한 곳의 회원 정보를 저장할 PageDto 객체 생성
 				PageDto dto2=new PageDto();
-				// ResultSet 으로부터 얻어낸 회원 번호를 BoardDto 객체의 setter 메소드를 이용해서 dto 에 저장
+				// ResultSet 으로부터 얻어낸 회원 번호를 PageDto 객체의 setter 메소드를 이용해서 dto 에 저장
 				dto2.setPageNum(rs.getLong("page_num"));
 				dto2.setStayName(rs.getString("stay_name"));
 				dto2.setUsersName(rs.getString("users_name"));
 				dto2.setPageCreatedAt(rs.getString("page_created_at"));
-				// 회원 한 명의 정보가 담긴 새로운 BoardDto 객체의 참조값을 List 에 누적시키기
+				// 회원 한 명의 정보가 담긴 새로운 PageDto 객체의 참조값을 List 에 누적시키기
 				list.add(dto2);
 			}
 		} catch (Exception e) {
@@ -241,53 +302,10 @@ public class PageDao {
 		}
 	}
 	
-	// 글 하나의 정보 불러오기
-	public PageDto getByNum(long num) {
-		PageDto dto=null;
-		
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try {
-			conn = DBConnector.getConn();
-			// 실행할 sql 문
-			String sql = """
-				SELECT stay_name, users_name, u.users_id, page_content, page_reserve, page_guide, page_refund
-				FROM page p
-				INNER JOIN users u ON p.users_num=u.users_num
-				INNER JOIN stay s ON p.stay_num=s.stay_num
-				WHERE page_num=?
-			""";
-			pstmt = conn.prepareStatement(sql);
-			// ? 에 값 바인딩
-			pstmt.setLong(1, num);
-			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
-			rs = pstmt.executeQuery();
-			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
-			// 단일 : if  /  다중 : while
-			if (rs.next()) {
-				dto=new PageDto();
-				dto.setPageNum(num);
-				dto.setStayName(rs.getString("stay_name"));
-				dto.setUsersName(rs.getString("users_name"));
-				dto.setUsersId(rs.getString("users_id"));
-				dto.setPageContent(rs.getString("page_content"));
-				dto.setPageReserve(rs.getString("page_reserve"));
-				dto.setPageGuide(rs.getString("page_guide"));
-				dto.setPageRefund(rs.getString("page_refund"));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			DBConnector.close(rs, pstmt, conn);
-		} // 하단에 return 값 넣어주셔야함!
-		return dto;
-	}
-	
 	// 글 번호 미리 받기
 	public long getSequence() {
 		long num=0;
-		
+			
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -315,6 +333,48 @@ public class PageDao {
 		return num;
 	}
 	
+	// 글 하나의 정보 불러오기
+	public PageDto getByNum(long num) {
+		PageDto dto=null;
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			// 실행할 sql 문
+			String sql = """
+				SELECT p.page_num, p.page_stay_num, s.stay_name, p.page_users_num, u.users_id, p.page_content, p.page_reserve, p.page_guide, p.page_refund
+				FROM page p
+				INNER JOIN users u ON p.page_users_num = u.users_num
+				INNER JOIN stay s ON p.page_stay_num = s.stay_num
+				WHERE p.page_num = ?
+			""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 값 바인딩
+			pstmt.setLong(1, num);
+			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+			// 단일 : if  /  다중 : while
+			if (rs.next()) {
+				dto=new PageDto();
+				dto.setPageNum(num);
+				dto.setStayNum(rs.getLong("stay_num"));
+				dto.setUsersNum(rs.getLong("users_num"));;
+				dto.setPageContent(rs.getString("page_content"));
+				dto.setPageReserve(rs.getString("page_reserve"));
+				dto.setPageGuide(rs.getString("page_guide"));
+				dto.setPageRefund(rs.getString("page_refund"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		} // 하단에 return 값 넣어주셔야함!
+		return dto;
+	}
+	
 	// 글 작성
 	public boolean insert(PageDto dto) {
 		Connection conn = null;
@@ -327,7 +387,7 @@ public class PageDao {
 			// 
 			String sql = """
 				INSERT INTO page
-				(page_num, stay_num, users_num, page_content, page_created_at, page_reserve, page_guide, page_refund)
+				(page_num, page_stay_num, page_users_num, page_content, page_created_at, page_reserve, page_guide, page_refund)
 				VALUES (?, ?, ?, ?, SYSDATE, ?, ?, ?)
 			""";
 			pstmt = conn.prepareStatement(sql);

@@ -39,10 +39,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
 	    <ul class="navbar-nav align-items-center ms-auto fw-semibold">
 	      <li class="nav-item mx-2">
-	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/user/login-form.jsp">LOGIN</a>
-	      </li>
-	      <li class="nav-item mx-2">
-	     	 <a class="nav-link text-dark text-nowrap" href="list.post">JOURNAL</a>
+	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/post/list.jsp">JOURNAL</a>
 	      </li>
 	      <li class="nav-item mx-2">
 	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/my-page/my-page.jsp">MYPAGE</a>
@@ -61,20 +58,32 @@
 	      </li>
 	      <li class="nav-item mx-2">
 	      
-	      	<!-- 알림창 버튼 (로그인 세션 있을때만 출력) -->
-	      	<% if(usersId != null) {%>
-	      		<button type="button" class="btn position-relative p-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
-				  <i class="bi bi-bell-fill fs-3 text-dark"></i>
-				  <span class="noti-btn-count position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger px-2"></span>
-				</button>
-	      	<%} %>
-	      	
-	      </li>
-	      <li class="nav-item mx-2">
-	        <a class="nav-link text-dark d-flex align-items-center text-nowrap" href="${pageContext.request.contextPath}/user/signup-form.jsp">
-	          <i class="bi bi-person me-1"></i> 회원가입
-	        </a>
-	      </li>
+	      
+        <% if (usersId == null) { %>
+          <!-- 비로그인 상태일 때 LOGIN & 회원가입 -->
+          <li class="nav-item mx-2">
+            <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/user/login-form.jsp">LOGIN</a>
+          </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link text-dark d-flex align-items-center text-nowrap" href="${pageContext.request.contextPath}/user/signup-form.jsp">
+              <i class="bi bi-person me-1"></i> 회원가입
+            </a>
+          </li>
+        <% } else { %>
+          <!-- 로그인 상태 일 때  알림 & LOGOUT -->
+          <li class="nav-item mx-2">
+            <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+              <i class="bi bi-bell"></i> 알림
+            </button>
+          </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/logout">
+              <i class="bi bi-box-arrow-right me-1"></i> LOGOUT
+            </a>
+          </li>
+        <% } %>
+
 	    </ul>
     </div> <!-- end collapse -->
   </div>

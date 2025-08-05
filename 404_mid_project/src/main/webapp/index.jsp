@@ -15,7 +15,7 @@
       object-position: center;
     }
   </style>
-</head>
+</head> 
 <body>
 	
 	<jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>

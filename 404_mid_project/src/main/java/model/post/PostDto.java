@@ -2,7 +2,7 @@ package model.post;
 
 public class PostDto {
 	private int postNum;
-	private int postWriterNum;
+	private Long postWriterNum;
 	private String postTitle;
 	private String postContent;
 	private int postType;
@@ -11,17 +11,17 @@ public class PostDto {
 	private String postCreatedAt;
 	private String postUpdatedAt;
 	private String postDeleted;
-	
+	private String usersID;
 	public int getPostNum() {
 		return postNum;
 	}
 	public void setPostNum(int postNum) {
 		this.postNum = postNum;
 	}
-	public int getPostWriterNum() {
+	public Long getPostWriterNum() {
 		return postWriterNum;
 	}
-	public void setPostWriterNum(int postWriterNum) {
+	public void setPostWriterNum(Long postWriterNum) {
 		this.postWriterNum = postWriterNum;
 	}
 	public String getPostTitle() {
@@ -71,6 +71,12 @@ public class PostDto {
 	}
 	public void setPostDeleted(String postDeleted) {
 		this.postDeleted = postDeleted;
+	}
+	public String getUsersID() {
+		return usersID;
+	}
+	public void setUsersID(String usersID) {
+		this.usersID = usersID;
 	}
 	
 	
