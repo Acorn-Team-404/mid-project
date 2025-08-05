@@ -28,12 +28,13 @@ public class CommentDao {
 			conn = DBConnector.getConn();
 			// 실행할 sql 문
 			String sql = """
-					SELECT commentNum, commentWriter, commentTargetWriter, commentContent, 
-					commentGroupNum, commentParentNum, commentDeleted, commentCreatedAt
+					SELECT comment_num, comment_writer, comment_target_writer, 
+						comment_content, comment_deleted, comment_parent_num, comment_group_num, 
+						users_profile_image, comment_created_at
 					FROM comments
-					INNER JOIN users ON commentsWriter = users.usersNum
-					WHERE parentNum=?
-					ORDER BY commentGroupNum ASC, commentNum ASC
+					INNER JOIN users u ON comment_writer = u.users_Id
+					WHERE comment_parent_num = ?
+					ORDER BY comment_group_num ASC, comment_num ASC
 					""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 값 바인딩
@@ -43,15 +44,19 @@ public class CommentDao {
 			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
 			// 단일 : if  /  다중 : while
 			while (rs.next()) {
-				CommentDto dto=new CommentDto();
-				dto.setCommentNum(rs.getInt("commentNum"));
-	            dto.setCommentWriter(rs.getInt("commentWriter"));
-	            dto.setCommentTargetWriter(rs.getInt("commentTargetWriter"));
-	            dto.setCommentContent(rs.getString("commentContent"));
-	            dto.setCommentGroupNum(rs.getInt("commentGroupNum"));
-	            dto.setCommentParentNum(rs.getInt("commentParentNum"));
-	            dto.setCommentDeleted(rs.getString("commentDeleted"));
-	            dto.setCommentCreatedAt(rs.getString("commentCreatedAt"));
+				CommentDto dto = new CommentDto();
+				dto.setCommentNum(rs.getInt("comment_num"));
+				dto.setCommentWriter(rs.getString("comment_writer"));
+				dto.setCommentTargetWriter(rs.getString("comment_target_writer"));
+				dto.setCommentContent(rs.getString("comment_content"));
+				dto.setCommentParentNum(rs.getInt("comment_parent_num"));
+				dto.setCommentGroupNum(rs.getInt("comment_group_num"));
+				dto.setCommentDeleted(rs.getString("comment_deleted"));
+				dto.setCommentProfileImage(rs.getString("comment_profile_image"));
+				dto.setCommentCreatedAt(rs.getString("comment_created_at"));
+				
+				//dto.setCommentReplyCount(rs.getInt("comment_reply_count"));
+				
 				
 				list.add(dto);
 			}
@@ -73,14 +78,14 @@ public class CommentDao {
 			conn = DBConnector.getConn();
 			String sql = """
 					INSERT INTO comments
-					(commnetNum, commentWriter, commentTargetWriter, commentContent, commentParentNum, commentGroupNum)
+					(comment_num, comment_writer, comment_target_writer, comment_content, comment_parent_num, comment_group_num)
 					VALUES (?, ?, ?, ?, ?, ?)
 					""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 순서대로 필요한 값 바인딩
 			pstmt.setInt(1, dto.getCommentNum());
-			pstmt.setInt(2, dto.getCommentWriter());
-			pstmt.setInt(3, dto.getCommentTargetWriter());
+			pstmt.setString(2, dto.getCommentWriter());
+			pstmt.setString(3, dto.getCommentTargetWriter());
 			pstmt.setString(4, dto.getCommentContent());
 			pstmt.setInt(5, dto.getCommentParentNum());
 			pstmt.setInt(6, dto.getCommentGroupNum());
@@ -139,8 +144,8 @@ public class CommentDao {
 			conn = DBConnector.getConn();
 			String sql = """
 					UPDATE comments
-					SET content=?
-					WHERE num=?
+					SET comment_content=?
+					WHERE comment_num=?
 					""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 순서대로 필요한 값 바인딩
@@ -173,8 +178,8 @@ public class CommentDao {
 			conn = DBConnector.getConn();
 			String sql = """
 					UPDATE comments
-					SET deleted='yes'
-					WHERE num=?
+					SET comment_deleted='yes'
+					WHERE comment_num=?
 					""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 순서대로 필요한 값 바인딩

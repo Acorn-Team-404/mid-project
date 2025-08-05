@@ -51,7 +51,7 @@ public class PostDao {
 				PostDto dto=new PostDto();
 				
 				dto.setPostNum(rs.getInt("post_num"));
-				dto.setPostWriterNum(rs.getInt("post_writer_num"));
+				dto.setPostWriterNum(rs.getLong("post_writer_num"));
 				dto.setPostTitle(rs.getString("post_title"));
 				dto.setPostContent(rs.getString("post_content"));
 				dto.setPostStayNum(rs.getInt("post_stay_num"));
@@ -59,7 +59,7 @@ public class PostDao {
 				dto.setPostViews(rs.getInt("post_views"));
 				dto.setPostCreatedAt(rs.getString("post_created_at"));
 				dto.setPostUpdatedAt(rs.getString("post_updated_at"));
-				dto.setPostDeleted(rs.getString("post_Deleted"));
+				dto.setPostDeleted(rs.getString("post_deleted"));
 				
 				list.add(dto);
 			}
@@ -83,16 +83,24 @@ public class PostDao {
 			conn = DBConnector.getConn();
 			// 실행할 sql 문
 			String sql = """
-					SELECT post_num, post_writer_num, post_title, post_content, 
-						post_views, post_stay_num, TO_CHAR(post_created_at, 'YYYY-MM-DD') AS post_created_at, post_updated_at, 
-						post_deleted, post_type, 
-						u.users_ID
-					FROM (SELECT post_num, post_writer_num, post_title, post_content, 
-						post_views, post_stay_num, TO_CHAR(post_created_at, 'YYYY-MM-DD') AS post_created_at, post_updated_at, 
-						post_deleted, post_type
-						FROM posts)
-					JOIN users u ON post_writer_num = u.users_num
-					WHERE post_num=?
+					SELECT 
+					    p.post_num, 
+					    p.post_writer_num, 
+					    p.post_title, 
+					    p.post_content, 
+					    p.post_views, 
+					    p.post_stay_num, 
+					    	TO_CHAR(p.post_created_at, 'YYYY-MM-DD') AS post_created_at, 
+					    p.post_updated_at, 
+					    p.post_deleted, 
+					    p.post_type, 
+					    u.users_ID
+					FROM 
+					    posts p
+					LEFT JOIN 
+					    users u ON p.post_writer_num = u.users_num
+					WHERE 
+					    p.post_num = ?		
 					""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 값 바인딩
@@ -103,7 +111,7 @@ public class PostDao {
 			if (rs.next()) {
 				dto=new PostDto();
 				dto.setPostNum(num);
-				dto.setPostWriterNum(rs.getInt("post_writer_num"));
+				dto.setPostWriterNum(rs.getLong("post_writer_num"));
 				dto.setPostTitle(rs.getString("post_title"));
 				dto.setPostContent(rs.getString("post_content"));
 				dto.setPostStayNum(rs.getInt("post_stay_num"));
@@ -143,7 +151,7 @@ public class PostDao {
 			conn = DBConnector.getConn();
 			// 실행할 sql 문
 			String sql = """
-					SELECT post_seq.NEXTVAL AS num
+					SELECT posts_seq.NEXTVAL AS num
 					FROM DUAL
 					""";
 			pstmt = conn.prepareStatement(sql);
@@ -176,16 +184,21 @@ public class PostDao {
 			conn = DBConnector.getConn();
 			String sql = """
 					INSERT INTO posts
-					(post_num, post_writer_num, post_title, post_content, post_stay_num)
-					VALUES(posts_seq.NEXTVAL, ?, ?, ?, ?)
+					(post_num, post_writer_num, post_title, post_content, 
+					post_type, post_stay_num, post_created_at)
+					VALUES(?, ?, ?, ?, ?, ?, SYSDATE)
 					""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 순서대로 필요한 값 바인딩
 			
-			pstmt.setInt(1, dto.getPostWriterNum());
-			pstmt.setString(2, dto.getPostTitle());
-			pstmt.setString(3, dto.getPostContent());
-			pstmt.setInt(4, dto.getPostStayNum());
+			pstmt.setInt(1, dto.getPostNum());
+			pstmt.setLong(2, dto.getPostWriterNum());
+			pstmt.setString(3, dto.getPostTitle());
+			pstmt.setString(4, dto.getPostContent());
+			pstmt.setInt(5, dto.getPostType());
+			pstmt.setInt(6, dto.getPostStayNum());
+			
+			
 			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
 			rowCount = pstmt.executeUpdate();
 		} catch (Exception e) {
@@ -219,11 +232,21 @@ public class PostDao {
 		try {
 			conn = DBConnector.getConn();
 			String sql = """
-
+					UPDATE posts
+					SET 
+						post_title=?,
+						post_content=?,
+						post_stay_num=?
+					WHERE post_num=?
 					""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 순서대로 필요한 값 바인딩
 
+			pstmt.setString(1, dto.getPostTitle());
+	        pstmt.setString(2, dto.getPostContent());
+	        pstmt.setInt(3, dto.getPostStayNum());
+	        pstmt.setInt(4, dto.getPostNum());
+	        
 			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
 			rowCount = pstmt.executeUpdate();
 
@@ -252,7 +275,7 @@ public class PostDao {
 			String sql = """
 					DELETE
 					FROM posts
-					WHERE num=?
+					WHERE post_num=?
 					""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 순서대로 필요한 값 바인딩
@@ -283,8 +306,8 @@ public class PostDao {
 			conn = DBConnector.getConn();
 			String sql = """
 						UPDATE posts
-						SET views = views+1
-						WHERE num=?
+						SET post_views = post_views+1
+						WHERE post_num=?
 					""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 순서대로 필요한 값 바인딩

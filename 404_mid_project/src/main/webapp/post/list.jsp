@@ -41,7 +41,7 @@
 		%>
 			<li class="col-md-4 mb-4">
 				<div class="card position-relative">
-					<a href="${pageContext.request.contextPath}/post/view.jsp?num=<%=post.getPostNum() %>"><img src="${pageContext.request.contextPath}/images/indexc01.jpg" class="card-img-top"></a>
+					<a href="${pageContext.request.contextPath}/post/view.post?num=<%=post.getPostNum() %>"><img src="${pageContext.request.contextPath}/images/indexc01.jpg" class="card-img-top"></a>
 					
 					<div class="position-absolute top-50 start-50 translate-middle w-100 bg-dark bg-opacity-50 text-white text-center px-3 py-2">
 						<%=post.getPostTitle() %>

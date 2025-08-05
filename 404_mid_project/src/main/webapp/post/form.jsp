@@ -146,7 +146,7 @@
     	
     	// 폼에 "submit" 이벤트 일어났을 때
     	document.querySelector("#saveForm").addEventListener("submit", (e)=>{
-    		e.preventDefault();
+    		//e.preventDefault();
     		if(selectedFiles.length < 1){
     			alert("업로드할 이미지를 1개 이상 선택해주세요.");
     			return;
