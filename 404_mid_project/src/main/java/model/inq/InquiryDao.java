@@ -337,4 +337,78 @@ public class InquiryDao {
 		} // 하단에 return 값 넣어주셔야함!
 		return list;
 	}
+	
+	//글 하나의 정보를 리턴하는 메소드(글번호 조회)
+	public InquiryDto getByNum(long num) {
+		// 필요한 객체를 담을 지역변수를 미리 만든다.
+		InquiryDto dto = null;
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			// 실행할 sql 문
+			String sql = """
+				SELECT users_num, inq_title, inq_content, inq_type, stay_name
+				FROM inquiry
+				JOIN users ON users_num=inq_users_num
+				LEFT JOIN stay ON stay_num=inq_stay_num
+				WHERE inq_num = ?
+			""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 값 바인딩
+			pstmt.setLong(1, num);
+			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+			// 단일 : if  /  다중 : while
+			if (rs.next()) {
+				dto=new InquiryDto();
+				dto.setTitle(rs.getString("inq_title"));
+				dto.setContent(rs.getString("inq_content"));
+				dto.setType(rs.getString("inq_type"));
+				dto.setStayName(rs.getString("stay_name"));
+				dto.setUsersNum(rs.getLong("users_num"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		} // 하단에 return 값 넣어주셔야함!
+		return dto;
+	}
+	
+	//답변 저장하는 메소드
+	public boolean updateAnswer(InquiryDto dto) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		// 변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
+		int rowCount = 0;
+		try {
+			conn = DBConnector.getConn();
+			String sql = """
+				UPDATE inquiry
+				SET inq_is_answered = 1, inq_answer = ?, inq_answered_at = SYSDATE
+				WHERE inq_num = ?
+			""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 순서대로 필요한 값 바인딩
+			pstmt.setString(1, dto.getAnswer());
+			pstmt.setLong(1, dto.getNum());
+			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
+			rowCount = pstmt.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(pstmt, conn);
+		}
+		// 작업의 성공 여부 (변화된 row 의 갯수로 판단)
+		if (rowCount > 0) {
+			return true; // 작업 성공
+		} else {
+			return false; // 작업 실패
+		}
+	}
 }
