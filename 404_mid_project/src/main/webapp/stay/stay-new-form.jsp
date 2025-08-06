@@ -5,7 +5,18 @@
 <%@ page pageEncoding="UTF-8"%>
 <%
 	String usersNum=(String)session.getAttribute("usersId");
-System.out.println(session.getAttribute("usersId"));
+	
+	// 유저 로그인 여부 체크
+	String usersId = (String)session.getAttribute("usersId");
+	if (usersId == null) {
+%>
+	<script>
+		alert("로그인이 필요합니다.");
+		location.href="${pageContext.request.contextPath}/user/login-form.jsp";
+	</script>
+<%
+		return;
+	}
 %>
 <!DOCTYPE html>
 <html>

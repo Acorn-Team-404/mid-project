@@ -54,6 +54,7 @@ public class NotificationDao {
 					    (SELECT COUNT(noti_read_code)
 						FROM notifications
 						WHERE noti_read_code = 10) AS noti_read_count,
+						b.book_num AS noti_book_num,
 					    TO_CHAR(b.book_checkin_date, 'YYYY-MM-DD') AS noti_book_checkin,
 						TO_CHAR(b.book_checkout_date, 'YYYY-MM-DD') AS noti_book_checkout,
 					    s.stay_name AS noti_stay_name,
@@ -106,6 +107,7 @@ public class NotificationDao {
 				dto.setNotiReadCount(rs.getInt("noti_read_count"));
 				
 				// 예약 추가필드
+				dto.setNotiBookNum(rs.getString("noti_book_num"));
 				dto.setNotiCheckIn(rs.getString("noti_book_checkin"));
 				dto.setNotiCheckOut(rs.getString("noti_book_checkout"));
 				dto.setNotiStayName(rs.getString("noti_stay_name"));
@@ -181,7 +183,7 @@ public class NotificationDao {
 	
 	
 	// 댓글 작성 시 함께 실행될 댓글알림 insert 메서드
-	public boolean commentInsert(NotificationDto dto) {
+	public boolean notiInsert(NotificationDto dto) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 

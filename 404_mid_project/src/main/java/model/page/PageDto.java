@@ -17,6 +17,7 @@ public class PageDto {
 	private String usersName;
 	private String usersId;
 	private String keyword;
+	private String stayLoc;
 	
 	// 페이징 처리를 위한 필드
 	private int startRowNum;
@@ -134,5 +135,11 @@ public class PageDto {
 	}
 	public void setNextNum(int nextNum) {
 		this.nextNum = nextNum;
+	}
+	public String getStayLoc() {
+		return stayLoc;
+	}
+	public void setStayLoc(String stayLoc) {
+		this.stayLoc = stayLoc;
 	}
 }

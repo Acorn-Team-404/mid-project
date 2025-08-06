@@ -42,7 +42,7 @@ public class NotiCommentServlet extends HttpServlet {
 			notiDto.setNotiTargetNum(notiTargetNum);
 			notiDto.setNotiMessage(notiMessage);
 			
-			boolean isNotiSuccess = NotificationDao.getInstance().commentInsert(notiDto);
+			boolean isNotiSuccess = NotificationDao.getInstance().notiInsert(notiDto);
 			
 			if(isNotiSuccess) {
 				System.out.println("알림 데이터 저장 성공");

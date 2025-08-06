@@ -26,20 +26,21 @@
   </style>
 </head>
 <body>
-	<h1 class="text-center mt-4">아이디 찾기</h1>
-	<div class="container mt-5 mb-5">
-		<form action="${pageContext.request.contextPath}/user/find-id.jsp" method="get">
-			<div class="mb-4">
-				<label for="usersName" class="form-label">이름</label>
-				<input type="text" name="usersName" class="form-control w-80"  id="usersName"/>
-			</div>
-			<div class="mb-4">
-				<label for="email" class="form-label">이메일</label>
-				<input type="text" name="email" class="form-control w-80"  id="email"/>
-			</div>
-			<button type="submit" class="btn custom-btn" >조회하기</button>
-		</form>
-	</div>
+<h1 class="text-center mt-4">아이디 찾기</h1>
+<div class="container mt-5 mb-5" style="max-width: 500px;">
+	<form action="${pageContext.request.contextPath}/user/find-id.jsp" method="get">
+	    <div class="form-floating mb-4">
+		    <input type="text" name="usersName" class="form-control" id="usersName" placeholder="이름" required>
+		    <label for="usersName">이름</label>
+	    </div>
+	
+	    <div class="form-floating mb-4">
+	        <input type="email" name="email" class="form-control" id="email" placeholder="이메일" required>
+	        <label for="email">이메일</label>
+	    </div>
+	    <button type="submit" class="btn custom-btn w-100">조회하기</button>
+	  </form>
+</div>
 	
 </body>
 </html>

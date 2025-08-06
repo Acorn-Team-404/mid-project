@@ -77,12 +77,17 @@ public class NotiSseServlet extends HttpServlet {
 
             @Override
             public void run() {
+            	if (completed.get()) {
+                    timer.cancel();
+                    return;
+                }
+            	
                 try {
                     if (System.currentTimeMillis() - startTime > 1000 * 60 * 10) { // SSE 타임아웃 10분
                         System.out.println("⏳ SSE 연결 10분 초과 → 종료");
                         if (completed.compareAndSet(false, true)) {
-                            asyncContext.complete(); // SSE 연결 정료
                             timer.cancel(); // 알림을 전송하던 TimerTask 중지
+                            asyncContext.complete(); // SSE 연결 종료
                         }
                         return;
                     }
@@ -113,6 +118,7 @@ public class NotiSseServlet extends HttpServlet {
                             obj.put("type", tmp.getNotiType());
                             obj.put("daysAgo", tmp.getNotiDaysAgo());
                             obj.put("readCount", tmp.getNotiReadCount());
+                            obj.put("bookNum", tmp.getNotiBookNum());
                             obj.put("bookCheckIn", tmp.getNotiCheckIn());
                             obj.put("bookCheckOut", tmp.getNotiCheckOut());
                             obj.put("stayName", tmp.getNotiStayName());
@@ -137,8 +143,8 @@ public class NotiSseServlet extends HttpServlet {
                         if (out.checkError()) {
                             System.out.println("❌ 클라이언트 연결 끊김");
                             if (completed.compareAndSet(false, true)) {
-                                asyncContext.complete();
                                 timer.cancel();
+                                asyncContext.complete();
                             }
                         }
 
@@ -149,8 +155,8 @@ public class NotiSseServlet extends HttpServlet {
                         if (out.checkError()) {
                             System.out.println("❌ 클라이언트 연결 끊김 (heartbeat)");
                             if (completed.compareAndSet(false, true)) {
-                                asyncContext.complete();
                                 timer.cancel();
+                                asyncContext.complete();
                             }
                         }
                     }
@@ -159,8 +165,8 @@ public class NotiSseServlet extends HttpServlet {
                     e.printStackTrace();
                     System.err.println("SSE 예외 발생 → 연결 종료");
                     if (completed.compareAndSet(false, true)) {
-                        asyncContext.complete();
                         timer.cancel();
+                        asyncContext.complete();
                     }
                 }
             }

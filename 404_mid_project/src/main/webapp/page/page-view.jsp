@@ -9,29 +9,36 @@
     pageEncoding="UTF-8"%>
 <%
 	// get 방식 파라미터로 전달되는 글 번호, 숙소 번호 얻어내기
-	long pageNum = Long.parseLong(request.getParameter("page_num"));
-	long stayNum = Long.parseLong(request.getParameter("stay_num"));
+	long pageNum = Long.parseLong(request.getParameter("pageNum"));
+	long stayNum = Long.parseLong(request.getParameter("stayNum"));
 	
 	// 참조값 얻어오기
 	StayDao dao = StayDao.getInstance();
 	
-	// 객실 정보
-	List<RoomDto> list = RoomDao.getInstance().getRoomListByStayNum((int)stayNum);
+	// 페이지 정보
+	PageDto pageDto = PageDao.getInstance().getByNum(pageNum, stayNum);
+	if (pageDto == null) {
+	    out.println("<script>alert('페이지 정보를 불러올 수 없습니다.'); history.back();</script>");
+	    return;
+	}
 	
 	// 슥소 정보
-	StayDto stayDto = dao.getByNum(stayNum);
-	String stayName = stayDto.getStayName();
+	StayDto stayDto = StayDao.getInstance().getBy(stayNum);
+	if (stayDto == null) {
+		out.println("<script>alert('숙소 정보를 불러올 수 없습니다.'); history.back();</script>");
+		return;
+	}
 	
-	// 페이지 정보
-	PageDto dto = PageDao.getInstance().getByNum(pageNum);
+	// 객실 정보
+	List<RoomDto> list = RoomDao.getInstance().getRoomListByRoomNum((int)stayNum);
 	
 	// 별점 평균, 별점 수
 	double avgStar = dao.getAverageStar(stayNum);
 	int reviewCount = dao.getReviewCount(stayNum);
 	
 	// 좌표
-	double stayLat = Double.parseDouble(stayDto.getStayLat());
-	double stayLong = Double.parseDouble(stayDto.getStayLong());
+	//double stayLat = Double.parseDouble(stayDto.getStayLat());
+	//double stayLong = Double.parseDouble(stayDto.getStayLong());
 %>
 <!DOCTYPE html>
 <html>
@@ -55,7 +62,9 @@
 		</p>
 	</div>
 	<div class="col-4">
-		<button type="button" class="btn btn-primary" onclick="#">예약하기</button>
+		<button type="button" class="btn btn-primary" onclick="location.href='${pageContext.request.contextPath}/booking/booking-page';">
+    		예약하기
+		</button>
 	</div>
 	
 	<!-- 네비게이션 바 -->
@@ -86,57 +95,13 @@
 	<!-- 숙소 소개 -->
 	<div class="container mt-5" id="info">
 		<h3>스테이 소개</h3>
-		<p><%=dto.getPageContent() %></p>
+		<p><%=pageDto.getPageContent() %></p>
 	</div>
 	
 	<!-- 별점 리뷰 -->
 	<div class="container mt-5" id="review">
 		<h3>리뷰</h3>
 		<p>후기 <%=reviewCount %>개, 평균 ★<%=String.format("%.2f", avgStar) %></p>
-	</div>
-	
-	<!-- 카카오 맵 -->
-	<div class="container mt-5" id="loc">
-		<h3>위치</h3>
-		<div id="map" style="width:500px;height:400px;">
-			<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=9b6864c72d30ce2e92d016819ab66440"></script>
-			<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=9b6864c72d30ce2e92d016819ab66440"></script>
-			<script>
-				var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-				mapOption = { 
-					center: new kakao.maps.LatLng(<%=stayLat%>, <%=stayLong%>), // 지도의 중심좌표
-					level: 3 // 지도의 확대 레벨
-				};
-	
-				var map = new kakao.maps.Map(mapContainer, mapOption);
-			
-				// 마커가 표시될 위치입니다 
-				var markerPosition  = new kakao.maps.LatLng(<%=stayLat%>, <%=stayLong%>);
-		
-				// 마커를 생성합니다
-				var marker = new kakao.maps.Marker({
-					position: markerPosition
-				});
-			
-				// 마커가 지도 위에 표시되도록 설정합니다
-				marker.setMap(map);
-			
-				var iwContent = '<div style="padding:5px;"><%=stayName %><br>
-									<a href="https://map.kakao.com/link/map/<%=stayName.trim() %>,<%=stayLat %>,<%=stayLong %>" target="_blank">큰지도보기</a>
-									<a href="https://map.kakao.com/link/to/<%=stayName.trim() %>,<%=stayLat %>,<%=stayLong %>" target="_blank">길찾기</a>
-								</div>', // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
-				iwPosition = new kakao.maps.LatLng(<%=stayLat%>, <%=stayLong%>); // 인포윈도우 표시 위치입니다
-			
-				// 인포윈도우를 생성합니다
-				var infowindow = new kakao.maps.InfoWindow({
-					position : iwPosition, 
-					content : iwContent 
-				});
-					  
-				// 마커 위에 인포윈도우를 표시합니다. 두번째 파라미터인 marker를 넣어주지 않으면 지도 위에 표시됩니다
-				infowindow.open(map, marker);
-			</script>
-		</div>
 	</div>
 	
 	<!-- 숙소 방침 -->
@@ -170,7 +135,7 @@
                 					<%} %>
 								</tbody>
 							</table>
-							<%=dto.getPageReserve() %>
+							<%=pageDto.getPageReserve() %>
 						</div>
 					</div>
 				</div>
@@ -182,7 +147,7 @@
 					</h2>
 					<div id="navTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
 						<div class="accordion-body">
-							<%=dto.getPageGuide() %>
+							<%=pageDto.getPageGuide() %>
 						</div>
 					</div>
 				</div>
@@ -194,7 +159,7 @@
 					</h2>
 					<div id="navThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
 						<div class="accordion-body">
-							<%=dto.getPageRefund() %>
+							<%=pageDto.getPageRefund() %>
 						</div>
 					</div>
 				</div>

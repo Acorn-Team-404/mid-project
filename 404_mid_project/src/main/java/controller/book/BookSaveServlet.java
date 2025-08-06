@@ -13,6 +13,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.book.BookDao;
 import model.book.BookDto;
+import model.book.GuidelineDao;
+import model.book.GuidelineDto;
 import model.page.StayDao;
 import model.page.StayDto;
 import model.room.RoomDao;
@@ -50,6 +52,10 @@ public class BookSaveServlet extends HttpServlet {
 	        // 객실 목록 가져오기
 	        List<RoomDto> roomList = RoomDao.getInstance().getRoomListByStayNum(stayNum);
 	        req.setAttribute("roomList", roomList);
+	        
+	        // 가이드 라인 정보 가져오기
+	        GuidelineDto guide = GuidelineDao.getInstance().getByGuideId(1);
+	        req.setAttribute("guide", guide);
 	    }
 	        
 		// 최종적으로 booking-page.jsp로 forward

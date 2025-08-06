@@ -2,27 +2,34 @@ package model.post;
 
 public class CommentDto {
 	private int commentNum;
-	private String commentWriter;
+	private int commentWriter;
+	private String commentWriterId;
 	private String commentContent;
-	private String commentTargetWriter;
+	private int commentTargetWriter;
+	private String commentTargetWriterId;
 	private int commentGroupNum;
 	private int commentParentNum;
 	private String commentDeleted;
 	private String commentCreatedAt;
 	private String commentProfileImage; //프로필이미지
 	private int commentReplyCount; // 대댓글의 갯수 저장
-	
 	public int getCommentNum() {
 		return commentNum;
 	}
 	public void setCommentNum(int commentNum) {
 		this.commentNum = commentNum;
 	}
-	public String getCommentWriter() {
+	public int getCommentWriter() {
 		return commentWriter;
 	}
-	public void setCommentWriter(String commentWriter) {
+	public void setCommentWriter(int commentWriter) {
 		this.commentWriter = commentWriter;
+	}
+	public String getCommentWriterId() {
+		return commentWriterId;
+	}
+	public void setCommentWriterId(String commentWriterId) {
+		this.commentWriterId = commentWriterId;
 	}
 	public String getCommentContent() {
 		return commentContent;
@@ -30,11 +37,17 @@ public class CommentDto {
 	public void setCommentContent(String commentContent) {
 		this.commentContent = commentContent;
 	}
-	public String getCommentTargetWriter() {
+	public int getCommentTargetWriter() {
 		return commentTargetWriter;
 	}
-	public void setCommentTargetWriter(String commentTargetWriter) {
+	public void setCommentTargetWriter(int commentTargetWriter) {
 		this.commentTargetWriter = commentTargetWriter;
+	}
+	public String getCommentTargetWriterId() {
+		return commentTargetWriterId;
+	}
+	public void setCommentTargetWriterId(String commentTargetWriterId) {
+		this.commentTargetWriterId = commentTargetWriterId;
 	}
 	public int getCommentGroupNum() {
 		return commentGroupNum;
@@ -60,18 +73,18 @@ public class CommentDto {
 	public void setCommentCreatedAt(String commentCreatedAt) {
 		this.commentCreatedAt = commentCreatedAt;
 	}
-	
 	public String getCommentProfileImage() {
 		return commentProfileImage;
 	}
 	public void setCommentProfileImage(String commentProfileImage) {
 		this.commentProfileImage = commentProfileImage;
 	}
-	
 	public int getCommentReplyCount() {
 		return commentReplyCount;
 	}
 	public void setCommentReplyCount(int commentReplyCount) {
 		this.commentReplyCount = commentReplyCount;
 	}
+	
+	
 }

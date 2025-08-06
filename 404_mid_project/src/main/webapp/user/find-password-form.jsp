@@ -24,24 +24,26 @@
 </style>
 </head>
 <body>
-	<h1 class="text-center mt-4">비밀번호 찾기</h1>
-	<div class="container mt-5 mb-5">
-		<form action="${pageContext.request.contextPath}/user/find-password.jsp" method="post">
-			<div class="mb-4">
-				<label for="usersName" class="form-label">이름</label>
-				<input type="text" name="usersName" class="form-control w-80" id="usersName"/>
-			</div>
-			<div class="mb-4">
-				<label for="usersId" class="form-label">아이디</label>
-				<input type="text" name="usersId" class="form-control w-80" id="usersId"/>
-			</div class="mb-4">
-			<div class="mb-4">
-				<label for="usersEamil" class="form-label">이메일</label>
-				<input type="email" name="usersEmail" class="form-control w-80" id="usersEmail"/>
-			</div>
-			<button type="submit" class="btn custom-btn d-block mx-auto">비밀번호 재설정하기</button>
-		</form>
-	
-	</div>
+<h1 class="text-center mt-4">비밀번호 찾기</h1>
+<div class="container mt-5 mb-5" style="max-width: 500px;">
+	<form action="${pageContext.request.contextPath}/user/find-password.jsp" method="post">
+		<div class="form-floating mb-4">
+		    <input type="text" name="usersName" class="form-control" id="usersName" placeholder="이름" required>
+		    <label for="usersName">이름</label>	    
+		</div>
+		
+		<div class="form-floating mb-4">
+	    	<input type="text" name="usersId" class="form-control" id="usersId" placeholder="아이디" required>
+			<label for="usersId">아이디</label>
+        </div>
+		
+		<div class="form-floating mb-4">
+			<input type="email" name="usersEmail" class="form-control" id="usersEmail" placeholder="이메일" required>
+	    	<label for="usersEmail">이메일</label>
+		</div>
+		
+		<button type="submit" class="btn custom-btn w-100">비밀번호 재설정하기</button>
+	  </form>
+</div>
 </body>
 </html>

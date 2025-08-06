@@ -24,6 +24,7 @@ public class NotificationDto {
 	
 	
 	// 예약 타입(추가 필드)
+	private String notiBookNum;
 	private String notiCheckIn;
 	private String notiCheckOut;
 	private String notiStayName;
@@ -38,6 +39,15 @@ public class NotificationDto {
 	// 문의 타입(추가 필드)
 	private String notiInqTitle;
 	private String notiInqContent;
+	
+	
+	public String getNotiBookNum() {
+		return notiBookNum;
+	}
+	
+	public void setNotiBookNum(String notiBookNum) {
+		this.notiBookNum = notiBookNum;
+	}
 	
 	
 	public String getNotiInqTitle() {
