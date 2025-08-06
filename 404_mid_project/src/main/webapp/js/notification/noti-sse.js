@@ -144,7 +144,7 @@ function initializeSSE() {
 			// 문의 타입 카드(미완성)
 			if(noti.typeCode == 40) {
 				notiCard = `
-					<div class="noti-card d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25" data-noti-num="${noti.notiNum}">
+					<div class="noti-card d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25" data-noti-num="${noti.notiNum}" onclick="location.href='${contextPath}/inquiry/list.jsp'">
 						<span class="read-dot ${noti.readCode === 11 ? 'd-none' : ''} position-absolute top-0 end-0 d-inline-block rounded-circle bg-semired" style="width: 11px; height: 11px;"></span>
 						<div class="noti-img-wrapper ratio ratio-1x1">
 							<img class="img-fluid object-fit-cover rounded-3" src="https://picsum.photos/id/237/200/300" alt="" />
