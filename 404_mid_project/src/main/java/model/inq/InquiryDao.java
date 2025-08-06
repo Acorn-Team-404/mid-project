@@ -350,7 +350,7 @@ public class InquiryDao {
 			conn = DBConnector.getConn();
 			// 실행할 sql 문
 			String sql = """
-				SELECT users_num, inq_title, inq_content, inq_type, stay_name
+				SELECT users_num, inq_title, inq_content, inq_type, stay_name, inq_is_answered, inq_answer
 				FROM inquiry
 				JOIN users ON users_num=inq_users_num
 				LEFT JOIN stay ON stay_num=inq_stay_num
@@ -370,6 +370,8 @@ public class InquiryDao {
 				dto.setType(rs.getString("inq_type"));
 				dto.setStayName(rs.getString("stay_name"));
 				dto.setUsersNum(rs.getLong("users_num"));
+				dto.setIsAnswered(rs.getLong("inq_is_answered"));
+				dto.setAnswer(rs.getString("inq_answer"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -395,7 +397,7 @@ public class InquiryDao {
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 순서대로 필요한 값 바인딩
 			pstmt.setString(1, dto.getAnswer());
-			pstmt.setLong(1, dto.getNum());
+			pstmt.setLong(2, dto.getNum());
 			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
 			rowCount = pstmt.executeUpdate();
 

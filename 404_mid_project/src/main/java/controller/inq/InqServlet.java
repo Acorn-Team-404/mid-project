@@ -46,5 +46,17 @@ public class InqServlet extends HttpServlet{
 			InquiryDao.getInstance().insert(dto);
 			resp.sendRedirect(req.getContextPath()+"/inquiry/list.jsp");
 		}
+		
+		if(path.equals("/updateInquiry.inq")) {
+			long num=Long.parseLong(req.getParameter("num"));
+			String answer=(String)req.getParameter("answer");
+			
+			InquiryDto dto=new InquiryDto();
+			dto.setNum(num);
+			dto.setAnswer(answer);
+			InquiryDao.getInstance().updateAnswer(dto);
+			// 나중에 리스트(관리자)로 경로 변경 예정
+			resp.sendRedirect(req.getContextPath()+"/inquiry/list.jsp");
+		}
 	}
 }
