@@ -94,7 +94,7 @@
 			<div class="section section-box">
 				<h2 class="h5">투숙객 정보</h2>
 				<p>
-					<strong>고객 이름:</strong> <%=userDto.getUsersName()%>
+					<strong>예약자 성함:</strong> <%=userDto.getUsersName()%>
 				</p>
 				<p>
 					<strong>투숙 인원:</strong> <%=bookDto.getBookTotalPax() %>
@@ -116,10 +116,7 @@
 			<div class="section section-box">
 				<h2 class="h5">결제 정보</h2>
 				<p>
-					<strong>결제 수단:</strong> <!-- 결제수단 가져오는 법 -->
-				</p>
-				<p>
-					<strong>금액:</strong> <%=bookDto.getBookTotalAmount() %>
+					<strong>총 결제 금액:</strong> <%=bookDto.getBookTotalAmount() %>
 				</p>
 				
 			</div>
@@ -156,6 +153,24 @@
     <input type="hidden" name="amount" value="<%=bookDto.getBookTotalAmount()%>"/>
 	</form>
 <jsp:include page="/WEB-INF/include/footer.jsp"></jsp:include>
+<script>
+	//전역scope
+  	window.bookingInfo = {
+    	bookNum: "<%= bookDto.getBookNum() %>",
+    	stayNum: "<%= bookDto.getBookStayNum() %>",
+    	roomNum: "<%= bookDto.getBookRoomNum() %>",
+    	roomName: "<%=roomDto.getRoomName()%>",
+    	amount: "<%= bookDto.getBookTotalAmount() %>",
+    	totalPax: "<%= bookDto.getBookTotalPax() %>",
+    	checkInDate: "<%= bookDto.getBookCheckIn() %>",
+    	checkOutDate: "<%= bookDto.getBookCheckOut() %>",
+    	userName: "<%= userDto.getUsersName() %>",
+    	roomType: "<%= roomDto.getRoomType() %>",
+    	stayName: "<%= stayDto.getStayName() %>",
+    	stayAddr: "<%= stayDto.getStayAddr() %>"
+  };
+
+</script>
 <script src="${pageContext.request.contextPath}/js/pay/toss-payments.js?v=3"></script>
 </body>
 </html>

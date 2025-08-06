@@ -287,7 +287,6 @@ public class StayDao {
 	           rs = pstmt.executeQuery();
 
 	           if (rs.next()) {
-	              
 
 	               dto = new StayDto();
 	               dto.setStayNum(rs.getLong("STAY_NUM"));
