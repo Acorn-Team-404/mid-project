@@ -118,7 +118,9 @@ public class RoomDao {
 				dto.setRoomCheckOut(rs.getTimestamp("ROOM_CHECKOUT_DATE"));
 				dto.setRoomBlockDate(rs.getTimestamp("ROOM_BLOCK_DATE"));
 				dto.setRoomContent(rs.getString("ROOM_CONTENT"));
-        dto.setRoomPaxMax(rs.getInt("ROOM_PAX_MAX"));
+				dto.setRoomPaxMax(rs.getInt("ROOM_PAX_MAX"));
+				dto.setRoomStayName(rs.getString("ROOM_STAY_NAME"));
+				dto.setRoomStayFacilities(rs.getString("ROOM_STAY_FACILITIES"));
 				// 리스트에 Dto 추가
 				list.add(dto);
 			}
