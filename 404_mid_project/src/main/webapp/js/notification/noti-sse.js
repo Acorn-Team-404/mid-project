@@ -60,7 +60,7 @@ function initializeSSE() {
 					<div class="noti-card d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25" data-noti-num="${noti.notiNum}" onclick="location.href='${contextPath}/mypage/detail?bookNum=${noti.bookNum}'">
 						<span class="read-dot ${noti.readCode === 11 ? 'd-none' : ''} position-absolute top-0 end-0 d-inline-block rounded-circle bg-semired" style="width: 11px; height: 11px;"></span>
 						<div class="noti-img-wrapper ratio ratio-1x1">
-							<img class="img-fluid object-fit-cover rounded-3" src="https://picsum.photos/id/237/200/300" alt="" />
+							<img class="img-fluid object-fit-cover rounded-3" src="${contextPath}/show.img?imageName=${noti.imageName}" alt="" />
 						</div>
 						<div class="noti-text-wrapper d-flex flex-column">
 							<div class="d-flex justify-content-between position-relative">

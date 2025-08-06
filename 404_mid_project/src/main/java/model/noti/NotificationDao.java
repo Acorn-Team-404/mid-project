@@ -88,16 +88,18 @@ public class NotificationDao {
 					  ON img.image_target_type = n.noti_image_type
 					 AND (
 					      (n.noti_image_type = 'stay'
-					       AND img.image_target_id = s.stay_num)
+					       AND img.image_target_id = s.stay_num
+					       AND img.image_sort_order = 1)
 					   OR (n.noti_image_type = 'comment'
-					       AND img.image_target_id = u.users_num)
+					       AND img.image_target_id = u.users_num
+					       AND img.image_sort_order = 1)
 					    )
 					LEFT JOIN common_code c
 					  ON c.cc_group_id = 'NOTI_TYPE'
 					 AND c.cc_code = n.noti_type_code
 					WHERE n.noti_recipient_num = ?
 						AND n.noti_num > ?
-					ORDER BY n.noti_num ASC;
+					ORDER BY n.noti_num ASC
 					""";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setLong(1, usersNum);
