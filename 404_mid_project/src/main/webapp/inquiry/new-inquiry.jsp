@@ -8,13 +8,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
-	String usersId=(String)session.getAttribute("usersId");
 	String uri=request.getContextPath()+"/inquiry/new-inquiry.jsp";
-	if (usersId == null) {
+	if (session.getAttribute("usersNum") == null) {
 	    response.sendRedirect(request.getContextPath()+"/user/login-form.jsp?url="+URLEncoder.encode(uri, "UTF-8"));
 	    return;
 	}
-	UserDto dto=UserDao.getInstance().getBasicInfoById(usersId);
+	long usersNum=(long)session.getAttribute("usersNum");
+	UserDto dto=UserDao.getInstance().getBasicInfoByNum(usersNum);
 	List<StayDto> list=StayDao.getInstance().selectAll();
 	String stayNumStr = request.getParameter("stayNum");
 	long stayNum = 0;
@@ -27,13 +27,15 @@
 <head>
 <meta charset="UTF-8">
 <title>/inquiry/new-inquiry.jsp</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
 <style>
 	.form-section {
     	border-top: 1px solid #dee2e6;
         border-bottom: 1px solid #dee2e6;
         padding: 0.5rem;
         margin: 1rem;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
 	}
 
     .section-title {
@@ -108,17 +110,17 @@
                     </label>
                 </div>
                 <div class="form-section">
-                    <div class="mt-2">
-                        <label for="userName" class="form-label">이름</label>
-                        <input type="text" name="userName" class="bg-light" value="<%=dto.getUsersName() %>" readonly />
-                    </div>
-                    <div class="mt-1">
-                        <label for="userPhone" class="form-label">전화번호</label>
-                        <input type="text" name="userPhone" class="bg-light" value="<%=dto.getUsersPhone() %>" readonly />
-                    </div>
-                    <div class="mt-1">
-                        <label for="userEmail" class="form-label">이메일</label>
-                        <input type="text" name="userEmail" class="bg-light" value="<%=dto.getUsersEmail() %>" readonly />
+                	<div class="d-flex">
+	                    <div>
+	                        <p>이름</p>
+	                        <p>전화번호</p>
+	                        <p>이메일</p>
+	                    </div>
+	                    <div class="ms-5">
+	                        <p><%=dto.getUsersName() %></p>
+	                        <p><%=dto.getUsersPhone() %></p>
+	                        <p><%=dto.getUsersEmail() %></p>
+	                    </div>
                     </div>
                     <small>회원정보를 확인해주세요.</small>
                 </div>
@@ -130,7 +132,7 @@
                     	</label>
                         <input type="text" class="form-control" name="title" id="title" />
                     </div>
-                    <div>
+                    <div class="mt-2">
                     	<label for="content" class="form-label">
                     		내용
                     		<span class="text-danger">*</span> 
@@ -168,7 +170,10 @@
                 		<label>동의합니다.</label>
                 	</div>
                 </div>
-                <button type="submit" class="btn btn-outline-primary">등록</button>
+	            <div class="d-flex justify-content-end">
+		            <button type="submit" class="btn btn-primary">등록</button>
+		            <button onclick="location.href='list.jsp'" class="btn btn-outline-primary ms-2 me-4">취소</button>
+				</div>
             </form>
         </div>
     </div>
@@ -204,6 +209,5 @@
             form.submit();
         });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 </body>
 </html>

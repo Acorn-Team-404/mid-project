@@ -433,7 +433,7 @@ public class UserDao {
 	}
 	
 	//회원 이름, 전화번호, 이메일만 조회
-	public UserDto getBasicInfoById(String usersId) {
+	public UserDto getBasicInfoByNum(long usersNum) {
 		UserDto dto=null;
 		//필요한 객체를 담을 지역변수를 미리 만든다.
 		Connection conn = null;
@@ -445,11 +445,11 @@ public class UserDao {
 			String sql = """
 				SELECT users_name, users_email, users_phone
 				FROM users
-				WHERE users_id=?
+				WHERE users_num=?
 			""";
 			pstmt = conn.prepareStatement(sql);
 			//? 에 값 바인딩
-			pstmt.setString(1, usersId);
+			pstmt.setLong(1, usersNum);
 			// select 문 실행하고 결과를 ResultSet 으로 받아온다
 			rs = pstmt.executeQuery();
 			//반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 리턴해줄 객체에 담는다
