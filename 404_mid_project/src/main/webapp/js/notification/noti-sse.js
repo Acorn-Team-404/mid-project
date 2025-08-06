@@ -39,6 +39,7 @@ function initializeSSE() {
 		
 		notiData.forEach(noti => {
 			
+			
 			// 안읽은 알림이 없다면
 			if(notiData[0].readCount == 0) {
 				notiCountNum.classList.add("d-none") // 요소 안보이게
