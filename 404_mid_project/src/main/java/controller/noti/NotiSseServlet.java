@@ -114,6 +114,7 @@ public class NotiSseServlet extends HttpServlet {
                             obj.put("message", tmp.getNotiMessage());
                             obj.put("readCode", tmp.getNotiReadCode());
                             obj.put("createdAt", tmp.getNotiCreatedAt());
+                            obj.put("imageType", tmp.getNotiImageType());
                             obj.put("typeCode", tmp.getNotiTypeCode());
                             obj.put("type", tmp.getNotiType());
                             obj.put("daysAgo", tmp.getNotiDaysAgo());
@@ -121,12 +122,16 @@ public class NotiSseServlet extends HttpServlet {
                             obj.put("bookNum", tmp.getNotiBookNum());
                             obj.put("bookCheckIn", tmp.getNotiCheckIn());
                             obj.put("bookCheckOut", tmp.getNotiCheckOut());
+                            obj.put("stayNum", tmp.getNotiStayNum());
                             obj.put("stayName", tmp.getNotiStayName());
+                            obj.put("commentUsersNum", tmp.getNotiCommentUsersNum());
                             obj.put("commentWriter", tmp.getNotiCommentWriter());
                             obj.put("commentContent", tmp.getNotiCommentContent());
                             obj.put("commentParentNum", tmp.getNotiCommentParentNum());
+                            obj.put("inqNum", tmp.getNotiInqNum());
                             obj.put("inqTitle", tmp.getNotiInqTitle());
                             obj.put("inqContent", tmp.getNotiInqContent());
+                            obj.put("imageName", tmp.getNotiImageName());
                             jsonArray.add(obj);
                         }
 
