@@ -12,6 +12,7 @@
 <head>
 <meta charset="UTF-8">
 <title>/post/edit-form.jsp</title>
+<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
 </head>
 <body>
 	<jsp:include page="/WEB-INF/include/navbar.jsp">
@@ -26,7 +27,7 @@
 			</div>
 			<div>
 				<label class="form-lable" for="writer">작성자</label>
-				<input class="form-control" type="text" name="writer" id="writer" value="<%=dto.getUsersID() %>" readonly />
+				<input class="form-control" type="text" name="writer" id="writer" value="<%=dto.getPostWriterId() %>" readonly />
 			</div>
 			<div>
 				<label class="form-lable" for="title">제목</label>

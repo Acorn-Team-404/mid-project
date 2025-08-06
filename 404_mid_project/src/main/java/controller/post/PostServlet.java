@@ -2,8 +2,12 @@ package controller.post;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -11,10 +15,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import model.post.CommentDao;
 import model.post.CommentDto;
 import model.post.PostDao;
 import model.post.PostDto;
+import model.post.PostImageDto;
 
 @WebServlet("*.post")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 10, // 업로드 처리하기 위한 메모리 사이즈(10 Mega byte)
@@ -22,6 +28,7 @@ import model.post.PostDto;
 		maxRequestSize = 1024 * 1024 * 60 // 이 요청의 최대 사이즈(60 Mega byte), 파일외의 다른 문자열도 전송되기 때문에
 )
 public class PostServlet extends HttpServlet {
+	
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
@@ -55,12 +62,13 @@ public class PostServlet extends HttpServlet {
 			// 게시글 조회 - DB
 			PostDto dto = dao.getByPostNum(num);
 			Long usersNum = (Long) req.getSession().getAttribute("usersNum");
-			if(!dto.getPostWriterNum().equals(usersNum)){
+			Long postWriterNum = dto.getPostWriterNum();
+			if(usersNum != null && postWriterNum != null && !postWriterNum.equals(usersNum)){
 			PostDao.getInstance().addViews(num);
 			
 			} //로그인했는지 여부 알아내기 
-			boolean isLogin = usersNum == null ? false : true;
-			
+			boolean isLogin = usersNum != null;
+			req.setAttribute("isLogin", isLogin);
 
 			// 댓글 목록을 DB에서 읽어오기
 			List<CommentDto> commentList = CommentDao.getInstance().selectAll(num);
@@ -80,7 +88,7 @@ public class PostServlet extends HttpServlet {
 				req.setAttribute("post", dto);
 				req.getRequestDispatcher("/post/form.jsp").forward(req, res);
 			}else {
-				res.sendRedirect("view.post?num=" + num);
+				res.sendRedirect("/view.post?num=" + num);
 			}
 			
 			
@@ -132,6 +140,11 @@ public class PostServlet extends HttpServlet {
 			dao.deleteByNum(num);
 			res.sendRedirect("list.post");
 		}
+		
 
 	}
+
+
+	
+
 }

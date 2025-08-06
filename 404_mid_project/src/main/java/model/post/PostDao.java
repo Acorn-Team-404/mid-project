@@ -4,6 +4,7 @@ import java.sql.Connection;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -264,7 +265,7 @@ public class PostDao {
 					    p.post_updated_at, 
 					    p.post_deleted, 
 					    p.post_type, 
-					    u.users_ID
+					    u.users_ID AS post_writer_Id
 					FROM 
 					    posts p
 					LEFT JOIN 
@@ -290,7 +291,7 @@ public class PostDao {
 				dto.setPostCreatedAt(rs.getString("post_created_at"));
 				dto.setPostUpdatedAt(rs.getString("post_updated_at"));
 				dto.setPostDeleted(rs.getString("post_deleted"));
-				dto.setUsersID(rs.getString("users_ID"));
+				dto.setPostWriterId(rs.getString("post_writer_Id"));
 				
 				
 			}
@@ -497,5 +498,40 @@ public class PostDao {
 			return false; // 작업 실패
 		}
 	}
+	
+	// 이미지 저장
+	public boolean insertPostImage(PostImageDto dto) {
+		
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		boolean isSuccess = false;
+		
+		String sql = """
+				INSERT INTO post_image (num, post_num, save_file_name)
+				VALUES (post_image_seq.NEXTVAL, ?, ?)
+				""";
+		
+		try {
+			conn = DBConnector.getConn();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, dto.getPostNum());
+            pstmt.setString(2, dto.getSaveFileName());
+
+            int rowCount = pstmt.executeUpdate();
+            isSuccess = rowCount > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (pstmt != null) pstmt.close();
+                if (conn != null) conn.close();
+            } catch (Exception e) {}
+        }
+
+        return isSuccess;
+		}
+	
 	
 }

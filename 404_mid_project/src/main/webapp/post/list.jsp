@@ -89,7 +89,7 @@
 	<jsp:include page="/WEB-INF/include/navbar.jsp">
 		<jsp:param value="post" name="thisPage"/>	
 	</jsp:include>
-	
+		
 	<div class="container mb-5">
 		<div> 
 			<h2 class="text-center" style="margin-top: 80px; margin-bottom: 50px;">JOURNAL</h2>
