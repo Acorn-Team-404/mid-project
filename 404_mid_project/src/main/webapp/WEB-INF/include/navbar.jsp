@@ -72,10 +72,10 @@
         <% } else { %>
           <!-- 로그인 상태 일 때  알림 & LOGOUT -->
           <li class="nav-item mx-2">
-            <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas"
-                    data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
-              <i class="bi bi-bell"></i> 알림
-            </button>
+            <button type="button" class="btn position-relative p-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+				  <i class="bi bi-bell-fill fs-3 text-dark"></i>
+				  <span class="noti-btn-count position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger px-2"></span>
+			</button>
           </li>
           <li class="nav-item mx-2">
             <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/logout">
