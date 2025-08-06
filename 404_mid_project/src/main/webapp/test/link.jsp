@@ -42,6 +42,12 @@
 			</form>
 		</li>
 		<li>
+			<form action="${pageContext.request.contextPath}/test/stay-list-mina.jsp">
+				<button type="submit" class="btn btn-primary">객실 예약(예약페이지 미나)</button>
+				
+			</form>
+		</li>
+		<li>
 			<form action="${pageContext.request.contextPath}/booking/submit">
 				<button type="submit" class="btn btn-primary">객실 예약</button>
 				<input type="hidden" name="stayNum" value="100"/>
