@@ -18,7 +18,7 @@
   PaymentDto paymentDto = (PaymentDto) request.getAttribute("paymentDto");
   String pay_method_code = PaymentDao.getInstance().getMethodCodeByPayNum(paymentDto.getPayNum());
   //예약db에 있는 숙소 번호로 예약한 숙소정보 가져오기
-  StayDto stayDto = StayDao.getInstance().getByNum(bookDto.getBookStayNum());
+  StayDto stayDto = StayDao.getInstance().getByBookStayNum(bookDto.getBookStayNum());
   RoomDto roomDto = RoomDao.getInstance().getByNum(bookDto.getBookRoomNum());
   UserDto usersDto = UserDao.getInstance().getByUserNum(bookDto.getBookUsersNum());
   

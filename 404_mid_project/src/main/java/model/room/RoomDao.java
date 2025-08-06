@@ -34,7 +34,7 @@ public class RoomDao {
 		return dao;
 	}
 
-	public RoomDto getByNum(int roomNum) {
+	public RoomDto getByNum(long roomNum) {
 	    RoomDto dto = null;
 	    Connection conn = null;
 	    PreparedStatement pstmt = null;
@@ -49,7 +49,7 @@ public class RoomDao {
 	    try {
 	        conn = DBConnector.getConn();
 	        pstmt = conn.prepareStatement(sql);
-	        pstmt.setInt(1, roomNum);
+	        pstmt.setLong(1, roomNum);
 	        rs = pstmt.executeQuery();
 
 	        if (rs.next()) {
