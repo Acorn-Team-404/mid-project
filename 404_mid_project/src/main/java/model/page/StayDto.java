@@ -13,9 +13,17 @@ public class StayDto {
 	private String stayDelete;
 	private String stayFacilities;
 	
-	private String usersId;
+	private String stayUsersId;
 	
 	// setter, getter
+	public String getUsersId() {
+		return stayUsersId;
+	}
+	
+	public void setUsersId(String usersId) {
+		this.stayUsersId = usersId;
+	}
+	
 	public long getStayNum() {
 		return stayNum;
 	}

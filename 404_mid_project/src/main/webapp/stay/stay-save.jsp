@@ -28,7 +28,7 @@
 	// DB 에 저장하기
 	StayDto dto = new StayDto();
 	dto.setStayNum(stayNum);
-    dto.setUsersNum(usersNum);
+  dto.setStayUsersNum(usersNum);
 	dto.setStayName(stayName);
 	dto.setStayAddr(stayAddr);
 	dto.setStayLoc(stayLoc);
