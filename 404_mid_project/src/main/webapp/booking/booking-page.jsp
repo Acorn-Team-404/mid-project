@@ -86,7 +86,7 @@
 						    String carouselId = "carousel-room-" + room.getRoomNum();
 						  %>
 						  <div class="">
-						    <div class="card mb-4 shadow-sm">
+						    <div class="card mb-4 shadow-sm border border-light rounded bg-white shadow-sm mb-4">
 						      <div class="row g-0">
 						      		<!--  최상단 숙소명: -->
 						  	
