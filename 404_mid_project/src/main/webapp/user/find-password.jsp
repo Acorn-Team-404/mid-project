@@ -13,6 +13,7 @@
     	//비밀번호 재설정
         session.setAttribute("resetPasswordId", usersId);
         response.sendRedirect("reset-password-form.jsp");
+        
     } else {
 %>
     <script>
