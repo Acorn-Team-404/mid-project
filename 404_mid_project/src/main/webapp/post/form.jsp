@@ -20,9 +20,9 @@
 		<jsp:param value="board" name="thisPage"/>	
 	</jsp:include>
 	<div class="container">
-		<h3 class="mt-4 mb-4"><i class="bi bi-image me-3"></i>게시글 작성 폼</h3>
-		<form action="upload.post" method="post" id="saveForm">
-			<div class="mb-2">
+		<h3 class="text-center" style="margin-top: 80px; margin-bottom: 80px;"><i class="bi bi-image me-3"></i>게시글 작성 폼</h3>
+		<form action="upload.post" method="post" enctype="multipart/form-data" id="saveForm">
+			<div class="mb-4">
 				<label class="form-label" for="title">제목</label>
 				<input class="form-control" type="text" name="title" id="title" />			
 			</div>
@@ -30,11 +30,11 @@
 				<label class="form-label" for="editor">내용</label>
 				<!-- Editor ui 가 출력될 div -->
 				<div id="editor"></div>
-				<textarea class="form-control" name="content" id="hiddenContent" required></textarea>
+				<textarea class="form-control" name="content" id="hiddenContent" style="display: none;" required></textarea>
 			</div>
-			
+			 
 			<div class="mb-3">
-				<label class="form-label">image upload</label>
+				<label class="form-label mt-4">image upload</label>
 					<div class="drop-zone" id="dropZone">
 						Drag & Drop Or Click
 						<input type="file" name="images" id="fileInput" multiple hidden>
@@ -99,6 +99,8 @@
     		if(!file.type.startsWith("image/")) continue; //continue:건너뛰기
     		
     		try{
+    			// 선택한 이미지 파일 읽어서 결과 얻어내기
+            	// promise 객체가 resolve될 때까지 기다림
     			const imageUrl = await readFileAsDataURL(file);
     			
     			const container = document.createElement("div");
@@ -107,6 +109,7 @@
     			const img = document.createElement("img");
     			img.setAttribute("src", imageUrl);
     			
+    			
     			const btn = document.createElement("button");
     			btn.classList.add("remove-btn");
     			btn.innerText="x"
@@ -114,6 +117,7 @@
     			btn.addEventListener("click", ()=>{
     				// selectedFiles 배열에서 i번째 방으로부터 1개의 item 삭제
     				selectedFiles.splice(i,1);
+    				// 삭제 후 preview 다시 update
     				updatePreview();
     			});
     			
@@ -144,16 +148,30 @@
     		});
     	}
     	
-    	// 폼에 "submit" 이벤트 일어났을 때
-    	document.querySelector("#saveForm").addEventListener("submit", (e)=>{
-    		//e.preventDefault();
-    		if(selectedFiles.length < 1){
-    			alert("업로드할 이미지를 1개 이상 선택해주세요.");
-    			return;
-    		}
-    		
-    	
-    	});
+    	const editor = new toastui.Editor({
+			el: document.querySelector(' #editor'),
+			height: '500px',
+			initialEditType: 'wysiwyg',
+			previewStyle: 'vertical',
+			language: 'ko'
+		});
+		
+		document.querySelector("#saveForm").addEventListener("submit", (e)=>{
+			// 에디터로 작성된 문자열 읽어오기
+			const content = editor.getHTML();
+
+			//에디터로 작성된 문자열을 폼 전송이 될 수 있도록 textarea의 value 값으로 넣어준다
+			document.querySelector("#hiddenContent").value=content;
+			
+			// 테스트하기 위해 폼 전송 막기, 막지 않으면->전송
+			//e.preventDefault();
+			
+			//만일 선택한 파일이 없다면
+	    	if(selectedFiles.length < 1){
+	    		alert("업로드할 이미지를 1개 이상 선택해주세요.")
+	    		e.preventDefault();
+	    	}
+		})
     
 	</script>
 	

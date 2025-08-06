@@ -13,19 +13,20 @@
     
 }
 /* drop zone 에 파일을 드레그해서 위에 올렸을때 적용할 css */
-   .drop-zone.dragover {
-       background-color: #e9ecef;
-   }
-   .preview img {
-       max-width: 120px;
-       margin: 10px;
-       border: 1px solid #ccc;
-       border-radius: 5px;
-   }
-   .preview-item {
-       position: relative;
-       display: inline-block;
-   }
+.drop-zone.dragover {
+    background-color: #e9ecef;
+}
+.preview img {
+    max-width: 120px;
+    margin: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    
+}
+.preview-item {
+    position: relative;
+    display: inline-block;
+}
 .remove-btn {
     position: absolute;
     top: 11px;

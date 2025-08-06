@@ -29,10 +29,11 @@ public class CommentDao {
 			// 실행할 sql 문
 			String sql = """
 					SELECT comment_num, comment_writer, comment_target_writer, 
-						comment_content, comment_deleted, comment_parent_num, comment_group_num, 
-						users_profile_image, comment_created_at
+						comment_content, comment_deleted, comment_parent_num, comment_group_num, comment_created_at,
+						u.users_profile_image AS comment_profile_image, u.users_id AS comment_writer_id, u2.users_id AS comment_target_writer_id
 					FROM comments
-					INNER JOIN users u ON comment_writer = u.users_Id
+					LEFT JOIN users u ON comment_writer = u.users_num
+					LEFT JOIN users u2 ON comment_target_writer = u2.users_num
 					WHERE comment_parent_num = ?
 					ORDER BY comment_group_num ASC, comment_num ASC
 					""";
@@ -46,14 +47,18 @@ public class CommentDao {
 			while (rs.next()) {
 				CommentDto dto = new CommentDto();
 				dto.setCommentNum(rs.getInt("comment_num"));
-				dto.setCommentWriter(rs.getString("comment_writer"));
-				dto.setCommentTargetWriter(rs.getString("comment_target_writer"));
+				dto.setCommentWriter(rs.getInt("comment_writer"));
+				dto.setCommentTargetWriter(rs.getInt("comment_target_writer"));
 				dto.setCommentContent(rs.getString("comment_content"));
 				dto.setCommentParentNum(rs.getInt("comment_parent_num"));
 				dto.setCommentGroupNum(rs.getInt("comment_group_num"));
 				dto.setCommentDeleted(rs.getString("comment_deleted"));
-				dto.setCommentProfileImage(rs.getString("users_profile_image"));
 				dto.setCommentCreatedAt(rs.getString("comment_created_at"));
+				dto.setCommentProfileImage(rs.getString("comment_profile_image"));
+				dto.setCommentWriterId(rs.getString("comment_writer_id"));
+				dto.setCommentTargetWriterId(rs.getString("comment_target_writer_id"));
+				
+				
 				
 				//dto.setCommentReplyCount(rs.getInt("comment_reply_count"));
 				
@@ -84,8 +89,8 @@ public class CommentDao {
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 순서대로 필요한 값 바인딩
 			pstmt.setInt(1, dto.getCommentNum());
-			pstmt.setString(2, dto.getCommentWriter());
-			pstmt.setString(3, dto.getCommentTargetWriter());
+			pstmt.setInt(2, dto.getCommentWriter());
+			pstmt.setInt(3, dto.getCommentTargetWriter());
 			pstmt.setString(4, dto.getCommentContent());
 			pstmt.setInt(5, dto.getCommentParentNum());
 			pstmt.setInt(6, dto.getCommentGroupNum());
