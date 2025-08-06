@@ -24,6 +24,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.book.BookDao;
 import model.book.BookDto;
+import model.noti.NotificationDao;
+import model.noti.NotificationDto;
 import model.pay.PaymentDao;
 import model.pay.PaymentDto;
 import model.util.DBConnector;
@@ -201,6 +203,34 @@ public class PaymentsServlet extends HttpServlet {
 				dbConn.commit();
 				paymentSuccess = true;
 				
+				// 결제 완료 시 예약 확정 알림 INSERT
+				if(paymentSuccess) {
+					long notiRecipientNum = usersNum;
+					long notiSenderNum = bookDto.getBookStayNum();
+					int notiTypeCode = 10;
+					int notiTargetTypeCode = 10;
+					String notiTargetNum = bookNum;
+					String notiMessage = "예약 확정";
+					
+					NotificationDto notiDto = new NotificationDto();
+					
+					notiDto.setNotiRecipientNum(notiRecipientNum);
+					notiDto.setNotiSenderNum(notiSenderNum);
+					notiDto.setNotiTypeCode(notiTypeCode);
+					notiDto.setNotiTargetTypeCode(notiTargetTypeCode);
+					notiDto.setNotiTargetNum(notiTargetNum);
+					notiDto.setNotiMessage(notiMessage);
+					
+					boolean isNotiSuccess = NotificationDao.getInstance().notiInsert(notiDto);
+					
+					if(isNotiSuccess) {
+						System.out.println("알림 데이터 저장 성공");
+					} else {
+						System.out.println("알림 데이터 저장 실패");
+					}
+				}
+				
+				
 				}catch (Exception e) {
 		            e.printStackTrace();
 		            if (dbConn != null) try { dbConn.rollback(); } catch (Exception rollbackEx) {}
@@ -211,6 +241,8 @@ public class PaymentsServlet extends HttpServlet {
 		            
 		        }
 
+			
+			
 			//결제 승인 api 호출 실패
 		} else {
 			System.out.println("결제 승인 실패");

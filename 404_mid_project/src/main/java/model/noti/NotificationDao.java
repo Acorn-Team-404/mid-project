@@ -181,7 +181,7 @@ public class NotificationDao {
 	
 	
 	// 댓글 작성 시 함께 실행될 댓글알림 insert 메서드
-	public boolean commentInsert(NotificationDto dto) {
+	public boolean notiInsert(NotificationDto dto) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 
