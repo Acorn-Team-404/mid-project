@@ -19,16 +19,9 @@
   	
   	//로그인된 userName (null일 가능성 있음)
   	Long usersNum = (Long) session.getAttribute("usersNum");
-  	//로그인 여부
+  	
   	boolean isLogin = usersNum != null;
   	
-  	if(!isLogin) {
-  	    // 로그인하지 않은 사용자는 댓글 작성 불가
-  	    response.sendRedirect(request.getContextPath() + "/user/login-form.jsp");
-  	    return;
-  	}
-  	
-  	int writer = usersNum.intValue();
   	
   	//댓글 목록
   	List<CommentDto> commentList = CommentDao.getInstance().selectAll(num);
@@ -47,6 +40,7 @@
 		<jsp:param value="view" name="thisPage"/>	
 	</jsp:include>
 	
+	
 	<%if(dto==null){ %>
 		<div class="container">
 			<div class="alert alert-danger mt-5">
@@ -57,7 +51,7 @@
 	
 	
 	<!-- 이미지..경로 필요!!! -->
-	<jsp:include page="/WEB-INF/include/index-carousel.jsp"></jsp:include>
+	<jsp:include page="/WEB-INF/include/post-carousel.jsp"></jsp:include>
 	
 	<div class="container">
 	
@@ -67,7 +61,7 @@
 		
 		<!-- 본문 -->
 		<div class="card-body">
-			<p class="card-text"><%=dto.getPostContent().replaceAll("\n", "<br>") %></p>
+			<%= dto.getPostContent() == null ? "" : dto.getPostContent().replaceAll("\n", "<br>") %>
 		</div>
 
 			<!-- 게시글 정보 -->		
@@ -80,7 +74,7 @@
 				
 				<div class="row border-bottom py-2">
 				  <div class="col-6 fw-semibold">작성자</div>
-				  <div class="col-6 text-end"><%= dto.getUsersID() %></div>
+				  <div class="col-6 text-end"><%= dto.getPostWriterId() %></div>
 				</div>
 				
 				<div class="row border-bottom py-2">
@@ -158,7 +152,7 @@
 		            			<i class="bi bi-arrow-return-right position-absolute" style="top:0;left:-30px"></i>
 		            		<%} %>
 			            	<!-- 댓글 작성자가 로그인된 userName일 경우 삭제버튼 출력 -->
-			            	<%if(tmp.getCommentWriter() == writer) {%>
+			            	<%if(tmp.getCommentWriter()==usersNum) {%>
 			            		<button data-num="<%=tmp.getCommentNum() %>" class="btn-close position-absolute top-0 end-0 m-3"></button>
 			            	<%} %>
 			            	<%-- <%if(tmp.getProfileImage()==null){ %>
@@ -180,7 +174,7 @@
 		                    	</div>
 		                    	<pre><%=tmp.getCommentContent() %></pre>
 		                    	<!-- 댓글 작성자가 로그인된 userName이라면 수정폼 / 아니면 댓글폼 -->
-		                    	<%if(tmp.getCommentWriter() == writer){ %>
+		                    	<%if(tmp.getCommentWriter() == usersNum){ %>
 		                    		<!-- 수정 버튼 (본인에게만 보임) -->
 				                    <button class="btn btn-sm btn-outline-secondary edit-btn">수정</button>
 				
@@ -221,38 +215,41 @@
 	</div> <!-- container -->
 	<script>
 		//로그인 여부
-		const isLogin = <%=isLogin %>;
+		boolean isLogin = usersNum != null;;
 		
 		//대댓글 보기 버튼 눌렀을 때 실행할 함수 등록
     	document.querySelectorAll(".dropdown-btn").forEach(item => {
 		item.addEventListener("click", (e) => {
-     		//click 이벤트 발생한 그 버튼의 자손요소 중에서 caret up 또는 down 요소 찾기
-			const caret = item.querySelector(".bi-caret-up, .bi-caret-down");
-     		//caret 모양을 위아래로 토글시키기
-			
-			caret.classList.toggle("bi-caret-down");
-			caret.classList.toggle("bi-caret-up");
-			
-			// 1. 버튼의 두 단계 부모 요소로 이동
-			const grandParent = item.parentElement.parentElement;
-			// 2. 두단계 부모요소의 바로 다음 형제 요소의 참조값 얻어내기
-			let next = grandParent.nextElementSibling;
-			// 3. 반복문->
-			while (next) {
-				//re-re 존재하면
-				if(next.classList.contains("re-re")){
-					//d-block 클래스를 토글
-					next.classList.toggle("d-block");
-				}else{
-					//re-re 존재하지 않으면 반복문 탈출
-					break;
+			if(isLogin){
+				//click 이벤트 발생한 그 버튼의 자손요소 중에서 caret up 또는 down 요소 찾기
+				const caret = item.querySelector(".bi-caret-up, .bi-caret-down");
+	     		//caret 모양을 위아래로 토글시키기
+				
+				caret.classList.toggle("bi-caret-down");
+				caret.classList.toggle("bi-caret-up");
+				
+				// 1. 버튼의 두 단계 부모 요소로 이동
+				const grandParent = item.parentElement.parentElement;
+				// 2. 두단계 부모요소의 바로 다음 형제 요소의 참조값 얻어내기
+				let next = grandParent.nextElementSibling;
+				// 3. 반복문->
+				while (next) {
+					//re-re 존재하면
+					if(next.classList.contains("re-re")){
+						//d-block 클래스를 토글
+						next.classList.toggle("d-block");
+					}else{
+						//re-re 존재하지 않으면 반복문 탈출
+						break;
+					}
+					
+					//그 다음 형제 참조값 얻어내기
+					next = next.nextElementSibling;
+					
 				}
-				
-				//그 다음 형제 참조값 얻어내기
-				next = next.nextElementSibling;
-				
+				});
 			}
-			 });
+     		
 		});
 		
 		//삭제 버튼을 눌렀을 때
@@ -294,6 +291,8 @@
 				const isMove=confirm("댓글 작성을 위해 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?");
 				location.href=
 					"${pageContext.request.contextPath }/user/login.jsp?url=${pageContext.request.contextPath }/post/view.jsp?num=<%=num %>";
+			}else{
+				<div class="alert alert-warning">댓글 작성을 위해 로그인해주세요.</div>
 			}
 		})
 		

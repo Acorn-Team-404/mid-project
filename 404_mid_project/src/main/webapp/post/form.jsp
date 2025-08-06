@@ -21,7 +21,7 @@
 	</jsp:include>
 	<div class="container">
 		<h3 class="text-center" style="margin-top: 80px; margin-bottom: 80px;"><i class="bi bi-image me-3"></i>게시글 작성 폼</h3>
-		<form action="upload.post" method="post" enctype="multipart/form-data" id="saveForm">
+		<form action="upload.post" method="post" id="saveForm">
 			<div class="mb-4">
 				<label class="form-label" for="title">제목</label>
 				<input class="form-control" type="text" name="title" id="title" />			
@@ -29,8 +29,9 @@
 			<div class="mb-2">
 				<label class="form-label" for="editor">내용</label>
 				<!-- Editor ui 가 출력될 div -->
-				<div id="editor"></div>
-				<textarea class="form-control" name="content" id="hiddenContent" style="display: none;" required></textarea>
+				<div id="editor">
+				<textarea class="form-control" name="content" id="hiddenContent" required></textarea>
+				</div>
 			</div>
 			 
 			<div class="mb-3">
