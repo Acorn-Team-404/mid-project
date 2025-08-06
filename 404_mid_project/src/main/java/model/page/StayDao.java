@@ -256,7 +256,7 @@ public class StayDao {
 	}
 	
 	// 숙소 정보 가져오기
-	public StayDto getBy(Long userNum) {
+	public StayDto getBy(long userNum) {
 	       StayDto dto = null;
 
 	       Connection conn = null;
@@ -313,7 +313,7 @@ public class StayDao {
 	   }
 
 		// 숙소 정보 가져오기 (Booking 전용)
-		public StayDto getByNum(int userNum) {
+		public StayDto getByBookStayNum(long bookStayNum) {
 		       StayDto dto = null;
 
 		       Connection conn = null;
@@ -322,33 +322,19 @@ public class StayDao {
 		       try {
 		           conn = DBConnector.getConn();
 		           String sql = """
-		           		SELECT 
-		           		     S.STAY_NUM,
-		           		     S.STAY_USER_NUM,
-		           		     S.STAY_NAME,
-		           		     S.STAY_ADDR,
-		           		     S.STAY_LOC,
-		           		     S.STAY_LAT,
-		           		     S.STAY_LONG,
-		           		     S.STAY_PHONE,
-		           		     S.STAY_UPDATE_AT,
-		           		     S.STAY_DELETE,
-		           		     S.STAY_FACILITIES,
-		           		     U.USERS_ID
-		           		FROM STAY S
-		           		JOIN USERS U ON S.STAY_USER_NUM = U.USERS_NUM
-		           		WHERE S.STAY_USER_NUM = ?
+		           		SELECT *
+		           		FROM STAY 
+		           		WHERE STAY_NUM = ?
 		           """;
 		           pstmt = conn.prepareStatement(sql);
-		           pstmt.setLong(1, userNum);
+		           pstmt.setLong(1, bookStayNum);
 		           rs = pstmt.executeQuery();
 
 		           if (rs.next()) {
-		              
 
 		               dto = new StayDto();
 		               dto.setStayNum(rs.getLong("STAY_NUM"));
-		               dto.setStayUsersNum(rs.getLong("STAY_USERS_NUM"));
+		               dto.setStayUsersNum(rs.getLong("STAY_USER_NUM"));
 		               dto.setStayName(rs.getString("STAY_NAME"));
 		               dto.setStayAddr(rs.getString("STAY_ADDR"));
 		               dto.setStayLoc(rs.getString("STAY_LOC"));
@@ -358,7 +344,7 @@ public class StayDao {
 		               dto.setStayUpdateAt(rs.getString("STAY_UPDATE_AT"));
 		               dto.setStayDelete(rs.getString("STAY_DELETE"));
 		               dto.setStayFacilities(rs.getString("STAY_FACILITIES"));
-		               dto.setUsersId(rs.getString("USER_ID"));
+		         
 		           } 
 		       } catch (Exception e) {
 		           e.printStackTrace();

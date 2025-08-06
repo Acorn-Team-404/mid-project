@@ -11,7 +11,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
     BookDto bookDto = (BookDto) request.getAttribute("bookDto");
-    StayDto stayDto = null;
+    StayDto stayDto = (StayDto) request.getAttribute("stayDto");
     RoomDto roomDto = null;
     UserDto userDto = null;
 
@@ -19,8 +19,6 @@
         session.setAttribute("bookNum", bookDto.getBookNum());
 
         System.out.println("예약 정보 로딩 성공");
-
-        stayDto = (StayDto) request.getAttribute("stayDto");
         System.out.println(stayDto.getStayAddr());
         System.out.println(stayDto.getStayName());
         System.out.println(stayDto.getStayPhone());

@@ -46,7 +46,7 @@ public class BookSaveServlet extends HttpServlet {
 	        int stayNum = Integer.parseInt(stayNumStr);
 
 	        // 숙소 정보 가져오기
-	        StayDto stay = StayDao.getInstance().getByNum(stayNum);
+	        StayDto stay = StayDao.getInstance().getByBookStayNum(stayNum);
 	        req.setAttribute("stay", stay);
 
 	        // 객실 목록 가져오기
@@ -144,7 +144,7 @@ public class BookSaveServlet extends HttpServlet {
 			// dto전체를 넘길 필요는 없고 결제 페이지에서는 bookNum으로 예약정보를 가져오는 쿼리 사용
 			BookDto bookDto = BookDao.getInstance().getByBookNum(dto.getBookNum());
 			System.out.println("bookDto.getBookStayNum(): " + bookDto.getBookStayNum());
-			StayDto stayDto = StayDao.getInstance().getByNum(bookDto.getBookStayNum());
+			StayDto stayDto = StayDao.getInstance().getByBookStayNum(bookDto.getBookStayNum());
 			System.out.println("stayDto: " + (stayDto != null ? "조회됨" : "NULL!!!"));
 			req.setAttribute("bookDto", bookDto);
 			req.setAttribute("stayDto", stayDto);
