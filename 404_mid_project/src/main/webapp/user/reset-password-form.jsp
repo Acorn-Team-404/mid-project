@@ -24,23 +24,28 @@
 </style>
 </head>
 <body>
-	<h1 class="text-center mt-4">비밀번호 재설정</h1>
-	<div class="container mt-5 mb-5">
-		<form action="${pageContext.request.contextPath}/user/reset-password.jsp" method="post">
-			<div class="mb-4">
-				<label for="newUsersPassword" class="form-label">비밀번호</label>
-				<input type="password" name="newUsersPassword" class="form-control w-80" id="newUsersPassword" required>
-				<span id="usersPasswordMessage"></span>
-			</div>
-			
-			<div class="mb-4">
-				<label for="newUsersCheckPassword" class="form-label">비밀번호 확인</label>
-				<input type="password" name="newUsersCheckPassword" class="form-control w-80" id="newUsersCheckPassword" required>
-				<span id="usersCheckPasswordMessage"></span>
-			</div>
-			<button type="submit" class="btn custom-btn d-block mx-auto">비밀번호 재설정</button>
-		</form>
-	</div>
+    <h1 class="text-center mt-4">비밀번호 재설정</h1>
+    <div class="container mt-5 mb-5" style="max-width: 500px;">
+        <form action="${pageContext.request.contextPath}/user/reset-password.jsp" method="post">
+      
+        <!-- 비밀번호 -->
+        <div class="form-floating mb-4">
+            <input type="password" name="newUsersPassword" class="form-control" id="newUsersPassword" placeholder="비밀번호" required>
+            <label for="newUsersPassword">비밀번호</label>
+        	<span id="usersPasswordMessage" class="ms-1"></span>
+        </div>
+
+        <!-- 비밀번호 확인 -->
+        <div class="form-floating mb-4">
+            <input type="password" name="newUsersCheckPassword" class="form-control" id="newUsersCheckPassword" placeholder="비밀번호 확인" required>
+            <label for="newUsersCheckPassword">비밀번호 확인</label>
+            <span id="usersCheckPasswordMessage" class="ms-1"></span>
+        </div>
+
+        <!-- 버튼 -->
+        <button type="submit" class="btn custom-btn d-block mx-auto">비밀번호 재설정</button>
+    </form>
+  </div>
 	<script>
 	// 비밀번호 복잡도 체크
 	document.getElementById("newUsersPassword").addEventListener("input", () => {
