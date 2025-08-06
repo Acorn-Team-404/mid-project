@@ -1,3 +1,4 @@
+<%@page import="model.book.GuidelineDto"%>
 <%@page import="model.room.RoomDao"%>
 <%@page import="model.room.RoomDto"%>
 <%@page import="model.image.ImageDao"%>
@@ -15,6 +16,8 @@
     List<ImageDto> carouselImages = ImageDao.getInstance().getListByTargetLong("stay", stayNum);
     int size = carouselImages.size();
     List<RoomDto> minaRoomList = RoomDao.getInstance().getRoomListByStayNum(stayNum);
+    
+    GuidelineDto guide = (GuidelineDto) request.getAttribute("guide");
 %>
 
 <!DOCTYPE html>
@@ -250,49 +253,28 @@
 	                        <h2>추가 요청사항</h2>
 	                        <textarea name="bookRequest" id="bookRequest" class="form-control" rows="5" placeholder="요청사항을 입력해 주세요."></textarea>
 	                    </div>
-	
-	                    <h2>예약 안내사항</h2>
-						<p>
-						    정확한 객실 요금은 일정 선택 후 확인할 수 있습니다.<br/>
-						    객실 타입에 따라 최대 투숙 인원이 상이합니다.<br/>
-						    스탠다드 객실 : 기준 인원 2인, 최대 인원 2인까지 이용할 수 있습니다.<br/>
-						    트윈 객실 : 기준 인원 2인, 최대 인원 3인까지 이용할 수 있습니다.<br/>
-						    패밀리 객실 : 기준 인원 2인, 최대 인원 4인까지 이용할 수 있습니다.<br/>
-						    기준 인원 초과 시, 1인 1박당 추가 요금이 발생합니다.<br/><br/>
-						    
-						    예약 가능일<br/>
-						    당일 예약 및 입실이 가능합니다.<br/><br/>
-						    
-						    반려 동물<br/>
-						    반려 동물은 동반이 불가한 숙소입니다.
-						</p>
-	
-	                    <h2>이용 안내</h2>
-	                    <p>
-	                    	체크인은 오후 3시 이후부터, 체크아웃은 오전 11시까지 입니다.<br/>
-							예약 시, 최대 인원을 초과하는 인원은 입실이 불가합니다.<br/>
-							예약 인원 외 방문객의 출입은 제한됩니다.<br/>
-							숙소 내의 모든 공간에서 절대 금연입니다. 위반 시 특수청소비가 청구됩니다.<br/>
-							침구나 비품에 심각한 오염이 발생한 경우, 파손 및 분실 등에 변상비가 청구됩니다.<br/>
-							늦은 시간 외부로 소음이 발생하지 않도록 배려 부탁드립니다.<br/>
-							협의되지 않은 상업 사진 및 영상 촬영(광고용, 제품사진, 쇼핑몰, SNS마켓 포함), 드론 촬영은 불가합니다.<br/>
-	                    </p>
-	                    <h2>환불 규정</h2>
-	                    <p class=>
-	                    	체크인 10일 전까지 : 총 결제금액의 100% 환불<br/>
-							체크인 9일 전까지 : 총 결제금액의 90% 환불<br/>
-							체크인 8일 전까지 : 총 결제금액의 80% 환불<br/>
-							체크인 7일 전까지 : 총 결제금액의 70% 환불<br/>
-							체크인 6일 전까지 : 총 결제금액의 60% 환불<br/>
-							체크인 5일 전까지 : 총 결제금액의 50% 환불<br/>
-							체크인 4일 전까지 : 총 결제금액의 40% 환불<br/>
-							체크인 3일 전부터 : 변경 및 환불 불가
-	                    </p>
-	               
-	                    <!-- <h2>판매자 정보</h2> -->
-	                </div>
-	            </div>
-	            
+	                    
+	                    <div class="mt-4 border-top pt-4">
+							<!-- 예약 안내사항 -->
+							<div class="border-top py-3 mb-4">
+							    <h5 class="fw-semibold">예약 안내사항</h5>
+							    <p class="mb-0"><%= guide.getGuideInformation().replaceAll("\n", "<br/>") %></p>
+							</div>
+							
+							<!-- 이용 안내 -->
+							<div class="border-top py-3 mb-4">
+							    <h5 class="fw-semibold">이용 안내</h5>
+							    <p class="mb-0"><%= guide.getStayPolicy().replaceAll("\n", "<br/>") %></p>
+							</div>
+							
+							<!-- 환불 규정 -->
+							<div class="border-top py-3">
+							    <h5 class="fw-semibold">환불 규정</h5>
+							    <p class="mb-0"><%= guide.getRefundPolicy().replaceAll("\n", "<br/>") %></p>
+							</div>
+						</div>
+					</div>
+				</div>	            
             </div>
             <!-- 오른쪽: 예약 요약 -->
             <div class="col-5">
