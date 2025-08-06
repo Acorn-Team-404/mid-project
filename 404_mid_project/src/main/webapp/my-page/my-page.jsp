@@ -62,6 +62,7 @@
         <a href="${pageContext.request.contextPath}/inquiry/list.jsp" class="list-group-item list-group-item-action">문의 내역</a> <!-- 임시로 inquiry/list.jsp 보내는 중 -->
         <a href="${pageContext.request.contextPath}/faq/list.jsp" class="list-group-item list-group-item-action">자주하는 질문</a> <!-- 임시로 faq/list.jsp 보내는 중 -->
         <a href="${pageContext.request.contextPath}/logout" onClick="confirmLogout(event)" class="list-group-item list-group-item-action text-danger">로그아웃</a>
+        <a href="${pageContext.request.contextPath}/review/review-form.jsp?bookNum=20250806-0258" class="list-group-item list-group-item-action text-danger">리뷰 테스트</a>
       </div>
     </div>
     
