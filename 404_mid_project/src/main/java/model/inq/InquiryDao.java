@@ -20,6 +20,37 @@ public class InquiryDao {
 		return dao;
 	}
 	
+	
+	// 알림 INSERT를 위해 미리 sequence 값을 가져오는 메서드
+	public long getSequence() {
+		long sequence=0;
+		//필요한 객체를 담을 지역변수를 미리 만든다.
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			//실행할 sql문
+			String sql = """
+				SELECT inquiry_seq.NEXTVAL AS sequence
+				FROM DUAL
+			""";
+			pstmt = conn.prepareStatement(sql);
+			// select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			//반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 리턴해줄 객체에 담는다
+			if (rs.next()) {
+				sequence = rs.getLong("sequence");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		}
+		return sequence;
+	}
+	
+	
 	//문의글을 DB 에 저장하는 메소드
 	public boolean insert(InquiryDto dto) {
 		Connection conn = null;
@@ -31,15 +62,16 @@ public class InquiryDao {
 			String sql = """
 				INSERT INTO inquiry
 				(inq_num, inq_stay_num, inq_users_num, inq_title, inq_content, inq_type)
-				VALUES(inquiry_seq.NextVAL, ?, ?, ?, ?, ?)
+				VALUES(?, ?, ?, ?, ?, ?)
 			""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 순서대로 필요한 값 바인딩
-			pstmt.setObject(1, dto.getStayNum());
-			pstmt.setLong(2, dto.getUsersNum());
-			pstmt.setString(3, dto.getTitle());
-			pstmt.setString(4, dto.getContent());
-			pstmt.setString(5, dto.getType());
+			pstmt.setLong(1, dto.getNum());
+			pstmt.setObject(2, dto.getStayNum());
+			pstmt.setLong(3, dto.getUsersNum());
+			pstmt.setString(4, dto.getTitle());
+			pstmt.setString(5, dto.getContent());
+			pstmt.setString(6, dto.getType());
 			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
 			rowCount = pstmt.executeUpdate();
 		} catch (Exception e) {
