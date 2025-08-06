@@ -217,9 +217,9 @@ public class NotificationDao {
 			String sql = """
 					INSERT INTO notifications (
 						noti_num, noti_recipient_num, noti_sender_num, noti_type_code,
-						noti_target_type_code, noti_target_num, noti_message
+						noti_target_type_code, noti_target_num, noti_message, noti_image_type
 					)
-					VALUES(noti_seq.NEXTVAL, ?, ?, ?, ?, ?, ?)
+					VALUES(noti_seq.NEXTVAL, ?, ?, ?, ?, ?, ?, ?)
 					""";
 			pstmt = conn.prepareStatement(sql);
 			
@@ -229,6 +229,7 @@ public class NotificationDao {
 			pstmt.setInt(4, dto.getNotiTargetTypeCode());
 			pstmt.setString(5, dto.getNotiTargetNum());
 			pstmt.setString(6, dto.getNotiMessage());
+			pstmt.setString(7, dto.getNotiImageType());
 
 			rowCount = pstmt.executeUpdate();
 
