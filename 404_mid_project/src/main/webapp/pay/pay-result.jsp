@@ -1,3 +1,4 @@
+<%@page import="model.pay.PaymentDao"%>
 <%@page import="model.user.UserDto"%>
 <%@page import="model.user.UserDao"%>
 <%@page import="model.page.StayDao"%>
@@ -15,11 +16,14 @@
   // PaymentServlet에서 포워딩한 예약정보 + 결제 정보
   BookDto bookDto = (BookDto) request.getAttribute("bookDto"); 
   PaymentDto paymentDto = (PaymentDto) request.getAttribute("paymentDto");
-  
+  String pay_method_code = PaymentDao.getInstance().getMethodCodeByPayNum(paymentDto.getPayNum());
   //예약db에 있는 숙소 번호로 예약한 숙소정보 가져오기
   StayDto stayDto = StayDao.getInstance().getByNum(bookDto.getBookStayNum());
   RoomDto roomDto = RoomDao.getInstance().getByNum(bookDto.getBookRoomNum());
   UserDto usersDto = UserDao.getInstance().getByUserNum(bookDto.getBookUsersNum());
+  
+  String errorCode = (String) request.getAttribute("errorCode");
+  String errorMsg = (String) request.getAttribute("errorMsg");
 %>
 
 <!DOCTYPE html>
@@ -107,7 +111,8 @@
       <p><strong>고객 요청사항 :</strong></p>
       <p><span><%= bookDto.getBookRequest() %></span></p>
     </div>
-
+    
+	<p><strong>결제 수단 :</strong> <span><%= pay_method_code %></span></p>
     <p><strong>최종 결제 금액 :</strong> <span><%= bookDto.getBookTotalAmount() %></span></p>
 
     <!-- 버튼 영역 -->
@@ -116,16 +121,29 @@
         <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-dark w-100">홈으로</a>
       </div>
       <div class="col-6">
-        <a href="${pageContext.request.contextPath}/my-page/my-page.jsp" class="btn btn-dark w-100">예약내역 보기</a>
+        <a href="${pageContext.request.contextPath}/my-page/preview.jsp" class="btn btn-dark w-100">예약내역 보기</a>
       </div>
     </div>
   </div>
 <% } else { %>
-  <h2>결제를 실패했습니다.</h2>
-  
-  
-<% } %>
-</div>
+  <div class="card">
+    <h2 style="color: #dc3545;">결제를 실패했습니다</h2>
 
+    <div class="border-box">
+      <p><strong>오류 코드:</strong> <span><%= errorCode != null ? errorCode : "알 수 없음" %></span></p>
+      <p><strong>오류 메시지:</strong> <span><%= errorMsg != null ? errorMsg : "일시적인 오류가 발생했습니다. 다시 시도해주세요." %></span></p>
+    </div>
+
+    <!-- 버튼 영역 -->
+    <div class="row mt-4">
+      <div class="col-6">
+        <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-dark w-100">홈으로</a>
+      </div>
+      <div class="col-6">
+        <a href="${pageContext.request.contextPath}/booking/booking-page.jsp" class="btn btn-dark w-100">다시 결제하기</a>
+      </div>
+    </div>
+  </div>
+<% } %>
 </body>
 </html>

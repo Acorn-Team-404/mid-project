@@ -7,6 +7,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%
+	//get 방식 파라미터로 전달되는 글 번호, 숙소 번호 얻어내기
+	String strStayNum = request.getParameter("stayNum");
+	if(strStayNum == null || strStayNum.trim().equals("")){
+	    out.println("<script>alert('숙소 번호가 없습니다.'); history.back();</script>");
+	    return;
+	}
+	long stayNum = Long.parseLong(strStayNum);
+	
 	// 숙소, 유저는 세션 객체로부터 얻어낸다
 	String stay_name = (String) session.getAttribute("stay_name");
 	Long users_num = (Long) session.getAttribute("usersNum");
@@ -22,18 +30,17 @@
 	}
 	
 	// 폼 전송
-	long stay_num = Long.parseLong(request.getParameter("stayNum"));
-	String pageContent = request.getParameter("content");
-	String pageReserve = request.getParameter("notice_reserve");
-	String pageGuide = request.getParameter("notice_guide");
-	String pageRefund = request.getParameter("notice_refund");
+	String pageContent = request.getParameter("pageContent");
+	String pageReserve = request.getParameter("pageReserve");
+	String pageGuide = request.getParameter("pageGuide");
+	String pageRefund = request.getParameter("pageRefund");
 	
 	// 페이지 번호를 미리 얻어낸다
 	long page_num=PageDao.getInstance().getSequence();
 	
 	// DB 에 저장하기
 	PageDto dto = new PageDto();
-	dto.setStayNum(stay_num);
+	dto.setStayNum(stayNum);
 	dto.setUsersNum(users_num);
 	dto.setPageContent(pageContent);
 	dto.setPageReserve(pageReserve);
@@ -56,7 +63,8 @@
 	<%if(isSuccess){ %>
 		<script>
 			alert("페이지 정보가 저장되었습니다.");
-			location.href="page-view.jsp?stay_num=<%=stay_num %>";
+			location.href="page-view.jsp?stayNum=<%=stayNum %>&pageNum=<%=page_num %>";
+			
 		</script>
 	<%}else{ %>
 		<script>

@@ -231,14 +231,14 @@
 	                        <input type="hidden" name="email" id="email" value="${email}"/>
 	                    </div>
 	
-	                    <div class="mb-3">
+	                    <div class="mb-4">
 	                        <label for="phone" class="form-label">전화번호</label>
 	                        <p>${phone}</p>
 	                        <input type="hidden" name="phone" id="phone" value="${phone}"/>
 	                    </div>
 	
-	                    <div class="mb-4">
-	                        <h2>옵션</h2>
+	                    <div class="border-top mb-4">
+	                        <h2 class="mt-3">옵션</h2>
 	                        <p>숙박 시 제공되는 옵션을 선택하세요</p>
 	
 	                        <label class="form-label">추가 침대</label><br/>
@@ -268,12 +268,12 @@
 	                        </div>
 	                    </div>
 	
-	                    <div class="mb-4">
+	                    <div class="mb-2">
 	                        <h2>추가 요청사항</h2>
 	                        <textarea name="bookRequest" id="bookRequest" class="form-control" rows="5" placeholder="요청사항을 입력해 주세요."></textarea>
 	                    </div>
 	                    
-	                    <div class="mt-4 border-top pt-4">
+	                    <div class="mt-4 pt-2">
 							<!-- 예약 안내사항 -->
 							<div class="border-top py-3 mb-4">
 							    <h5 class="fw-semibold">예약 안내사항</h5>

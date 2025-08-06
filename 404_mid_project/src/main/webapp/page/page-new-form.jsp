@@ -8,11 +8,21 @@
 	// 이미지 배열
 	List<String> imageList = new ArrayList<>();
 	
-	// 숙소 번호
-	long stayNum = Long.parseLong(request.getParameter("stay_num"));
-	
 	// 숙소 목록
 	List<StayDto> stayList = StayDao.getInstance().selectAll();
+	
+	// 유저 로그인 여부 체크
+	Long users_num = (Long) session.getAttribute("usersNum");
+	String usersId = (String)session.getAttribute("usersId");
+	if (usersId == null) {
+%>
+	<script>
+		alert("로그인이 필요합니다.");
+		location.href="${pageContext.request.contextPath}/user/login-form.jsp";
+	</script>
+<%
+		return;
+	}
 %>
 <!DOCTYPE html>
 <html>
@@ -29,6 +39,8 @@
 <script src="https://uicdn.toast.com/editor/latest/i18n/ko-kr.js"></script>
 </head>
 <body>
+	<jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
+	<h1>상세 페이지</h1>
 	<form action="page-save.jsp" method="post" id="saveForm">
 		<div class="mb-3">
 			<label for="stayNum">숙소 선택</label>
@@ -40,32 +52,33 @@
 			</select>
 		</div>
 		<div>
-			<h1>슬라이드(Carousel) 이미지 첨부</h1>
+			<h2>슬라이드(Carousel) 이미지 첨부</h2>
 			  <input type="file" name="imageFiles" multiple accept="image/*">
 		</div>
 		<div class="Container" id="info">
-			<h1>소개글 작성</h1>
+			<h2>소개글 작성</h2>
+			<input type="hidden" name="writer" value="<%=usersId %>">
 			<div class="mb-2">
 				<!-- Editor ui 이 출력될 div -->
 				<div id="editor"></div>
 			</div>
-			<input type="hidden" name="content" id="hiddenContent">
+			<input type="hidden" name="pageContent" id="hiddenContent">
 		</div>
 		<div class="Container" id="review" hidden>
-			<h1>리뷰 출력</h1>
+			<h2>리뷰 출력</h2>
 		</div>
 		<div class="Container" id="loc" hidden>
-			<h1>스테이 지도 출력</h1>
+			<h2>스테이 지도 출력</h2>
 		</div>
 		<div class="Container" id="notice">
 			<h3>예약 안내</h3>
-			<input type="text" name="notice_reserve" id="notice_reserve" class="form-control" />
+			<input type="text" name="pageReserve" id="notice_reserve" class="form-control" />
 			
 			<h3>이용 안내</h3>
-			<input type="text" name="notice_guide" id="notice_guide" class="form-control" />
+			<input type="text" name="pageGuide" id="notice_guide" class="form-control" />
 			
 			<h3>환불 규정</h3>
-			<input type="text" name="notice_refund" id="notice_refund" class="form-control" />
+			<input type="text" name="pageRefund" id="notice_refund" class="form-control" />
 		</div>
 		<button class="btn btn-success btn-sm" type="submit">저장</button>
 	</form>

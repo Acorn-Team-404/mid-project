@@ -1,3 +1,5 @@
+<%@page import="model.room.RoomDto"%>
+<%@page import="model.room.RoomDao"%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="model.book.BookDao" %>
@@ -14,6 +16,8 @@
  	// 예약 목록 가져오기
     BookDao dao = BookDao.getInstance();
     List<BookDto> bookings = dao.getByUserNum(userNum);
+    
+    
 %>
 
 <!DOCTYPE html>
@@ -21,6 +25,7 @@
 <head>
     <meta charset="UTF-8">
     <title>/my-page/preview.jsp</title>
+	<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
 <body>
@@ -36,7 +41,9 @@
                         <th>예약번호</th>
                         <th>체크인</th>
                         <th>체크아웃</th>
+                        <th>예약상태</th>
                         <th>상세</th>
+                        <a href="${pageContext.request.contextPath}/review/review-form.jsp?bookNum=20250806-0258&stayNum=1">리뷰 작성</a>
                     </tr>
                 </thead>
                 <tbody class="text-center">
@@ -45,8 +52,9 @@
                             <td><%= dto.getBookNum() %></td>
                             <td><%= dto.getBookCheckIn() %></td>
                             <td><%= dto.getBookCheckOut() %></td>
+                            <td><%= dto.getBookStatusCode() %></td>
                             <td>
-                                <a href="<%= request.getContextPath() %>/mypage/detail?bookNum=<%= dto.getBookNum() %>" class="btn btn-sm btn-primary">보기</a>
+                                <a href="<%= request.getContextPath() %>/booking/confirm?bookNum=<%= dto.getBookNum() %>" class="btn btn-sm btn-primary">보기</a>
                             </td>
                         </tr>
                     <% } %>

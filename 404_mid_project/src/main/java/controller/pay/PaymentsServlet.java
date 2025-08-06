@@ -24,6 +24,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.book.BookDao;
 import model.book.BookDto;
+import model.noti.NotificationDao;
+import model.noti.NotificationDto;
 import model.pay.PaymentDao;
 import model.pay.PaymentDto;
 import model.util.DBConnector;
@@ -44,6 +46,8 @@ public class PaymentsServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		System.out.println("PaymentsServlet 도착 - 요청 파라미터: " + request.getParameterMap());
+		String errorCode = null;         // <-- 여기에 선언
+		String errorMessage = null;
 		boolean paymentSuccess = false;
 		
 		// 토스 서버에 쏴줄 파라미터들 수집하기
@@ -140,6 +144,7 @@ public class PaymentsServlet extends HttpServlet {
 			    
 				//payments.jsp에서 bookNum을 받아서 예약번호로 예약상태 업데이트
 				BookDao.getInstance().updateBookStatus(dbConn,bookNum);
+				
 				PaymentDao payDao = PaymentDao.getInstance();
 				PaymentDto payDto = new PaymentDto();
 				payDto.setPayNum(payDao.generatePayNum());
@@ -201,6 +206,34 @@ public class PaymentsServlet extends HttpServlet {
 				dbConn.commit();
 				paymentSuccess = true;
 				
+				// 결제 완료 시 예약 확정 알림 INSERT
+				if(paymentSuccess) {
+					long notiRecipientNum = usersNum;
+					long notiSenderNum = bookDto.getBookStayNum();
+					int notiTypeCode = 10;
+					int notiTargetTypeCode = 10;
+					String notiTargetNum = bookNum;
+					String notiMessage = "예약 확정";
+					
+					NotificationDto notiDto = new NotificationDto();
+					
+					notiDto.setNotiRecipientNum(notiRecipientNum);
+					notiDto.setNotiSenderNum(notiSenderNum);
+					notiDto.setNotiTypeCode(notiTypeCode);
+					notiDto.setNotiTargetTypeCode(notiTargetTypeCode);
+					notiDto.setNotiTargetNum(notiTargetNum);
+					notiDto.setNotiMessage(notiMessage);
+					
+					boolean isNotiSuccess = NotificationDao.getInstance().notiInsert(notiDto);
+					
+					if(isNotiSuccess) {
+						System.out.println("알림 데이터 저장 성공");
+					} else {
+						System.out.println("알림 데이터 저장 실패");
+					}
+				}
+				
+				
 				}catch (Exception e) {
 		            e.printStackTrace();
 		            if (dbConn != null) try { dbConn.rollback(); } catch (Exception rollbackEx) {}
@@ -211,12 +244,27 @@ public class PaymentsServlet extends HttpServlet {
 		            
 		        }
 
-			//결제 승인 api 호출 실패
-		} else {
-			System.out.println("결제 승인 실패");
-			System.out.println("응답 코드: " + responseCode);
-			System.out.println("에러 메시지: " + result.toString());
+		} 
+		
+		//결제 승인 api 호출 실패
+		else {
+			
+			try {
+			//결제 실패 응답 에러코드 JSON 파싱 후 포워딩 준비 
+			JSONParser parser = new JSONParser();
+			JSONObject errorJson = (JSONObject) parser.parse(result.toString());
+			errorCode = (String) errorJson.get("code");
+			errorMessage = (String) errorJson.get("message");
+			} catch (Exception e) {
+				errorCode = "UNKNWON_ERROR";
+				errorMessage = "결제 오류응답 파싱 중 오류가 발생했습니다.";
+				e.printStackTrace();
+			}
+			
+
 		}
+		
+		
 		
 		// 결제 완료/실패 정보를 가지고 결과페이지로 포워딩
 		PaymentDto paymentDto = PaymentDao.getInstance().getPayByOrderId(orderId);
@@ -232,7 +280,9 @@ public class PaymentsServlet extends HttpServlet {
 		} else {
 			 request.setAttribute("paymentSuccess", false);
 			 request.setAttribute("bookDto", bookDto);
-			request.setAttribute("paymentDto", paymentDto);
+			 request.setAttribute("paymentDto", paymentDto);
+			 request.setAttribute("errorCode", errorCode);
+			 request.setAttribute("errorMsg", errorMessage);
 			 RequestDispatcher rd = request.getRequestDispatcher("/pay/pay-result.jsp");
 			 rd.forward(request, response);
 		}

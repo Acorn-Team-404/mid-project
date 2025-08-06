@@ -31,9 +31,11 @@ public class StayDao {
         	conn = DBConnector.getConn();
             // 실행할 sql 문
          	String sql = """
-         		SELECT AVG(scope_star) AS avg_star
-         		FROM scope
-         		WHERE stay_num = ? AND scope_delete IS NULL
+         		SELECT s.stay_name, AVG(sc.scope_star) AS avg_star
+         		FROM scope sc
+         		JOIN stay s ON sc.scope_stay_num = s.stay_num
+         		WHERE sc.scope_delete IS NULL AND s.stay_num=?
+         		GROUP BY s.stay_name
          	""";
             pstmt = conn.prepareStatement(sql);
             // ? 에 바인딩
@@ -65,7 +67,7 @@ public class StayDao {
          	String sql = """
          		SELECT COUNT(*) AS star_count
          		FROM scope
-         		WHERE stay_num = ? AND scope_delete IS NULL
+         		WHERE scope_stay_num = ? AND scope_delete IS NULL
          	""";
             pstmt = conn.prepareStatement(sql);
             // ? 에 바인딩
@@ -254,56 +256,119 @@ public class StayDao {
 	}
 	
 	// 숙소 정보 가져오기
-	public StayDto getByNum(long stayNum) {
-	    StayDto dto = null;
+	public StayDto getBy(Long userNum) {
+	       StayDto dto = null;
 
-	    Connection conn = null;
-	    PreparedStatement pstmt = null;
-	    ResultSet rs = null;
-	    try {
-	        conn = DBConnector.getConn();
-	        String sql = """
-	            SELECT *
-	            FROM STAY
-	            WHERE STAY_NUM = ?
-	        """;
-	        pstmt = conn.prepareStatement(sql);
-	        pstmt.setLong(1, stayNum);
-	        rs = pstmt.executeQuery();
+	       Connection conn = null;
+	       PreparedStatement pstmt = null;
+	       ResultSet rs = null;
+	       try {
+	           conn = DBConnector.getConn();
+	           String sql = """
+	           		SELECT 
+	           		     S.STAY_NUM,
+	           		     S.STAY_USER_NUM,
+	           		     S.STAY_NAME,
+	           		     S.STAY_ADDR,
+	           		     S.STAY_LOC,
+	           		     S.STAY_LAT,
+	           		     S.STAY_LONG,
+	           		     S.STAY_PHONE,
+	           		     S.STAY_UPDATE_AT,
+	           		     S.STAY_DELETE,
+	           		     S.STAY_FACILITIES,
+	           		     U.USERS_ID
+	           		FROM STAY S
+	           		JOIN USERS U ON S.STAY_USER_NUM = U.USERS_NUM
+	           		WHERE S.STAY_USER_NUM = ?
+	           """;
+	           pstmt = conn.prepareStatement(sql);
+	           pstmt.setLong(1, userNum);
+	           rs = pstmt.executeQuery();
 
-	        if (rs.next()) {
-	            // 컬럼명과 값을 모두 출력해보자
-	            ResultSetMetaData meta = rs.getMetaData();
-	            for (int i = 1; i <= meta.getColumnCount(); i++) {
-	                System.out.println(meta.getColumnName(i) + " = " + rs.getString(i));
-	            }
+	           if (rs.next()) {
 
-	            dto = new StayDto();
-	            dto.setStayNum(rs.getLong("STAY_NUM"));
-	            dto.setStayUsersNum(rs.getLong("STAY_USER_NUM"));
-	            dto.setStayName(rs.getString("STAY_NAME"));
-	            dto.setStayAddr(rs.getString("STAY_ADDR"));
-	            dto.setStayLoc(rs.getString("STAY_LOC"));
-	            dto.setStayLat(rs.getString("STAY_LAT"));
-	            dto.setStayLong(rs.getString("STAY_LONG"));
-	            dto.setStayPhone(rs.getString("STAY_PHONE"));
-	            dto.setStayUpdateAt(rs.getString("STAY_UPDATE_AT"));
-	            dto.setStayDelete(rs.getString("STAY_DELETE"));
-	            dto.setStayFacilities(rs.getString("STAY_FACILITIES"));
-	        } else {
-	            System.out.println("해당 stayNum에 해당하는 데이터가 없습니다: " + stayNum);
-	        }
+	               dto = new StayDto();
+	               dto.setStayNum(rs.getLong("STAY_NUM"));
+	               dto.setStayUsersNum(rs.getLong("STAY_USERS_NUM"));
+	               dto.setStayName(rs.getString("STAY_NAME"));
+	               dto.setStayAddr(rs.getString("STAY_ADDR"));
+	               dto.setStayLoc(rs.getString("STAY_LOC"));
+	               dto.setStayLat(rs.getString("STAY_LAT"));
+	               dto.setStayLong(rs.getString("STAY_LONG"));
+	               dto.setStayPhone(rs.getString("STAY_PHONE"));
+	               dto.setStayUpdateAt(rs.getString("STAY_UPDATE_AT"));
+	               dto.setStayDelete(rs.getString("STAY_DELETE"));
+	               dto.setStayFacilities(rs.getString("STAY_FACILITIES"));
+	               dto.setUsersId(rs.getString("USER_ID"));
+	           } 
+	       } catch (Exception e) {
+	           e.printStackTrace();
+	       } finally {
+	           try {
+	               DBConnector.close(pstmt, conn);
+	           } catch (Exception e) {}
+	       }
+	       return dto;
+	   }
 
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    } finally {
-	        try {
-	            DBConnector.close(pstmt, conn);
-	        } catch (Exception e) {}
-	    }
-	    return dto;
-	}
+		// 숙소 정보 가져오기 (Booking 전용)
+		public StayDto getByNum(int userNum) {
+		       StayDto dto = null;
 
+		       Connection conn = null;
+		       PreparedStatement pstmt = null;
+		       ResultSet rs = null;
+		       try {
+		           conn = DBConnector.getConn();
+		           String sql = """
+		           		SELECT 
+		           		     S.STAY_NUM,
+		           		     S.STAY_USER_NUM,
+		           		     S.STAY_NAME,
+		           		     S.STAY_ADDR,
+		           		     S.STAY_LOC,
+		           		     S.STAY_LAT,
+		           		     S.STAY_LONG,
+		           		     S.STAY_PHONE,
+		           		     S.STAY_UPDATE_AT,
+		           		     S.STAY_DELETE,
+		           		     S.STAY_FACILITIES,
+		           		     U.USERS_ID
+		           		FROM STAY S
+		           		JOIN USERS U ON S.STAY_USER_NUM = U.USERS_NUM
+		           		WHERE S.STAY_USER_NUM = ?
+		           """;
+		           pstmt = conn.prepareStatement(sql);
+		           pstmt.setLong(1, userNum);
+		           rs = pstmt.executeQuery();
+
+		           if (rs.next()) {
+		              
+
+		               dto = new StayDto();
+		               dto.setStayNum(rs.getLong("STAY_NUM"));
+		               dto.setStayUsersNum(rs.getLong("STAY_USERS_NUM"));
+		               dto.setStayName(rs.getString("STAY_NAME"));
+		               dto.setStayAddr(rs.getString("STAY_ADDR"));
+		               dto.setStayLoc(rs.getString("STAY_LOC"));
+		               dto.setStayLat(rs.getString("STAY_LAT"));
+		               dto.setStayLong(rs.getString("STAY_LONG"));
+		               dto.setStayPhone(rs.getString("STAY_PHONE"));
+		               dto.setStayUpdateAt(rs.getString("STAY_UPDATE_AT"));
+		               dto.setStayDelete(rs.getString("STAY_DELETE"));
+		               dto.setStayFacilities(rs.getString("STAY_FACILITIES"));
+		               dto.setUsersId(rs.getString("USER_ID"));
+		           } 
+		       } catch (Exception e) {
+		           e.printStackTrace();
+		       } finally {
+		           try {
+		               DBConnector.close(pstmt, conn);
+		           } catch (Exception e) {}
+		       }
+		       return dto;
+		   }
     
     // 숙소 등록
     public boolean insert(StayDto dto) {

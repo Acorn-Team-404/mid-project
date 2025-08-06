@@ -55,7 +55,6 @@ section section-box {
 	justify-content: center;
 	margin-top: 10px;
 }
-
 .button2 {
 	flex: 1 1 0;
 	min-width: 100px;
@@ -74,7 +73,7 @@ section section-box {
 
 .button2.selected {
 	background-color: #e6e6e6 !important;
-	border-color: #aaa !important;
+	border-color: black !important;
 	color: #000 !important;
 }
 

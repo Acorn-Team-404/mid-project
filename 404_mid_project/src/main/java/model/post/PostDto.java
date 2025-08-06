@@ -12,6 +12,11 @@ public class PostDto {
 	private String postUpdatedAt;
 	private String postDeleted;
 	private String usersID;
+	//페이징 처리를 위한 필드
+	private int startRowNum;
+	private int endRowNum;
+	//검색 키워드 담기 위한 필드
+	private String postKeyword;
 	public int getPostNum() {
 		return postNum;
 	}
@@ -77,6 +82,24 @@ public class PostDto {
 	}
 	public void setUsersID(String usersID) {
 		this.usersID = usersID;
+	}
+	public int getStartRowNum() {
+		return startRowNum;
+	}
+	public void setStartRowNum(int startRowNum) {
+		this.startRowNum = startRowNum;
+	}
+	public int getEndRowNum() {
+		return endRowNum;
+	}
+	public void setEndRowNum(int endRowNum) {
+		this.endRowNum = endRowNum;
+	}
+	public String getPostKeyword() {
+		return postKeyword;
+	}
+	public void setPostKeyword(String postKeyword) {
+		this.postKeyword = postKeyword;
 	}
 	
 	

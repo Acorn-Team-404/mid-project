@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<jsp:include page="/WEB-INF/include/user-modal.jsp" />
 <!DOCTYPE html>
 <html>
 
@@ -9,6 +8,8 @@
   <jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <title>user/signup-form</title>
   <style>
@@ -30,6 +31,7 @@
     #birth {
       size: 100rem;
     }
+    
   </style>
 </head>
 
@@ -39,67 +41,76 @@
   <h2 class="text-center mt-4">회원가입</h2>
 
   <div class="container mt-5 mb-5" style="max-width: 500px;">
-    <form action="${pageContext.request.contextPath}/user/signup.jsp" method="post" autocapitalize="off" onsubmit="return checkForm()">
+  	<form action="${pageContext.request.contextPath}/user/signup.jsp" method="post" autocapitalize="off" onsubmit="return checkForm()">
 
-      <div class="mb-4">
-        <label for="usersName" class="form-label">이름</label>
-        <input class="form-control w-80" type="text" name="usersName" id="usersName" required>
-      </div>
-
-      <div class="mb-4" style="max-width: 500px;margin: 0 auto;">
-        <label for="usersId" class="form-label">아이디</label>
-        <span id="usersIdMessage"></span>
-        <div class="input-group">
-          <input class="form-control" type="text" name="usersId" id="usersId" required>
-          <button type="button" onclick="IdCheck()" class="btn custom-btn">중복확인</button>
-        </div>
-        <input type="hidden" name="checkIdAction" id="checkIdAction" value="off">
+      <div class="form-floating mb-4">
+          <input class="form-control w-80" type="text" name="usersName" id="usersName" placeholder="이름" required>
+          <label for="usersName" class="form-label">이름</label>
       </div>
 
       <div class="mb-4">
-        <label for="usersPassword" class="form-label">비밀번호</label>
-        <span id="usersPasswordMessage"></span> <br>
-        <input class="form-control w-80" type="password" name="usersPassword" id="usersPassword" required>
-      </div>
+		  <div class="input-group">
+		      <div class="form-floating flex-grow-1">
+		          <input class="form-control" type="text" name="usersId" id="usersId" placeholder="아이디" required>
+		          <label for="usersId">아이디</label>
+		      </div>
+		      <input type="hidden" id="checkIdAction" name="checkIdAction" value="off">
+		      <button type="button" onclick="IdCheck()" class="btn custom-btn">중복확인</button>
+		  </div>
+		  <span id="usersIdMessage" class="ms-1"></span>
+	  </div>
 
-      <div class="mb-4">
-        <label for="usersCheckPassword" class="form-label">비밀번호 확인</label>
-        <span id="usersCheckPasswordMessage"></span> <br>
-        <input class="form-control w-80" type="password" name="usersCheckPassword" id="usersCheckPassword" required>
+      <div class="form-floating mb-4">
+		  <input class="form-control" type="password" name="usersPassword" id="usersPassword" placeholder="비밀번호" required>
+		  <label for="usersPassword">비밀번호</label>
+	      <span id="usersPasswordMessage" class="ms-1"></span>
+	  </div>
 
-      </div>
 
-      <div class="mb-4" style="max-width: 500px;margin: 0 auto;">
-        <label for="email" class="form-label">이메일</label> <br>
-        <span id="EmailCheckMessage"></span>
-  
-        <div class="input-group mb-2">
-	        <input class="form-control" type="email" name="email" id="email" required>
-	        <input type="hidden" id="emailVerified" name="emailVerified" value="false">
-	        <input type="hidden" id="emailVerified2" name="emailVerified2" value="false">
-	        <button type="button" onclick="EmailCheck()" class="btn custom-btn">이메일 중복확인</button>
-        </div>
+      <div class="form-floating mb-4">
+	  	  <input class="form-control" type="password" name="usersCheckPassword" id="usersCheckPassword" placeholder="비밀번호 확인" required>
+		  <label for="usersCheckPassword">비밀번호 확인</label>
+		  <span id="usersCheckPasswordMessage" class="ms-1"></span>
+	  </div>
 
-        <button type="button" onclick="sendEmailAuth()" class="btn custom-btn" id="send-code">인증 코드 보내기</button>
+	<div class="mb-4">
+		<div class="input-group">
+			<div class="form-floating flex-grow-1">
+			    <input class="form-control" type="email" name="email" id="email" placeholder="이메일" required>
+			    <label for="email">이메일</label>
+			</div>
+		<button type="button" onclick="EmailCheck()" class="btn custom-btn">중복확인</button>
+		</div>	
+	</div>	
+		
+		  <!-- 인증 코드 보내기 버튼 -->
+		<button type="button" onclick="sendEmailAuth()" class="btn custom-btn w-100 mb-4" id="send-code">인증 코드 전송</button>
+		
+		  <!-- 인증 코드 입력창 -->
+	<div id="code-box" class="input-group mb-4" style="display: none;">
+		  <div class="form-floating flex-grow-1">
+			    <input class="form-control" type="text" name="inputCode" id="inputCode" placeholder="인증코드 입력">
+			    <label for="inputCode">인증코드 입력</label>
+		  </div>
+		  <button type="button" onclick="verifyCode()" class="btn custom-btn">확인</button>
+		  <button type="button" onclick="sendEmailAuth()" class="btn custom-btn" id="resend-code" style="display: none;">재전송</button>
+	</div>
 
-        <div id="code-box" class="input-group mb-4" style="display:none">
-          <input class="form-control" type="text" name="inputCode" id="inputCode" placeholder="인증코드 입력.."><!--required 빼고 js로 처리  -->
-          <button type="button" onclick="verifyCode()" class="btn custom-btn">인증 코드 확인</button>
-          <button type="button" onclick="sendEmailAuth()" class="btn custom-btn" id="resend-code">다시보내기</button>
-        </div>
-      </div>
+		<span id="EmailCheckMessage" class="ms-1"></span>
+		<input type="hidden" id="emailVerified" name="emailVerified" value="false">
+		<input type="hidden" id="emailVerified2" name="emailVerified2" value="false">
+	
 
-      <div class="mb-4" style="max-width: 500px;margin: 0 auto;">
-        <label for="phone" class="form-label">연락처</label> <br>
-        <input class="form-control w-80" type="text" name="phone" id="phone" maxlength="13" oninput="Hyphen(this)"
-          required>
-      </div>
 
-      <div>
-        <label for="birth" class="form-label">생년월일</label> <br>
-        <input class="form-control w-80 mb-5" style="width:200px; height : 30px;" type="date" name="birth" id="birth"
-          required>
-      </div>
+     <div class="form-floating mb-4">
+	 	<input class="form-control" type="text" name="phone" id="phone" maxlength="13" oninput="Hyphen(this)" placeholder="연락처" required>
+		<label for="phone">연락처</label>
+	 </div>
+
+	<div class="form-floating mb-5">
+		  <input class="form-control" type="date" name="birth" id="birth" placeholder="생년월일" required>
+		  <label for="birth">생년월일</label>
+	</div>
 
       <button type="submit" class="btn custom-btn d-block mx-auto">가입</button>
     </form>
@@ -115,21 +126,24 @@
 	
 	//이메일 중복 인증하기
     function EmailCheck() {
-    	  const usersEmail = document.getElementById("email").value; // ✅ 필수
+    	  const usersEmail = document.getElementById("email").value; //
     	  const checkEmailAction = document.getElementById("emailVerified2");
    
     	fetch(contextPath + "/user/check-email.jsp?usersEmail=" + encodeURIComponent(usersEmail))
     	  .then(response => response.text())
     	  .then(data => {
     	    if (data.trim() === "empty") {
-    	    	alert("이메일을 입력하세요.");
+    	    	showInfoModal("이메일을 입력하세요");
+    	    	//alert("이메일을 입력하세요.");
     	      checkEmailAction.value = "false";
     	    } else if (data.trim() === "exist") {
-    	      alert("중복된 이메일입니다.");
+    	      showInfoModal("중복된 이메일입니다."); 	
+    	      //alert("중복된 이메일입니다.");
     	      checkEmailAction.value = "false";
     	    } else {
-    	      alert("사용 가능한 이메일입니다.");
-    	      checkEmailAction.value = "true"; // ✅ 이게 on이 아니라 true여야 form에서 통과됨
+    	       showInfoModal("사용 가능한 이메일 입니다");	
+    	      //alert("사용 가능한 이메일입니다.");
+    	      checkEmailAction.value = "true"; //  true여야 form에서 통과
     	    }
     	  });
     }	
@@ -148,10 +162,12 @@
 		console.log("emailVerified:", checkEmail);
 		
 		if(checkId !== "on"){
-			alert("아이디 중복확인을 주세요");
+			showInfoModal("아이디 중복확인을 해주세요.");
+			//alert("아이디 중복확인을 주세요");
 			return false;
 		}else if(checkEmail  !== "true"){
-			alert("이메일 인증을 완료해주세요");
+			showInfoModal("이메일 인증을 완료해주세요");
+			//alert("이메일 인증을 완료해주세요");
 			return false;
 		}else return true; //둘다 눌렀을 떄...
 	}
@@ -161,6 +177,14 @@
     //인증번호 보내기, 버튼 누르면
 	function sendEmailAuth() {
 	  const email = document.getElementById("email").value;
+	  
+	  if (email === "") {
+		  	showInfoModal("이메일을 입력하세요");
+		    //alert("이메일을 입력하세요.");
+		    document.getElementById("email").focus();
+		    return;
+		  }
+	  
 	  fetch(contextPath + "/user/email-auth.jsp", {
 	    method: "POST",
 	    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -176,7 +200,8 @@
 	function checkEmailVerification() {
 		  const verified = document.getElementById("emailVerified").value;
 		  if (verified !== "true") {
-		    alert("이메일 인증을 완료해주세요.");
+			showInfoModal("이메일 인증을 완료해 주세요");  
+		    //alert("이메일 인증을 완료해주세요.");
 		    return false;
 		  }
 	  	return true;
@@ -209,11 +234,13 @@
 	        
 	        
 	      } else if (text.trim() === "expired") {
-	        alert("인증번호가 만료되었습니다.");
+	    	showInfoModal("인증번호가 만료되었습니다");
+	        //alert("인증번호가 만료되었습니다.");
 	        emailVerified = false;
 	        document.getElementById("emailVerified").value = "false";
 	      } else {
-	        alert("인증번호가 틀렸습니다.");
+	    	showInfoModal("인증번호가 틀렸습니다");
+	    	//alert("인증번호가 틀렸습니다.");
 	        emailVerified = false;
 	        document.getElementById("emailVerified").value = "false";
 	      }
@@ -230,7 +257,7 @@
       if (usersPassword === "") {
         passwordMessage.textContent = "";
       } else if (!isValidPassword) {
-        passwordMessage.textContent = "  비밀번호는 대문자, 소문자, 숫자, 특수문자를 포함한 10자 이상이어야 합니다.";
+        passwordMessage.textContent = "  비밀번호는 대문자, 소문자, 숫자, 특수문자를 포함한 10자 이상";
         passwordMessage.style.color = "red";
       } else {
         passwordMessage.textContent = "  사용 가능한 비밀번호입니다.";
@@ -289,13 +316,15 @@
         .then(response => response.text())
         .then(data => {
           if (data.trim() === "empty") {
-            alert("아이디를 입력하세요.");
+        	  
+        	showInfoModal("아이디를 입력하세요.");
+            //alert("아이디를 입력하세요.");
             checkIdAction.value = "off";
           } else if (data.trim() === "exist") {
-            alert("중복된 아이디입니다.");
+        	showInfoModal("중복된 아이디 입니다.");
             checkIdAction.value = "off";
           } else {
-            alert("사용 가능한 아이디입니다.");
+        	showInfoModal("사용가능한 아이디 입니다.");
             checkIdAction.value = "on";
           }
         })
@@ -321,7 +350,16 @@
       disableMobile: true // 모바일에서도 팝업 보이게
     });
 
+    function showInfoModal(message) {
+    	  const modalMessage = document.getElementById("modalMessage");
+    	  modalMessage.textContent = message;
+
+    	  const infoModal = new bootstrap.Modal(document.getElementById('infoModal'));
+    	  infoModal.show();
+    	}
   </script>
+  <jsp:include page="/WEB-INF/include/user-modal.jsp" />
+ 
 </body>
 
 </html>
