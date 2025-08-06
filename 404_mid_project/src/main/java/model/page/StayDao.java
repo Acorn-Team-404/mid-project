@@ -313,6 +313,63 @@ public class StayDao {
 	       return dto;
 	   }
 
+		// 숙소 정보 가져오기 (Booking 전용)
+		public StayDto getByNum(int userNum) {
+		       StayDto dto = null;
+
+		       Connection conn = null;
+		       PreparedStatement pstmt = null;
+		       ResultSet rs = null;
+		       try {
+		           conn = DBConnector.getConn();
+		           String sql = """
+		           		SELECT 
+		           		     S.STAY_NUM,
+		           		     S.STAY_USER_NUM,
+		           		     S.STAY_NAME,
+		           		     S.STAY_ADDR,
+		           		     S.STAY_LOC,
+		           		     S.STAY_LAT,
+		           		     S.STAY_LONG,
+		           		     S.STAY_PHONE,
+		           		     S.STAY_UPDATE_AT,
+		           		     S.STAY_DELETE,
+		           		     S.STAY_FACILITIES,
+		           		     U.USERS_ID
+		           		FROM STAY S
+		           		JOIN USERS U ON S.STAY_USER_NUM = U.USERS_NUM
+		           		WHERE S.STAY_USER_NUM = ?
+		           """;
+		           pstmt = conn.prepareStatement(sql);
+		           pstmt.setLong(1, userNum);
+		           rs = pstmt.executeQuery();
+
+		           if (rs.next()) {
+		              
+
+		               dto = new StayDto();
+		               dto.setStayNum(rs.getLong("STAY_NUM"));
+		               dto.setStayUsersNum(rs.getLong("STAY_USERS_NUM"));
+		               dto.setStayName(rs.getString("STAY_NAME"));
+		               dto.setStayAddr(rs.getString("STAY_ADDR"));
+		               dto.setStayLoc(rs.getString("STAY_LOC"));
+		               dto.setStayLat(rs.getString("STAY_LAT"));
+		               dto.setStayLong(rs.getString("STAY_LONG"));
+		               dto.setStayPhone(rs.getString("STAY_PHONE"));
+		               dto.setStayUpdateAt(rs.getString("STAY_UPDATE_AT"));
+		               dto.setStayDelete(rs.getString("STAY_DELETE"));
+		               dto.setStayFacilities(rs.getString("STAY_FACILITIES"));
+		               dto.setUsersId(rs.getString("USER_ID"));
+		           } 
+		       } catch (Exception e) {
+		           e.printStackTrace();
+		       } finally {
+		           try {
+		               DBConnector.close(pstmt, conn);
+		           } catch (Exception e) {}
+		       }
+		       return dto;
+		   }
     
     // 숙소 등록
     public boolean insert(StayDto dto) {

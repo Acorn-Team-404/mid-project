@@ -65,8 +65,8 @@ public class BookDao {
 	          dto = new BookDto();
 	          dto.setBookNum(rs.getString("BOOK_NUM"));
 	          dto.setBookUsersNum(rs.getLong("BOOK_USERS_NUM"));
-	          dto.setBookRoomNum(rs.getInt("BOOK_ROOM_NUM"));
-	          dto.setBookStayNum(rs.getInt("BOOK_STAY_NUM"));
+	          dto.setBookRoomNum(rs.getLong("BOOK_ROOM_NUM"));
+	          dto.setBookStayNum(rs.getLong("BOOK_STAY_NUM"));
 	          dto.setBookCheckIn(rs.getString("BOOK_CHECKIN_DATE"));
 	          dto.setBookCheckOut(rs.getString("BOOK_CHECKOUT_DATE"));
 	          dto.setBookAdult(rs.getInt("BOOK_ADULT"));
@@ -116,8 +116,8 @@ public class BookDao {
             dto = new BookDto();
             dto.setBookNum(rs.getString("BOOK_NUM"));
             dto.setBookUsersNum(rs.getLong("BOOK_USERS_NUM"));
-            dto.setBookRoomNum(rs.getInt("BOOK_ROOM_NUM"));
-            dto.setBookStayNum(rs.getInt("BOOK_STAY_NUM"));
+            dto.setBookRoomNum(rs.getLong("BOOK_ROOM_NUM"));
+            dto.setBookStayNum(rs.getLong("BOOK_STAY_NUM"));
             dto.setBookCheckIn(rs.getString("BOOK_CHECKIN_DATE"));
             dto.setBookCheckOut(rs.getString("BOOK_CHECKOUT_DATE"));
             dto.setBookAdult(rs.getInt("BOOK_ADULT"));
@@ -178,7 +178,7 @@ public class BookDao {
    
    
      // 해당 숙소의 객실 목록
-      public List<RoomDto> getRoomByStayNum(int stayNum){
+      public List<RoomDto> getRoomByStayNum(long stayNum){
          List<RoomDto> list = new ArrayList<>();
          Connection conn = null;
          PreparedStatement pstmt = null;
@@ -195,7 +195,7 @@ public class BookDao {
             rs = pstmt.executeQuery();
             while(rs.next()) {
                RoomDto dto = new RoomDto();
-               dto.setRoomNum(rs.getInt("room_num"));
+               dto.setRoomNum(rs.getLong("room_num"));
                dto.setRoomName(rs.getString("room_name"));
                dto.setRoomPrice(rs.getInt("room_price"));
                list.add(dto);
@@ -241,7 +241,7 @@ public class BookDao {
    }
 
    // 객실 금액 조회
-   public int getRoomPrice(int roomNum) {
+   public int getRoomPrice(long roomNum) {
       int price = 0;
       Connection conn = null;
       PreparedStatement pstmt = null;
@@ -254,7 +254,7 @@ public class BookDao {
                """;
 
          pstmt = conn.prepareStatement(sql);
-         pstmt.setInt(1, roomNum);
+         pstmt.setLong(1, roomNum);
          rs = pstmt.executeQuery();
          if (rs.next()) {
             price = rs.getInt("room_price");
@@ -286,8 +286,8 @@ public class BookDao {
          pstmt = conn.prepareStatement(sql);
          pstmt.setString(1, dto.getBookNum());
          pstmt.setLong(2, dto.getBookUsersNum());
-         pstmt.setInt(3, dto.getBookRoomNum());
-         pstmt.setInt(4, dto.getBookStayNum());
+         pstmt.setLong(3, dto.getBookRoomNum());
+         pstmt.setLong(4, dto.getBookStayNum());
          pstmt.setString(5, dto.getBookCheckIn());
          pstmt.setString(6, dto.getBookCheckOut());
          pstmt.setInt(7, dto.getBookAdult());
