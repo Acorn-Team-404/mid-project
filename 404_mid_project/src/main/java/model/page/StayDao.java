@@ -272,11 +272,6 @@ public class StayDao {
 	        rs = pstmt.executeQuery();
 
 	        if (rs.next()) {
-	            // 컬럼명과 값을 모두 출력해보자
-	            ResultSetMetaData meta = rs.getMetaData();
-	            for (int i = 1; i <= meta.getColumnCount(); i++) {
-	                System.out.println(meta.getColumnName(i) + " = " + rs.getString(i));
-	            }
 
 	            dto = new StayDto();
 	            dto.setStayNum(rs.getLong("STAY_NUM"));

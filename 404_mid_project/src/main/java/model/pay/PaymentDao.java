@@ -22,6 +22,38 @@ public class PaymentDao {
 		return dao;
 	}
 	
+	public String getMethodCodeByPayNum(String payNum) {	
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String method_code = null;
+		try {
+			conn = DBConnector.getConn();
+		
+			String sql = """
+					SELECT CC_CODE_NAME
+					FROM COMMON_CODE 
+					WHERE CC_CODE = (
+					SELECT PAY_METHOD_CODE 
+					FROM PAYMENTS
+					WHERE PAY_NUM = ?)
+					AND CC_GROUP_ID = 'PAYMENT_METHOD'
+					
+					""";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, payNum);
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				method_code = rs.getString(1);	
+			}
+		} catch (Exception e){
+			e.printStackTrace();
+		}finally {DBConnector.close(pstmt, conn);}
+		
+		return method_code;
+	} 
+	
 	public PaymentDto getPayBybookNum(String bookNum) {
 		PaymentDto dto = null;
 		Connection conn = null;
