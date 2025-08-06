@@ -20,8 +20,8 @@
   	//로그인된 userName (null일 가능성 있음)
   	Long usersNum = (Long) session.getAttribute("usersNum");
   	
+  	boolean isLogin = usersNum != null;
   	
-  	int writer = usersNum.intValue();
   	
   	//댓글 목록
   	List<CommentDto> commentList = CommentDao.getInstance().selectAll(num);
@@ -152,7 +152,7 @@
 		            			<i class="bi bi-arrow-return-right position-absolute" style="top:0;left:-30px"></i>
 		            		<%} %>
 			            	<!-- 댓글 작성자가 로그인된 userName일 경우 삭제버튼 출력 -->
-			            	<%if(tmp.getCommentWriter() == writer) {%>
+			            	<%if(tmp.getCommentWriter()==usersNum) {%>
 			            		<button data-num="<%=tmp.getCommentNum() %>" class="btn-close position-absolute top-0 end-0 m-3"></button>
 			            	<%} %>
 			            	<%-- <%if(tmp.getProfileImage()==null){ %>
@@ -174,7 +174,7 @@
 		                    	</div>
 		                    	<pre><%=tmp.getCommentContent() %></pre>
 		                    	<!-- 댓글 작성자가 로그인된 userName이라면 수정폼 / 아니면 댓글폼 -->
-		                    	<%if(tmp.getCommentWriter() == writer){ %>
+		                    	<%if(tmp.getCommentWriter() == usersNum){ %>
 		                    		<!-- 수정 버튼 (본인에게만 보임) -->
 				                    <button class="btn btn-sm btn-outline-secondary edit-btn">수정</button>
 				
@@ -215,7 +215,7 @@
 	</div> <!-- container -->
 	<script>
 		//로그인 여부
-		const isLogin = <%=isLogin %>;
+		boolean isLogin = usersNum != null;;
 		
 		//대댓글 보기 버튼 눌렀을 때 실행할 함수 등록
     	document.querySelectorAll(".dropdown-btn").forEach(item => {
