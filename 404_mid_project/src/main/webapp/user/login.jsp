@@ -41,7 +41,12 @@
 		response.sendRedirect(url);
 		
 	} else {
-		out.println("<script>alert('입력한 정보와 일치하는 계정이 없습니다.'); history.back();</script>");
+		request.setAttribute("modalMessage", "입력한 정보와 일치하는 계정이 없습니다.");
+		request.setAttribute("goBack", true); // 모달 닫은 후 뒤로 가기
+		request.setAttribute("isValid", false); // 모달 닫은 후 뒤로 가기
+		RequestDispatcher rd = request.getRequestDispatcher("/user/login-form.jsp");
+		rd.forward(request, response);
+		return;
 	}
 	
 	
