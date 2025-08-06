@@ -119,7 +119,13 @@
             <div class="form-section">
              	<div>
             		<label for="answer" class="form-label">답변</label>
-            		<textarea class="form-control" name="answer" id="answer"></textarea>
+            		<%if(inqDto.getIsAnswered()==0) { %>
+	            		<textarea class="form-control" name="answer" id="answer" ></textarea>
+	            	<%}else{ %>
+		            	<div class="form-control bg-light border-1 mt-2" style="height: auto; min-height: 150px;">
+					    	<%=StringUtils.isEmpty(inqDto.getAnswer()) ? "" : inqDto.getAnswer() %>
+						</div>					
+	            	<%} %>
             	</div>
             </div>
             <input type="hidden" name="num" value="<%=num %>" />
