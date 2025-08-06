@@ -1,4 +1,5 @@
 <%@page import="model.user.UserDao"%>
+<%@page import="model.user.UserDto"%>
 <%@page import="model.page.StayDao"%>
 <%@page import="java.util.List"%>
 <%@page import="model.page.StayDto"%>
@@ -6,6 +7,18 @@
     pageEncoding="UTF-8"%>
 <%
 	List<StayDto> list = StayDao.getInstance().selectAll();
+	
+	// 유저 로그인 여부 체크
+	String usersId = (String)session.getAttribute("usersId");
+	if (usersId == null) {
+%>
+	<script>
+		alert("로그인이 필요합니다.");
+		location.href="${pageContext.request.contextPath}/user/login-form.jsp";
+	</script>
+<%
+		return;
+	}
 %>
 <!DOCTYPE html>
 <html>
@@ -17,7 +30,7 @@
 <body>
 <jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
 	<div class="container">
-		<form action="list.jsp" method="get">
+		<form action="stay-list.jsp" method="get">
 		
 		<h1>숙소 관리</h1>
 		<p>총 <%=list.size() %>개의 숙소</p>
@@ -37,10 +50,10 @@
                 </tr>
             </thead>
             <tbody>
-                <%for (StayDto stay : list) { %>
+                <%for (StayDto stay : list) {%>
                 <tr onclick="location.href='<%=request.getContextPath()%>/stay/stay-view.jsp?stayNum=<%=stay.getStayNum()%>'" style="cursor:pointer;">
                     <td><%=stay.getStayNum() %></td>
-                    <td><%=stay.getUsersId() %></td>
+                    <td><%=usersId %></td>
                     <td><%=stay.getStayName() %></td>
                     <td><%=stay.getStayAddr() %></td>
                     <td><%=stay.getStayUpdateAt() %></td>
