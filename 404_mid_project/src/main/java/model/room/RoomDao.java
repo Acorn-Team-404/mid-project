@@ -82,14 +82,14 @@ public class RoomDao {
 	// 특정 숙소 번호(stayNum)를 받아 해당 숙소의 객실 목록을 반환하는 메서드
 	
 	// 숙소 번호(stayNum)에 해당하는 모든 객실 정보(객실 리스트 & 숙소명, 숙소위치, 숙소 전화번호 함께) 조회
-	public List<RoomDto> getRoomListByStayNum(int stayNum) {
+	public List<RoomDto> getRoomListByStayNum(long stayNum) {
 		List<RoomDto> list = new ArrayList<>();
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 
 		try {
-			conn = new DBConnector().getConn();
+			conn = DBConnector.getConn();
 
 			String sql = """
 				SELECT r.*, s.STAY_NAME AS room_stay_name, s.STAY_FACILITIES AS room_stay_facilities
@@ -100,7 +100,7 @@ public class RoomDao {
 			""";
 
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, stayNum);
+			pstmt.setLong(1, stayNum);
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
