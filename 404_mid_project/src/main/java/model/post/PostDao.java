@@ -71,6 +71,176 @@ public class PostDao {
 		return list;
 	}
 	
+	// 전체 글 갯수 리턴
+	public int getPostCount() {
+		int count=0;
+		// 필요한 객체를 담을 지역변수를 미리 만든다.
+		// ex) List<DTO> list=new ArrayList<>();
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			// 실행할 sql 문
+			String sql = """
+					SELECT COUNT(*) 
+					FROM posts 
+					WHERE post_deleted='no'
+					""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 값 바인딩
+
+			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+			// 단일 : if  /  다중 : while
+			if (rs.next()) {
+				count = rs.getInt(1); // 첫 번째 컬럼 값 가져오기
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		}
+		return count;
+	}
+	
+	//특정 page에 해당하는 row만 select해서 리턴하는 메소드
+	//BoardDto 객체에 startRowNum 과 endRowNum을 담아와서 select
+	public List<PostDto> selectPage(PostDto dto){
+		List<PostDto> list=new ArrayList<PostDto>();
+		
+		// 필요한 객체를 담을 지역변수를 미리 만든다.
+		// ex) List<DTO> list=new ArrayList<>();
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			// 실행할 sql 문
+			String sql = """
+					SELECT *
+					FROM
+						(SELECT result1.*, ROWNUM AS rnum
+						FROM
+							(SELECT post_num, post_writer_num, post_title, post_views, post_created_at
+							FROM posts
+							ORDER BY post_num DESC) result1)
+					WHERE rnum BETWEEN ? AND ?
+					""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 값 바인딩
+			pstmt.setInt(1, dto.getStartRowNum());
+			pstmt.setInt(2, dto.getEndRowNum());
+			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+			// 단일 : if  /  다중 : while
+			while (rs.next()) {
+				PostDto dto2=new PostDto();
+				dto2.setPostNum(rs.getInt("post_num"));
+				dto2.setPostWriterNum(rs.getLong("post_writer_num"));
+				dto2.setPostTitle(rs.getString("post_title"));
+				dto2.setPostViews(rs.getInt("post_views"));
+				dto2.setPostCreatedAt(rs.getString("post_created_at"));
+				
+				list.add(dto2);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		} // 하단에 return 값 넣어주셔야함!
+		return list;
+	}
+	
+	//특정 page와 keyword에 해당하는 row만 select해서 리턴하는 메소드
+		//BoardDto 객체에 startRowNum 과 endRowNum을 담아와서 select
+		public List<PostDto> selectPageByKeyword(PostDto dto){
+			List<PostDto> list=new ArrayList<PostDto>();
+			
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			try {
+				conn = DBConnector.getConn();
+				// 실행할 sql 문
+				String sql = """
+						SELECT *
+						FROM
+							(SELECT result1.*, ROWNUM AS rnum
+							FROM
+								(SELECT post_num, post_writer_num, post_title, post_views, post_created_at
+								FROM posts
+								WHERE title LIKE '%'||?||'%' OR content LIKE '%'||?||'%'
+								ORDER BY post_num DESC) result1)				
+						WHERE rnum BETWEEN ? AND ?
+						""";
+				pstmt = conn.prepareStatement(sql);
+				// ? 에 값 바인딩
+				pstmt.setString(1, dto.getPostKeyword());
+				pstmt.setString(2, dto.getPostKeyword());
+				pstmt.setInt(3, dto.getStartRowNum());
+				pstmt.setInt(4, dto.getEndRowNum());
+				// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+				rs = pstmt.executeQuery();
+				// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+				// 단일 : if  /  다중 : while
+				while (rs.next()) {
+					PostDto dto2=new PostDto();
+					dto2.setPostNum(rs.getInt("post_num"));
+					dto2.setPostWriterNum(rs.getLong("post_writer_num"));
+					dto2.setPostTitle(rs.getString("post_title"));
+					dto2.setPostViews(rs.getInt("post_views"));
+					dto2.setPostCreatedAt(rs.getString("post_created_at"));
+					
+					list.add(dto2);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				DBConnector.close(rs, pstmt, conn);
+			} // 하단에 return 값 넣어주셔야함!
+			return list;
+		}	
+		
+	// 검색 키워드 리스트
+	public int getCountByKeyword(String keyword) {
+		int count=0;
+		// 필요한 객체를 담을 지역변수를 미리 만든다.
+		// ex) List<DTO> list=new ArrayList<>();
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			// 실행할 sql 문
+			String sql = """
+						SELECT MAX(rownum) AS count
+						FROM posts
+						WHERE title LIKE '%' || ? || '%' OR content LIKE '%' || ? || '%'
+					""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 값 바인딩
+			pstmt.setString(1, keyword);
+			pstmt.setString(2, keyword);
+			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+			// 단일 : if  /  다중 : while
+			if (rs.next()) {
+				count=rs.getInt("count");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		} // 하단에 return 값 넣어주셔야함!
+		return count;
+	}
 	
 	// 게시글 1개 정보 리턴
 	public PostDto getByPostNum(int num) {
