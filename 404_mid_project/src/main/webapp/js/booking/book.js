@@ -53,14 +53,50 @@ window.addEventListener("DOMContentLoaded", () => {
 	        updateSummaryBox();
 	    });
 	});
+	
+	// 체크인 날짜와 체크아웃 날짜 이전 이후 선택 알람 처리
+	document.querySelector("#checkIn").addEventListener("change", (e)=>{
+		const cIn = document.querySelector("#checkIn").value.trim();
+		const cOut = document.querySelector("#checkOut").value.trim();
+		if (cIn && cOut) {
+			const checkIn = new Date(cIn);
+		    const checkOut = new Date(cOut);
 
+		    if (checkIn > checkOut) {
+				e.preventDefault();
+		        showAlertModal("체크인 날짜는 체크아웃 날짜 이전으로 선택해 주세요");
+				document.querySelector("#checkIn").value = "";
+				document.querySelector("#checkIn").focus();
+		        return;
+			}
+		}
+	});
+	document.querySelector("#checkOut").addEventListener("change", (e)=>{
+		const cIn = document.querySelector("#checkIn").value.trim();
+		const cOut = document.querySelector("#checkOut").value.trim();
+		if (cIn && cOut) {
+			const checkIn = new Date(cIn);
+			const checkOut = new Date(cOut);
+
+			if (checkIn > checkOut) {
+				e.preventDefault();
+				showAlertModal("체크아웃 날짜는 체크인 날짜 이후로 선택해 주세요");
+				document.querySelector("#checkOut").value = "";
+				document.querySelector("#checkOut").focus();
+				return;
+			}
+		}
+	});
+
+	// 총 금액 처리
     function calculateTotalAmount() {
         const pricePerDay = getSelectedRoomPrice();
         const days = calculateStayDays();
         const total = pricePerDay * days;
         document.querySelector('#totalAmountValue').value = total;
     }
-
+	
+	// 객실 금액 조회
     function getSelectedRoomPrice() {
         const select = document.querySelector('#bookRoomNum');
         if (!select || !select.value) return 0;
@@ -68,7 +104,16 @@ window.addEventListener("DOMContentLoaded", () => {
         const price = selectedOption.getAttribute('data-price');
         return price ? parseInt(price, 10) : 0;
     }
+	
+	// 모달창 띄우기
+	function showAlertModal(message){
+	    const modalBody = document.querySelector("#alertModalBody");
+	    modalBody.textContent = message;
+	    const modal = new bootstrap.Modal(document.querySelector("#alertModal"));
+	    modal.show();
+	}
 
+	// 숙박일 계산
     function calculateStayDays() {
         const checkIn = document.querySelector('#checkIn').value;
         const checkOut = document.querySelector('#checkOut').value;
@@ -79,6 +124,7 @@ window.addEventListener("DOMContentLoaded", () => {
         return diff > 0 ? diff : 0;
     }
 
+	// 옵션 선택 후 사용자에게 보여주는 박스
     function updateSummaryBox() {
         // 침대 옵션
         const beds = Array.from(document.querySelectorAll('input[name="bed"]:checked')).map(cb => {

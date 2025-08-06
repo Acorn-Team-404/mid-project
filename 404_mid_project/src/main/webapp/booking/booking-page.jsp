@@ -30,7 +30,25 @@
 <jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
 </head>
 <body>
-<jsp:include page="/WEB-INF/include/navbar.jsp" />
+	<jsp:include page="/WEB-INF/include/navbar.jsp" />
+	<!-- 알람 모달창 -->
+	<div class="modal fade" id="alertModal" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+	    	<div class="modal-content">
+	    		<div class="modal-header no-border">
+	       			<h5 class="modal-title">알림</h5>
+	        		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+	      		</div>
+	      		<div class="modal-body" id="alertModalBody">
+	        		<!-- 메시지 삽입 -->
+	      		</div>
+	      		<div class="modal-footer no-border">
+	        		<button type="button" class="btn btn-primary" data-bs-dismiss="modal">확인</button>
+	      		</div>
+	    		</div>
+	  	</div>
+	</div>
+	
 	<!-- 캐러셀 영역 -start -->
 	<% if (size > 0) { %>
 	<div class="w-75 mx-auto">
@@ -196,7 +214,7 @@
 						  </div>
 						  <% } %>
 	            <div class="">
-	                <div class="left-container">
+	                <div class="left-container mb-4">
 	                    <h1>예약자 정보</h1>
 	                    <input type="hidden" name="usersNum" id="userNum" value="${usersNum}"/>
 	
@@ -277,8 +295,8 @@
 				</div>	            
             </div>
             <!-- 오른쪽: 예약 요약 -->
-            <div class="col-5">
-                <div class="right-container-fixed">
+            <div class="col-12 col-md-5">
+                <div class="right-container-fixed sticky" style="top:100px;">
                     <input type="hidden" name="bookStayNum" id="bookStayNum" value="${stay.stayNum}" />
 
                     <select name="bookRoomNum" id="bookRoomNum" class="form-select">
