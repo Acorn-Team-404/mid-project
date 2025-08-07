@@ -15,7 +15,7 @@
 
 <%-- index에서 include하기 때문에 중복 방지<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include> --%>
 <nav class="navbar navbar-expand-lg sticky-top bg-white border-bottom shadow-sm py-3">
-  <div class="container-fluid align-items-center flex-nowrap">
+  <div class="container-fluid align-items-center">
     <!-- 좌측 로고 -->
     <a class="navbar-brand fw-bold" href="${pageContext.request.contextPath}/index.jsp">STAYLOG</a>
     <span><%=usersId %></span> <!-- 현재 세션 상태 확인을 위한 임시코드(지워도 상관없음) -->

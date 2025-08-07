@@ -120,7 +120,7 @@ function initializeSSE() {
 			
 			
 			
-			// 리뷰 타입 카드(미완성)
+			// 리뷰 타입 카드(관리자 기능 부재로 인한 미완성)
 			if(noti.typeCode == 30) {
 				notiCard = `
 					<div class="noti-card d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25" data-noti-num="${noti.notiNum}">
@@ -149,7 +149,7 @@ function initializeSSE() {
 			}
 			
 			
-			// 문의 타입 카드(미완성)
+			// 문의 타입 카드(관리자 기능 부재로 인한 미완성)
 			if(noti.typeCode == 40) {
 				notiCard = `
 					<div class="noti-card d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25" data-noti-num="${noti.notiNum}" onclick="location.href='${contextPath}/inquiry/list.jsp'">
@@ -179,12 +179,7 @@ function initializeSSE() {
 				`;
 			}
 						
-						
-						
-						
-						
-			
-			
+				
 			// 카드 삽입
 			offcanvasBody.insertAdjacentHTML("afterbegin", notiCard);
 			
