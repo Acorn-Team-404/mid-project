@@ -14,6 +14,7 @@ public class PageDto {
 	
 	// 숙소 정보, 작성자, 키워드
 	private String stayName;
+	private String stayAddr;
 	private String usersName;
 	private String usersId;
 	private String keyword;
@@ -27,9 +28,15 @@ public class PageDto {
 	private int prevNum;
 	private int nextNum;
 	
-	// setter, getter
+	// setter, getter	
 	public long getPageNum() {
 		return pageNum;
+	}
+	public String getStayAddr() {
+		return stayAddr;
+	}
+	public void setStayAddr(String stayAddr) {
+		this.stayAddr = stayAddr;
 	}
 	public void setPageNum(long pageNum) {
 		this.pageNum = pageNum;

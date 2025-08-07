@@ -13,6 +13,26 @@ public class ReviewDto {
 	
 	private long reviewStayNum;
 	
+	//페이징 처리를 위한 필드
+	private long startRowNum;
+	private long endRowNum;
+	
+	public long getStartRowNum() {
+		return startRowNum;
+	}
+
+	public long getEndRowNum() {
+		return endRowNum;
+	}
+
+	public void setStartRowNum(long startRowNum) {
+		this.startRowNum = startRowNum;
+	}
+
+	public void setEndRowNum(long endRowNum) {
+		this.endRowNum = endRowNum;
+	}
+
 	public ReviewDto() {
 		
 	}
