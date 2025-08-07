@@ -1,9 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 	String url = request.getParameter("url");
-	if (url == null) {
+	if (url == null || url.contains("loginform.jsp")) {
 		String cPath = request.getContextPath();
-		url = cPath + "/index.jsp";
+		url = cPath + "/index.jsp";  // 또는 기본 이동 페이지
 	}
 	
 	String msg = (String) request.getAttribute("modalMessage");
