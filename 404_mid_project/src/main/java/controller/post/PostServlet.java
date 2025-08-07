@@ -1,13 +1,8 @@
 package controller.post;
 
-import java.io.File;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -15,12 +10,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
 import model.post.CommentDao;
 import model.post.CommentDto;
 import model.post.PostDao;
 import model.post.PostDto;
-import model.post.PostImageDto;
+
 
 @WebServlet("*.post")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 10, // 업로드 처리하기 위한 메모리 사이즈(10 Mega byte)
@@ -96,12 +90,13 @@ public class PostServlet extends HttpServlet {
 		} else if (path.equals("/upload.post")) {
 			System.out.println("게시글 업로드");
 			// 글 작성자는 세션 객체로부터 얻기
-			Long writerLong = (Long) req.getSession().getAttribute("usersNum");
+			Long writerNum = (Long) req.getSession().getAttribute("usersNum");
+			
 			PostDto dto = new PostDto();
 
 			int num = dao.getSequence();
 			dto.setPostNum(num);
-			dto.setPostWriterNum(writerLong); // 로그인된 사용자 번호 (임시)
+			dto.setPostWriterNum(writerNum); // 로그인된 사용자 번호 (임시)
 			dto.setPostStayNum(1); // 게시글 관련 숙소 번호 (임시)
 			dto.setPostType(0); // 게시글 타입 0:일반, 1:공지 등
 			dto.setPostTitle(req.getParameter("title"));
@@ -120,9 +115,17 @@ public class PostServlet extends HttpServlet {
 		} else if (path.equals("/update.post")) {
 			int num = Integer.parseInt(req.getParameter("num"));
 			
+			String title = req.getParameter("title");
+			if (title == null || title.trim().isEmpty()) {
+			    System.out.println("제목이 비어있습니다."); // 디버깅 로그
+			    req.setAttribute("error", "제목을 입력해주세요.");
+			    req.getRequestDispatcher("/post/edit-form.jsp").forward(req, res);
+			    return;
+			}
+			
 			PostDto dto = new PostDto();
-			dto.setPostNum(Integer.parseInt(req.getParameter("num")));
-			dto.setPostTitle(req.getParameter("title"));
+			dto.setPostNum(num);
+			dto.setPostTitle(title);
 			dto.setPostContent(req.getParameter("content"));
 			
 			boolean success = dao.update(dto);

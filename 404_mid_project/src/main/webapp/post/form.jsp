@@ -5,10 +5,11 @@
 <head>
 <meta charset="UTF-8">
 <title>/post/form.jsp</title>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/post/post.css">
 <jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
 <!-- Toast UI Editor CSS -->
 <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/post/post-form.css">
+
 <!-- Toast UI Editor JS -->
 <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 
@@ -20,8 +21,8 @@
 		<jsp:param value="board" name="thisPage"/>	
 	</jsp:include>
 	<div class="container">
-		<h3 class="text-center" style="margin-top: 80px; margin-bottom: 80px;"><i class="bi bi-image me-3"></i>게시글 작성 폼</h3>
-		<form action="upload.post" method="post" id="saveForm">
+		<h3 class="text-center" style="margin-top: 60px; margin-bottom: 60px;"><i class="bi bi-image me-3"></i>게시글 작성 폼</h3>
+		<form action="upload.post" method="post" id="saveForm" enctype="multipart/form-data">
 			<div class="mb-4">
 				<label class="form-label" for="title">제목</label>
 				<input class="form-control" type="text" name="title" id="title" />			
@@ -30,20 +31,22 @@
 				<label class="form-label" for="editor">내용</label>
 				<!-- Editor ui 가 출력될 div -->
 				<div id="editor">
-				<textarea class="form-control" name="content" id="hiddenContent" required></textarea>
 				</div>
+				<textarea class="form-control" name="content" id="hiddenContent" hidden></textarea>
+				
 			</div>
 			 
 			<div class="mb-3">
 				<label class="form-label mt-4">image upload</label>
 					<div class="drop-zone" id="dropZone">
-						Drag & Drop Or Click
+						<div id="dropText">Drag & Drop Or Click</div>
 						<input type="file" name="images" id="fileInput" multiple hidden>
+						<div class="preview d-flex flex-wrap mt-3" id="preview"></div>
 					</div>
-					<div class="preview d-flex flex-wrap mt-3" id="preview"></div>
+					
 			</div>
 			
-			<button class="btn btn-success btn-sm" type="submit">save</button>
+			<button class="btn btn-success btn-sm mb-4" type="submit">save</button>
 		</form>
 		
 	</div>
@@ -52,6 +55,7 @@
 	const dropZone = document.querySelector("#dropZone");
     const fileInput = document.querySelector("#fileInput");
     const preview = document.querySelector("#preview");
+    const dropText = document.querySelector("#dropText"); 
     
     let selectedFiles = [];
     
@@ -75,6 +79,7 @@
     dropZone.addEventListener("drop", (e) => {
     	e.preventDefault();
     	dropZone.classList.remove("dragover");
+    	
     	// 선택된 파일객체 배열 -> 기능 모두 가능한 배열로 변경
     	const files = Array.from(e.dataTransfer.files);
     	// 기존 배열에 추가
@@ -82,6 +87,8 @@
     	
     	updatePreview();
     })
+    
+    
     
     // 파일 직접 선택 input type="file"에 change 이벤트
     fileInput.addEventListener("change", ()=>{
@@ -93,6 +100,14 @@
     // preview 업데이트 ( await 비동기 함수 -> async 키워드 붙여야 함 )
     async function updatePreview(){
     	preview.innerHTML="";
+    	
+    	// 이미지가 하나라도 있으면 dropText 숨기기
+    	if (selectedFiles.length > 0) {
+    	  dropText.style.display = "none";
+    	} else {
+    	  dropText.style.display = "block"; // 또는 inline
+    	}
+    	
     	// input type="file"에 value 넣기
     	const dataTransfer=new DataTransfer();
     	for(let i=0; i<selectedFiles.length; i++){

@@ -4,7 +4,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
-    List<ImageDto> carouselImages = ImageDao.getInstance().getListByTarget("post", 66); // post 영역
+    List<ImageDto> carouselImages = ImageDao.getInstance().getListByTarget("post", num); // post 영역
     int size = carouselImages.size();
 %>
 	<% if (size > 0) { %>

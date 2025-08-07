@@ -1,3 +1,5 @@
+<%@page import="model.image.ImageDao"%>
+<%@page import="model.image.ImageDto"%>
 <%@page import="org.apache.tomcat.jakartaee.commons.lang3.StringUtils"%>
 <%@page import="oracle.jdbc.proxy.annotation.Post"%>
 <%@page import="model.post.PostDao"%>
@@ -10,7 +12,7 @@
 <%
 	//검색 keyword가 있는지 읽어와보기
 	String keyword=request.getParameter("keyword");
-	System.out.println(keyword); //null or "" 또는 "검색어"
+	//System.out.println(keyword); //null or "" 또는 "검색어"
 	
 	if(keyword==null){
 		keyword="";
@@ -66,15 +68,12 @@
 		dto.setPostKeyword(keyword);
 		list=PostDao.getInstance().selectPageByKeyword(dto);
 	}
-		
+	
     //List<PostDto> list = PostDao.getInstance().selectAll();
     //if (list == null) list = new ArrayList<>();
         
-    // ✅ 콘솔 디버깅용 로그 찍기
-	System.out.println("총 게시글 수: " + totalRow);
-	System.out.println("시작 페이지 번호: " + startPageNum);
-	System.out.println("끝 페이지 번호: " + endPageNum);
-	System.out.println("전체 페이지 수: " + totalPageCount);
+    Long usersNum = (Long) session.getAttribute("usersNum");
+    boolean isLogin = usersNum != null;
 	    
     %>
 
@@ -84,6 +83,7 @@
 <meta charset="UTF-8">
 <title>/post/list.jsp</title>
 <jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/post/post.css">
 </head>
 <body>
 	<jsp:include page="/WEB-INF/include/navbar.jsp">
@@ -92,55 +92,89 @@
 		
 	<div class="container mb-5">
 		<div> 
-			<h2 class="text-center" style="margin-top: 80px; margin-bottom: 50px;">JOURNAL</h2>
-			<div class="d-flex justify-content-end mb-4">
-			<a class="btn btn-sm btn-outline-secondary" 
-				href="${pageContext.request.contextPath}/post/form.jsp" >
+		
+			<div class="d-flex justify-content-end">
+			<a class="btn btn-sm btn-outline-secondary mt-4" 
+				href="${pageContext.request.contextPath}/post/form.jsp"
+				id="postBtn" >
 				post
 			<i class="bi bi-pencil-square"></i>
 			</a>
 			</div>
+			<h2 class="text-center my-5">JOURNAL</h2>
+			
 		</div>
 		
-		<ul class="row list-unstyled">
-		<%
-		for(PostDto post : list) {
-		%>
-			<li class="col-md-4 mb-4">
-				<div class="card position-relative">
-					<a href="${pageContext.request.contextPath}/post/view.post?num=<%=post.getPostNum() %>"><img src="${pageContext.request.contextPath}/images/indexc01.jpg" class="card-img-top"></a>
+		<div> <!-- 카드 형태의 게시글 -->
+			<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-5">
+				<%
+				for(PostDto post : list) {
+					int postNum = post.getPostNum();
+					ImageDto img = ImageDao.getInstance().selectByIntSingleImage("post", postNum);
+				%>
+				<div class="col">
+					<div class="card h-100 shadow-sm overflow-hidden rounded-4 hover-card">
 					
-					<div class="position-absolute top-50 start-50 translate-middle w-100 bg-dark bg-opacity-50 text-white text-center px-3 py-2">
-						<%=post.getPostTitle() %>
+						<div class="position-relative group">
+							<a href="${pageContext.request.contextPath}/post/view.post?num=<%=post.getPostNum() %>">
+								<% if (img != null) { %>
+									<img src="<%=request.getContextPath()%>/show.img?imageName=<%=img.getImageSavedName()%>" 
+										class="w-100" 
+										style="height: 300px; object-fit: cover;">
+								<% } else { %>
+									<img src="<%= request.getContextPath() %>/images/no-image.png"
+										class="w-100" style="height: 300px; object-fit: cover;"
+										alt="기본 이미지">
+								<% } %>
+							</a>
+							<div class="hover-title position-absolute top-50 start-50 translate-middle w-100 bg-dark bg-opacity-50 text-white text-center px-3 py-2">
+								<%=post.getPostTitle() %>
+							</div>
+						</div>
 					</div>
 				</div>
-			</li>
-		<% } %>
-			
-			
-		</ul>
+				<% } %>
+			</div> <!-- 카드 형태의 게시글 -->
+
+		</div>
 		
-		<ul class="pagination">
+		
+		
+		<ul class="pagination justify-content-center my-5">
 			<%-- startPageNum 이 1이 아닐때 이전 page 가 존재하기 때문에... --%>
 			<%if(startPageNum != 1){ %>
 				<li class="page-item">
 					<a class="page-link" href="list.jsp?pageNum=<%=startPageNum-1 %>&keyword=<%=keyword %>">&lsaquo;</a>
 				</li>
-			<%} %>			
+			<%} %>	
+					
 			<%for(int i=startPageNum; i<=endPageNum ; i++){ %>
 				<li class="page-item <%= i==pageNum ? "active":"" %>">
-					<a class="page-link" href="list.jsp?pageNum=<%=i %>&keyword=<%=keyword %>"><%=i %></a>
-				</li>
+					<a class="page-link" 
+						href="list.jsp?pageNum=<%=i %>&keyword=<%=keyword %>"><%=i %>
+					</a>
+				</li> 
 			<%} %>
 			<%-- endPageNum 이 totalPageCount 보다 작을때 다음 page 가 있다 --%>		
 			<%if(endPageNum < totalPageCount){ %>
 				<li class="page-item">
-					<a class="page-link" href="list.jsp?pageNum=<%=endPageNum+1 %>&keyword=<%=keyword %>">&rsaquo;</a>
+					<a class="page-link " href="list.jsp?pageNum=<%=endPageNum+1 %>&keyword=<%=keyword %>">&rsaquo;</a>
 				</li>
 			<%} %>	
 
 			
 		</ul>
 	</div> <!-- container -->
+	<script>
+	const isLogin = <%= isLogin %>; // JSP → JS로 전달
+
+	document.getElementById("postBtn").addEventListener("click", function(e) {
+	    if (!isLogin) {
+	        e.preventDefault(); // 이동 막기
+	        alert("로그인 후 글을 작성할 수 있습니다.");
+	        location.href = "<%=request.getContextPath()%>/user/login.jsp"; // 로그인 페이지로 이동
+	    }
+	});
+	</script>
 </body>
 </html>
