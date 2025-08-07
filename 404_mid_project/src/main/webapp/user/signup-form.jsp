@@ -73,7 +73,7 @@
 		  <span id="usersCheckPasswordMessage" class="ms-1"></span>
 	  </div>
 
-	<div class="mb-4">
+	<div class="mb-2">
 		<div class="input-group">
 			<div class="form-floating flex-grow-1">
 			    <input class="form-control" type="email" name="email" id="email" placeholder="이메일" required>
@@ -81,10 +81,12 @@
 			</div>
 		<button type="button" onclick="EmailCheck()" class="btn custom-btn">중복확인</button>
 		</div>	
+		<button type="button" onclick="sendEmailAuth()" class="btn custom-btn w-100 mt-2" id="send-code">인증 코드 전송</button>
+		<span id="EmailCheckMessage" class="ms-1"></span>
 	</div>	
 		
 		  <!-- 인증 코드 보내기 버튼 -->
-		<button type="button" onclick="sendEmailAuth()" class="btn custom-btn w-100 mb-4" id="send-code">인증 코드 전송</button>
+	
 		
 		  <!-- 인증 코드 입력창 -->
 	<div id="code-box" class="input-group mb-4" style="display: none;">
@@ -96,13 +98,13 @@
 		  <button type="button" onclick="sendEmailAuth()" class="btn custom-btn" id="resend-code" style="display: none;">재전송</button>
 	</div>
 
-		<span id="EmailCheckMessage" class="ms-1"></span>
+		
 		<input type="hidden" id="emailVerified" name="emailVerified" value="false">
 		<input type="hidden" id="emailVerified2" name="emailVerified2" value="false">
 	
 
 
-     <div class="form-floating mb-4">
+     <div class="form-floating mt-4 mb-4">
 	 	<input class="form-control" type="text" name="phone" id="phone" maxlength="13" oninput="Hyphen(this)" placeholder="연락처" required>
 		<label for="phone">연락처</label>
 	 </div>
@@ -122,21 +124,32 @@
     const contextPath = "<%= request.getContextPath() %>";
 	var emailVerified = false;
 	//document.querySelector("#code-box").style.display = "flex";
+	
+	
 
+	//이메일이 비었을 때 입력하라는 창 
+	const inputEmail = document.getElementById("email").value
+	
+	if(inputEmail ==null){
+		
+	}
+	 
 	
 	//이메일 중복 인증하기
     function EmailCheck() {
     	  const usersEmail = document.getElementById("email").value; //
     	  const checkEmailAction = document.getElementById("emailVerified2");
+    	  
+    	  if(!usersEmail){
+    		  showInfoModal("이메일을 입력하세요");
+    		  checkEmailAction.value = "false";
+    		  return;
+    	  }
    
     	fetch(contextPath + "/user/check-email.jsp?usersEmail=" + encodeURIComponent(usersEmail))
     	  .then(response => response.text())
     	  .then(data => {
-    	    if (data.trim() === "empty") {
-    	    	showInfoModal("이메일을 입력하세요");
-    	    	//alert("이메일을 입력하세요.");
-    	      checkEmailAction.value = "false";
-    	    } else if (data.trim() === "exist") {
+    	      if (data.trim() === "exist") {
     	      showInfoModal("중복된 이메일입니다."); 	
     	      //alert("중복된 이메일입니다.");
     	      checkEmailAction.value = "false";
@@ -183,6 +196,10 @@
 		    //alert("이메일을 입력하세요.");
 		    document.getElementById("email").focus();
 		    return;
+		  }else{
+			  document.getElementById("code-box").style.display = "flex";
+			  document.getElementById("send-code").style.display = "none"; 
+			  document.getElementById("resend-code").style.display = "inline-block";
 		  }
 	  
 	  fetch(contextPath + "/user/email-auth.jsp", {
@@ -191,9 +208,7 @@
 	    body: "usersEmail=" + encodeURIComponent(email)
 	  }).then(resp => resp.text()).then(text => {
 	    //alert("인증 코드가 발송되었습니다.");
-	    document.getElementById("code-box").style.display = "flex";
-	    document.getElementById("send-code").style.display = "none";
-	    document.getElementById("resend-code").style.display = "inline-block";
+
 	  });
 	}
 
@@ -220,7 +235,8 @@
 	    .then(text => {
 	
 	      if (text.trim() === "success") {
-	        alert("이메일 인증 성공!");
+	    	showInfoModal("이메일 인증 성공!");  
+	        //alert("이메일 인증 성공!");
 	        emailVerified = true;
 	        document.getElementById("emailVerified").value = "true";
 	        
