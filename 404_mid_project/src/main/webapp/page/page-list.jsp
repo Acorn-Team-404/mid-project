@@ -127,7 +127,7 @@
 							<%=tmp.getUsersName() %><br>
 							<%=String.format("%.1f", avgStar) %> (<%=reviewCount %>)<br>
 						</p>
-						<a href="${pageContext.request.contextPath}/page/page-view.jsp?pageNum=<%=tmp.getPageNum()%>&stayNum=<%=tmp.getStayNum()%>" class="btn btn-sm btn-primary">상세 보기</a>
+						<a href="${pageContext.request.contextPath}/page/page-view.jsp?pageNum=<%=tmp.getPageNum()%>" class="btn btn-sm btn-primary">상세 보기</a>
 					</div>
 				</div>
 			</div>

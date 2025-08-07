@@ -1,173 +1,203 @@
-<%@page import="model.room.RoomDao"%>
 <%@page import="java.util.List"%>
-<%@page import="model.room.RoomDto"%>
-<%@page import="model.page.PageDto"%>
+<%@page import="model.review.ReviewDao"%>
+<%@page import="model.review.ReviewDto"%>
+<%@page import="model.book.GuidelineDao"%>
+<%@page import="model.book.GuidelineDto"%>
 <%@page import="model.page.PageDao"%>
-<%@page import="model.page.StayDto"%>
-<%@page import="model.page.StayDao"%>
+<%@page import="model.page.PageDto"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
-	// get 방식 파라미터로 전달되는 글 번호, 숙소 번호 얻어내기
-	long pageNum = Long.parseLong(request.getParameter("pageNum"));
-	long stayNum = Long.parseLong(request.getParameter("stayNum"));
+	long pageNum=Long.parseLong(request.getParameter("pageNum"));
+	PageDto pageDto = PageDao.getInstance().getByNum(pageNum);
 	
-	// 참조값 얻어오기
-	StayDao dao = StayDao.getInstance();
+	long guideId = 1; //숙소별 가이드라인으로 변경되면 수정
+	GuidelineDto guide = GuidelineDao.getInstance().getByGuideId(guideId);
 	
-	// 페이지 정보
-	PageDto pageDto = PageDao.getInstance().getByNum(pageNum, stayNum);
-	if (pageDto == null) {
-	    out.println("<script>alert('페이지 정보를 불러올 수 없습니다.'); history.back();</script>");
-	    return;
+	long stayNum=pageDto.getStayNum();
+	
+	long rPageNum=1; //리뷰 페이지 번호
+	String strPageNum=request.getParameter("rPageNum");
+	if(strPageNum != null){
+		rPageNum=Long.parseLong(strPageNum);
 	}
 	
-	// 슥소 정보
-	StayDto stayDto = StayDao.getInstance().getBy(stayNum);
-	if (stayDto == null) {
-		out.println("<script>alert('숙소 정보를 불러올 수 없습니다.'); history.back();</script>");
-		return;
+	//한 페이지에 몇개씩 표시할 것인지
+	final long PAGE_ROW_COUNT=3;
+		
+	//하단 페이지를 몇개씩 표시할 것인지
+	final long PAGE_DISPLAY_COUNT=7;
+	
+	//보여줄 페이지의 시작,끝 ROWNUM
+	long startRowNum=1+(rPageNum-1)*PAGE_ROW_COUNT;
+	long endRowNum=rPageNum*PAGE_ROW_COUNT;
+	
+	//하단 시작,끝 페이지 번호
+	long startPageNum = 1 + ((rPageNum-1)/PAGE_DISPLAY_COUNT)*PAGE_DISPLAY_COUNT;
+	long endPageNum=startPageNum+PAGE_DISPLAY_COUNT-1;
+	
+	long totalRow=0; //전체 리뷰 개수
+	totalRow=ReviewDao.getInstance().getCountAll(stayNum);
+	
+	long totalPageCount=(long)Math.ceil((double)totalRow/PAGE_ROW_COUNT);
+	if(endPageNum > totalPageCount){
+		endPageNum=totalPageCount;
 	}
 	
-	// 객실 정보
-	List<RoomDto> list = RoomDao.getInstance().getRoomListByRoomNum((int)stayNum);
-	
-	// 별점 평균, 별점 수
-	double avgStar = dao.getAverageStar(stayNum);
-	int reviewCount = dao.getReviewCount(stayNum);
-	
-	// 좌표
-	//double stayLat = Double.parseDouble(stayDto.getStayLat());
-	//double stayLong = Double.parseDouble(stayDto.getStayLong());
+	ReviewDto dto=new ReviewDto();
+	dto.setStartRowNum(startRowNum);
+	dto.setEndRowNum(endRowNum);
+	dto.setReviewStayNum(stayNum);
+	List<ReviewDto> list=ReviewDao.getInstance().selectPageByNum(dto);
 %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>/page/view</title>
-<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
+<title>/page/view.jsp</title>
+<jsp:include page="/WEB-INF/include/resource.jsp"/>
+<style>
+	.section-line{
+		border-top: 3px solid #dee2e6;
+		border-bottom: 3px solid #dee2e6;
+		margin-bottom: 1rem;
+		padding: 0.5rem;
+		padding-top: 0;
+	}
+	.section{
+		scroll-margin-top: 120px;
+	}
+	.section-title{
+		border-bottom: 1px solid #dee2e6;
+		margin-top: 0;
+		padding: 0.5rem;
+	}
+	.star { color: gold; font-size: 1.2rem; }
+    .star.gray { color: lightgray; font-size: 1.2rem; }
+    .review-box {
+    	border: 1px solid #ccc;
+    	padding: 15px;
+    	margin-bottom: 15px;
+    	border-radius: 8px;
+	}
+</style>
 </head>
 <body>
-
-
 	<!-- Carousel 영역 -->
 	
-	
-	<!-- 숙소 정보 -->
-	<div class="container col-8">
-		<h2 class="stay-name"><%=stayDto.getStayName() %></h2>
-		<p class="stay-location"><%=stayDto.getStayLoc() %></p>
-		<p class="stay-review">
-			<span class="reviews">★ <%=String.format("%.1f", avgStar) %>점 / 후기 <%=reviewCount %>개</span>
-		</p>
-	</div>
-	<div class="col-4">
-		<button type="button" class="btn btn-primary" onclick="location.href='${pageContext.request.contextPath}/booking/booking-page';">
-    		예약하기
-		</button>
-	</div>
-	
-	<!-- 네비게이션 바 -->
-	<nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
-		<div class="container-fluid">
-			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-					<li class="nav-item">
-						<a class="nav-link" href="#info">스테이</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="#review">리뷰</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="#loc">위치</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="#notice">안내</a>
-					</li>
-				</ul>
-			</div>
-		</div>
-	</nav>
-	
-	<!-- 숙소 소개 -->
-	<div class="container mt-5" id="info">
-		<h3>스테이 소개</h3>
-		<p><%=pageDto.getPageContent() %></p>
-	</div>
-	
-	<!-- 별점 리뷰 -->
-	<div class="container mt-5" id="review">
-		<h3>리뷰</h3>
-		<p>후기 <%=reviewCount %>개, 평균 ★<%=String.format("%.2f", avgStar) %></p>
-	</div>
-	
-	<!-- 숙소 방침 -->
-	<div class="container mt-5">
-		<div class="Container" id="notice">
-			<h1>안내사항</h1>
-			<div class="accordion" id="accordionExample">
-				<div class="accordion-item">
-					<h2 class="accordion-header">
-						<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#navOne" aria-expanded="true" aria-controls="collapseOne">
-						예약 안내
-						</button>
-					</h2>
-					<div id="navOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-						<div class="accordion-body">
-							<table>
-								<thead>
-									<tr>
-										<th>객실</th>
-										<th>인원(기준/최대)</th>
-										<th>금액</th>
-									</tr>
-								</thead>
-								<tbody>
-									<%for (RoomDto room : list) { %>
-                					<tr>
-					                    <td><%=room.getRoomName() %></td>
-					                    <td>(<%=room.getRoomAdultMax() %> / <%=room.getRoomPaxMax() %>)명</td>
-					                    <td><%=String.format("%,d", room.getRoomPrice()) %></td>
-                					</tr>
-                					<%} %>
-								</tbody>
-							</table>
-							<%=pageDto.getPageReserve() %>
-						</div>
-					</div>
+	<div class="sticky-top">
+		<div class="full-width-bg bg-light">
+			<div class="container d-flex justify-content-between align-items-center bg-light">
+				<div>
+					<p class="fs-5 mb-0"><%=pageDto.getStayName() %></p>
+					<p><%=pageDto.getStayLoc().replaceAll("\n", "<br>") %></p>
 				</div>
-				<div class="accordion-item">
-					<h2 class="accordion-header">
-						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navTwo" aria-expanded="false" aria-controls="collapseTwo">
-						이용 안내
-						</button>
-					</h2>
-					<div id="navTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-						<div class="accordion-body">
-							<%=pageDto.getPageGuide() %>
-						</div>
-					</div>
-				</div>
-				<div class="accordion-item">
-					<h2 class="accordion-header">
-						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navThree" aria-expanded="false" aria-controls="collapseThree">
-						환불 규정
-						</button>
-					</h2>
-					<div id="navThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-						<div class="accordion-body">
-							<%=pageDto.getPageRefund() %>
-						</div>
-					</div>
+				<div>
+					<a class="btn btn-sm btn-primary me-2" href="${pageContext.request.contextPath }/booking/submit?stayNum=<%=stayNum %>">예약하기</a>
+					<a class="btn btn-sm btn-primary" href="${pageContext.request.contextPath }/inquiry/new-inquiry.jsp?stayNum=<%=stayNum %>">문의하기</a>
 				</div>
 			</div>
 		</div>
+		<div class="bg-white">
+			<ul class="nav nav-tabs justify-content-center border-0">
+				<li class="nav-item">
+					<a class="nav-link" href="#content-section">소개</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#review-section">리뷰</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#location-section">위치정보</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#guide-section">안내사항</a>
+				</li>
+			</ul>	
+		</div>
 	</div>
-	<script>
-	
-	</script>
+	<div class="container">
+		<div>
+			<div class="section section-line mt-2" id="content-section"> <!-- 소개글 -->
+				<p class="section-title">소개글</p>
+				<div class="fs-7"><%=pageDto.getPageContent().replaceAll("\n", "<br>") %></div>
+			</div>
+			<div class="section section-line" id="review-section"> <!-- 리뷰 -->
+				<div class="d-flex section-title justify-content-between align-items-center">
+					<div>리뷰</div>
+					<div class="text-end">전체 리뷰 개수 : <%=totalRow %></div>
+				</div>
+				<div class="mt-3">
+					<!-- 여기 -->
+					<%if (totalRow == 0) {%>
+					    <p class="fs-7">등록된 리뷰가 없습니다.</p>
+					<%} else {%>
+						<%for(ReviewDto tmp:list) {%>
+							<div class="review-box">
+								<strong><%= tmp.getUsersId() %></strong> | <%= tmp.getCreatedAt() %><br/>
+								<div>
+									<%for (int i = 1; i <= 5; i++) {%>
+										<%if (i <= tmp.getRating()) {%>
+											<span class="star">★</span>
+										<%} else {%>
+											<span class="star gray">★</span>
+										<%} %>
+									<%} %>
+								</div>
+								<p><%= tmp.getComment() %></p>
+							</div>
+						<%} %>
+					<%} %>
+				</div>
+				<div>
+					<ul class="pagination">
+						<%-- startPageNum 이 1이 아닐때 이전 page 가 존재하기 때문에... --%>
+						<%if(startPageNum != 1){ %>
+							<li class="page-item">
+								<a class="page-link" href="view.jsp?pageNum=<%=pageNum%>&rPageNum=<%=startPageNum-1 %>">&lsaquo;</a>
+							</li>
+						<%} %>			
+						<%for(long i=startPageNum; i<=endPageNum ; i++){ %>
+							<li class="page-item">
+								<a class="page-link <%= i==pageNum ? "active":"" %>" href="view.jsp?pageNum=<%=pageNum%>&rPageNum=<%=i %>"><%=i %></a>
+							</li>
+						<%} %>
+						<%-- endPageNum 이 totalPageCount 보다 작을때 다음 page 가 있다 --%>		
+						<%if(endPageNum < totalPageCount){ %>
+							<li class="page-item">
+								<a class="page-link" href="view.jsp?pageNum=<%=pageNum%>&rPageNum=<%=endPageNum+1 %>">&rsaquo;</a>
+							</li>
+						<%} %>	
+					</ul>
+				</div>
+			</div>
+			<div class="section section-line" id="location-section"> <!-- 위치정보 -->
+				<p class="section-title">위치정보</p>
+				<div class="mb-3">
+			        <p class="fs-7"><strong>주소:</strong> <%=pageDto.getStayAddr()%></p>
+			    </div>
+			    <!-- 지도 include -->
+			    <%
+				    // include할 JSP에 데이터 전달
+				    request.setAttribute("stayAddress", pageDto.getStayAddr());
+				    request.setAttribute("stayName", pageDto.getStayName());
+				%>
+			    <jsp:include page="/WEB-INF/include/map.jsp"/>
+			</div>
+			<div class="section" id="guide-section"> <!-- 안내사항 -->
+				<div class="section-line">
+					<p class="section-title">예약안내</p>
+					<div class="fs-7"><%=guide.getGuideInformation().replaceAll("\n", "<br>") %></div>
+				</div>
+				<div class="section-line">
+					<p class="section-title">이용안내</p>
+					<div class="fs-7"><%=guide.getStayPolicy().replaceAll("\n", "<br>") %></div>
+				</div>
+				<div class="section-line">
+					<p class="section-title">환불규정</p>
+					<div class="fs-7"><%=guide.getRefundPolicy().replaceAll("\n", "<br>") %></div>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
