@@ -14,6 +14,23 @@
       object-fit: cover;
       object-position: center;
     }
+    
+    .listing-card {
+		  max-width: 18rem;
+		  border-radius: .75rem;
+		  overflow: hidden;
+		}
+		
+		.listing-card .ratio {
+		  border-top-left-radius: .75rem;
+		  border-top-right-radius: .75rem;
+		}
+		
+		.listing-card .card-body {
+		  padding-left: .5rem;
+		  padding-right: .5rem;
+		}
+    
   </style>
 </head> 
 <body>
@@ -21,7 +38,7 @@
 	<jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
 	
 	<jsp:include page="/WEB-INF/include/index-carousel.jsp"></jsp:include>
-	
+	<jsp:include page="/WEB-INF/include/index-stay-card.jsp" />
 	<jsp:include page="/WEB-INF/include/footer.jsp"></jsp:include>
 </body>
 
