@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.admin.StayInfoDao;
 import model.noti.NotificationDao;
 import model.noti.NotificationDto;
 import model.review.ReviewDao;
@@ -44,6 +45,8 @@ public class ReviewSubmitServlet extends HttpServlet {
 		dto.setComment(comment);
 		dto.setReviewStayNum(stayNum);
 		
+		long pageNum = StayInfoDao.getInstance().getPageNumByStayNum(stayNum);
+		
 		// DB 저장
 		boolean result = ReviewDao.getInstance().insert(dto);
 		
@@ -51,7 +54,7 @@ public class ReviewSubmitServlet extends HttpServlet {
 		// 만약 저장이 된다면
 		if(result) {
 			// 임시로 상세페이지 이동
-			resp.sendRedirect(req.getContextPath() + "/review/list?stayNum=" + stayNum);
+			resp.sendRedirect(req.getContextPath() + "/page/page-view.jsp?pageNum=" + pageNum);
 		}else {
 			// 에러 페이지
 			resp.sendRedirect(req.getContextPath() + "/index.jsp");

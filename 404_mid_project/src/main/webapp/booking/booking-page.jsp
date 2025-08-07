@@ -425,5 +425,6 @@
 	});
 	</script>
 	<script src="${pageContext.request.contextPath}/js/booking/book.js"></script>
+		<jsp:include page="/WEB-INF/include/footer.jsp" />
 </body>
 </html>

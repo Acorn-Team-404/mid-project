@@ -21,11 +21,13 @@
         double avg    = dto.getAvgRating();               // 평균별점
         int    stars  = (int)Math.round(avg);             // 반올림해서 별개수
         String avgStr = String.format("%.1f", avg);       // 화면용 소수1자리
-        String bookingUrl = request.getContextPath()
-                + "/booking/submit?stayNum=" + dto.getStayNum();
+        String viewUrl = request.getContextPath()
+                + "/page/page-view.jsp?pageNum=" 
+                + dto.getLatestPageNum();
         // 이미지 파일명 가져오기
         String imageName = dto.getImageName();
         String imageUrl;
+        
 
         // 대체 이미지 경로 지정 (no-image.png가 webapp/images 폴더에 있다고 가정)
         if (imageName == null 
@@ -71,7 +73,7 @@
         <p class="fw-bold mb-1">₩<%=String.format("%,d", dto.getMinPrice())%>~</p>
 				
 	      <!-- ★ 여기에 예약 버튼 대신 'stretched-link' ★ -->
-	      <a href="<%=bookingUrl%>" class="stretched-link"></a>
+	      <a href="<%=viewUrl%>" class="stretched-link"></a>
 	   	 </div> <!-- /.card-body -->
 
     </div>

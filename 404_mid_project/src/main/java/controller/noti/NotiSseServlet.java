@@ -22,7 +22,7 @@ import jakarta.servlet.http.HttpSession;
 import model.noti.NotificationDao;
 import model.noti.NotificationDto;
 
-@WebServlet(value = "/sse", asyncSupported = true) // 비동기 처리 설정
+//@WebServlet(value = "/sse", asyncSupported = true) // 비동기 처리 설정
 public class NotiSseServlet extends HttpServlet {
 
     @Override

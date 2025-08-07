@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 // 들어오는 모든 요청에 대해서 필터링을 하겠다는 의미
-@WebFilter("/*")
+//@WebFilter("/*")
 public class SecurityFilter implements Filter{
 	//로그인 없이 접근 가능한 경로 목록
 	Set<String> whiteList = Set.of(

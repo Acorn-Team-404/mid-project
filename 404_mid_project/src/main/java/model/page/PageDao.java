@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.admin.StaySummaryDto;
 import model.util.DBConnector;
 
 
@@ -65,11 +66,22 @@ public class PageDao {
 			conn = DBConnector.getConn();
 			// 실행할 sql 문
 			String sql = """
-				SELECT page_num, s.stay_name, u.users_name, page_created_at
+				SELECT 
+				  p.page_num,
+				  s.stay_name,
+				  u.users_name,
+				  p.page_created_at
 				FROM page p
-				INNER JOIN users u ON page_users_num=u.users_num
-				INNER JOIN stay s ON p.page_stay_num=s.stay_num
-				ORDER BY page_num DESC
+				INNER JOIN users u 
+				  ON p.page_users_num = u.users_num
+				INNER JOIN stay s 
+				  ON p.page_stay_num   = s.stay_num
+				WHERE p.page_num = (
+				  SELECT MAX(p2.page_num)
+				  FROM page p2
+				  WHERE p2.page_stay_num = p.page_stay_num
+				)
+				ORDER BY p.page_num DESC;
 			""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 값 바인딩
@@ -420,4 +432,59 @@ public class PageDao {
 			return false; // 작업 실패라는 의미에서 false 리턴하기
 		}
 	}
+	
+	// model/admin/StayInfoDao.java
+	public List<StaySummaryDto> getStaySummaries() {
+	    String sql = """
+	        SELECT 
+	          s.stay_num,
+	          s.stay_name,
+	          s.stay_loc,
+	          NVL((SELECT MIN(r.room_price)
+	               FROM room r 
+	               WHERE r.room_stay_num = s.stay_num), 0) AS min_price,
+	          NVL((SELECT ROUND(AVG(rv.review_rating),2)
+	               FROM review rv 
+	               WHERE rv.review_stay_num = s.stay_num), 0) AS avg_rating,
+	          NVL((SELECT COUNT(*) 
+	               FROM review rv 
+	               WHERE rv.review_stay_num = s.stay_num), 0) AS review_count,
+	          NVL((SELECT img.image_saved_name
+	               FROM image_file img
+	               WHERE img.image_target_type = 'stay'
+	                 AND img.image_target_id = s.stay_num
+	                 AND ROWNUM = 1), 'default.jpg') AS image_name,
+	          -- 여기 추가 ▼
+	          NVL((SELECT MAX(p.page_num)
+	               FROM page p
+	               WHERE p.page_stay_num = s.stay_num), 0) AS latest_page_num
+	        FROM stay s
+	        WHERE s.stay_delete = 'N'
+	        ORDER BY s.stay_num DESC
+	        """;
+
+	    List<StaySummaryDto> list = new ArrayList<>();
+	    try (
+	      Connection conn = DBConnector.getConn();
+	      PreparedStatement pstmt = conn.prepareStatement(sql);
+	      ResultSet rs = pstmt.executeQuery();
+	    ) {
+	      while (rs.next()) {
+	        StaySummaryDto dto = new StaySummaryDto();
+	        dto.setStayNum      (rs.getLong  ("stay_num"));
+	        dto.setStayName     (rs.getString("stay_name"));
+	        dto.setStayLoc      (rs.getString("stay_loc"));
+	        dto.setMinPrice     (rs.getInt   ("min_price"));
+	        dto.setAvgRating    (rs.getDouble("avg_rating"));
+	        dto.setReviewCount  (rs.getInt   ("review_count"));
+	        dto.setImageName    (rs.getString("image_name"));
+	        dto.setLatestPageNum(rs.getLong  ("latest_page_num"));  // ★ 세팅
+	        list.add(dto);
+	      }
+	    } catch (Exception e) {
+	      e.printStackTrace();
+	    }
+	    return list;
+	}
+
 }

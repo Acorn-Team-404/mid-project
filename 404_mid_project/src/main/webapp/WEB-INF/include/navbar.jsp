@@ -21,7 +21,7 @@
 
     <!-- 검색창 -->
     <form class="d-flex mx-4 flex-grow-1" role="search">
-      <div class="input-group rounded-pill border bg-light px-3" style="height: 45px; width: 100%;">
+      <div class="input-group rounded-pill border bg-light px-3 " style="height: 45px; width: 100%;">
         <span class="input-group-text bg-transparent border-0">
           <i class="bi bi-search"></i> <!-- Bootstrap Icons 사용 -->
         </span>
