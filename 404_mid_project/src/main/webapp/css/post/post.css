@@ -1,0 +1,115 @@
+@charset "UTF-8";
+
+
+.pagination .page-link {
+  color: #6c757d;         /* Bootstrap text-secondary */
+  border-color: #dee2e6;  /* light gray border */
+}
+
+.pagination .page-link:hover {
+  background-color: #f8f9fa; /* light gray on hover */
+  color: #000;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #6c757d; /* Bootstrap secondary */
+  border-color: #6c757d;
+  color: white;
+}
+
+.hover-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.hover-card img {
+  transition: all 0.3s ease;
+  display: block;
+}
+
+.hover-card:hover img {
+  filter: brightness(50%);
+}
+
+.hover-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
+}
+
+.hover-card:hover .hover-title {
+  opacity: 1;
+}
+    
+
+.post-content img {
+  max-width: 100%;   /* 부모 너비를 넘지 않음 */
+  height: auto;      /* 비율 유지 */
+  display: block;    /* 줄바꿈 */
+  margin: 20px auto; /* 위아래 여백 및 가운데 정렬 */
+  border-radius: 8px; /* 선택사항: 둥근 모서리 */
+}
+    
+.drop-zone {
+    border: 2px dashed #0d6efd;
+    cursor: pointer;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    
+}
+/* drop zone 에 파일을 드레그해서 위에 올렸을때 적용할 css */
+.drop-zone.dragover {
+    background-color: #e9ecef;
+}
+.preview img {
+    max-width: 120px;
+    margin: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    
+}
+.preview-item {
+    position: relative;
+    display: inline-block;
+}
+.remove-btn {
+    position: absolute;
+    top: 11px;
+    right: 11px;
+    background-color: #ffffffcc; /* 반투명 흰색 */
+    color: #333;
+    border: none;
+    border-radius: 4px;
+    width: 20px;
+    height: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s, color 0.2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.remove-btn:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+h1.post-title {
+        font-style: italic;
+        font-weight: bold;
+        font-size: 2rem;
+    }
+

@@ -29,7 +29,16 @@ public class CommentDao {
 			// 실행할 sql 문
 			String sql = """
 					SELECT comment_num, comment_writer, comment_target_writer, 
-						comment_content, comment_deleted, comment_parent_num, comment_group_num, comment_created_at,
+						comment_content, comment_deleted, comment_parent_num, comment_group_num, 
+						CASE
+							WHEN SYSDATE - comment_created_at < 1/1440 THEN '방금'
+							WHEN SYSDATE - comment_created_at < 10/1440 THEN '10분 전'
+							WHEN SYSDATE - comment_created_at < 1 THEN '1일 전'
+							WHEN SYSDATE - comment_created_at < 365 THEN
+								TO_CHAR(TRUNC(SYSDATE - comment_created_at)) || '일 전'
+							WHEN SYSDATE - comment_created_at < 730 THEN '1년 전'
+						ELSE '오래전'
+						END AS comment_created_at,
 						u.users_profile_image AS comment_profile_image, u.users_id AS comment_writer_id, u2.users_id AS comment_target_writer_id
 					FROM comments
 					LEFT JOIN users u ON comment_writer = u.users_num
