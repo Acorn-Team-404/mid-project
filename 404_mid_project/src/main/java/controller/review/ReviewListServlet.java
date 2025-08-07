@@ -22,6 +22,6 @@ public class ReviewListServlet extends HttpServlet {
         List<ReviewDto> reviews = ReviewDao.getInstance().getByStayNum(stayNum);
         req.setAttribute("reviews", reviews);
         req.setAttribute("stayNum", stayNum);
-        req.getRequestDispatcher("/review/review-list.jsp").forward(req, resp);
+        req.getRequestDispatcher("/page/page-view.jsp").forward(req, resp);
     }
 }

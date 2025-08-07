@@ -8,6 +8,15 @@ public class StaySummaryDto {
     private double avgRating;    // 별점 평균
     private String imageName;    // 대표 이미지 파일명
     private int reviewCount;   // 리뷰 카운트 추가
+    private long latestPageNum;  // 페이지번호 불러오기
+    
+    
+    public long getLatestPageNum() {
+		return latestPageNum;
+	}
+    public void setLatestPageNum(long latestPageNum) {
+		this.latestPageNum = latestPageNum;
+	}
 	public long getStayNum() {
 		return stayNum;
 	}
