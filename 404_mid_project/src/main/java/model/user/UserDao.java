@@ -282,6 +282,7 @@ public class UserDao {
             dto.setUsersEmail(rs.getString("users_email"));
             dto.setUsersPhone(rs.getString("users_phone"));
             dto.setUsersBirth(rs.getString("users_birth"));
+            dto.setUsersRole(rs.getString("users_role"));
             dto.setUsersProfileImage(rs.getString("users_profile_image"));
    
          }

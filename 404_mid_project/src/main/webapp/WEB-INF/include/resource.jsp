@@ -8,3 +8,12 @@
 <!-- notification 커스텀 css -->
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/notification/notification-modal.css" />
 
+<!-- 달력 -->
+<!-- flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<!-- flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<!-- flatpickr 한국어 locale -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
+
+

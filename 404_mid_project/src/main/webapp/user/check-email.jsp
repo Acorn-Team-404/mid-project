@@ -6,4 +6,10 @@
     String email = request.getParameter("usersEmail");
     boolean isExist = UserDao.getInstance().isEmailExist(email);
     out.print(isExist ? "exist" : "available");
+
+    String usersEmail = request.getParameter("usersEmail");
+    if (usersEmail == null || usersEmail.trim().isEmpty()) {
+        out.print("empty");
+        return;
+    }	
 %>
