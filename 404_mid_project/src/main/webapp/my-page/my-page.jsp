@@ -48,8 +48,8 @@
 <body>
   <jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
 <div class="container my-5">
-  <h2 class="mb-4">마이페이지</h2>
-  <div class="row">
+  <h2 class="mb-4 ">마이페이지</h2>
+  <div class="row gy-4 flex-column flex-md-row">
   
  
     <div class="col-md-3">
