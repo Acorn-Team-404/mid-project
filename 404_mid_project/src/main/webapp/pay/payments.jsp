@@ -1,3 +1,5 @@
+<%@page import="java.sql.Date"%>
+<%@page import="java.text.SimpleDateFormat"%>
 <%@page import="model.user.UserDao"%>
 <%@page import="model.user.UserDto"%>
 <%@page import="model.pay.PaymentDao"%>
@@ -15,6 +17,14 @@
     RoomDto roomDto = null;
     UserDto userDto = null;
 
+	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy년 MM월 dd일");
+	String checkInDateOnly = bookDto.getBookCheckIn().substring(0, 10);
+	String checkOutDateOnly = bookDto.getBookCheckOut().substring(0, 10);
+	Date checkInDate = Date.valueOf(checkInDateOnly);
+	Date checkOutDate = Date.valueOf(checkOutDateOnly);
+	String checkInFormat = dateFormat.format(checkInDate);
+	String checkOutFormat = dateFormat.format(checkOutDate);
+	
     if (bookDto != null) {
         session.setAttribute("bookNum", bookDto.getBookNum());
 
@@ -78,12 +88,13 @@
 				<div class="row row-cols-2">
 					<div>
 						<h3 class="h6">체크인</h3>
-						<p>날짜:</p> <%=bookDto.getBookCheckIn() %>
+						
+						<p>날짜:</p> <%=checkInFormat %>
 						<p>시간:</p> <%=bookDto.getBookCheckInTime() %>
 					</div>
 					<div>
 						<h3 class="h6">체크아웃</h3>
-						<p>날짜:</p><%=bookDto.getBookCheckOut() %>
+						<p>날짜:</p><%=checkOutFormat %>
 						<p>시간:</p> AM 11 : 00
 					</div>
 				</div>

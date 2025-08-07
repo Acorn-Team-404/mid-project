@@ -17,9 +17,9 @@
 		url = request.getContextPath() + "/index.jsp";
 	}
 
-	UserDto dto = UserDao.getInstance().getByUserId(usersId);
-	boolean isValid = dto != null && dto.getUsersPw() != null 
-	                  && BCrypt.checkpw(usersPassword, dto.getUsersPw());
+   UserDto dto = UserDao.getInstance().getByUserId(usersId);
+   boolean isValid = dto != null && dto.getUsersPw() != null 
+                     && BCrypt.checkpw(usersPassword, dto.getUsersPw());
 
 	if (isValid) {
 		session.setAttribute("usersId", dto.getUsersId());
@@ -53,5 +53,5 @@
 	}
 	
 	
-	
+
 %>

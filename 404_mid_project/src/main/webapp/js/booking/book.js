@@ -1,5 +1,6 @@
 /* 채린 영역 -start */
 window.addEventListener("DOMContentLoaded", () => {
+	
     const pax = {
         adult: parseInt(document.querySelector("#adult").value) || 0,
         children: parseInt(document.querySelector("#children").value) || 0,
@@ -25,17 +26,57 @@ window.addEventListener("DOMContentLoaded", () => {
             updateSummaryBox();
         }
     };
+	
+	// 체크인 - 체크아웃 날짜
+	flatpickr("#dateRange", {
+	    mode: "range",
+	    minDate: "today",
+	    dateFormat: "Y-m-d",
+	    locale: flatpickr.l10ns.ko,
+		onChange: function (selectedDates, dateStr) {
+		    if (selectedDates.length === 2) {
+		        const formatDate = (date) => {
+		            const year = date.getFullYear();
+		            const month = String(date.getMonth() + 1).padStart(2, '0');
+		            const day = String(date.getDate()).padStart(2, '0');
+		            return `${year}-${month}-${day}`;
+		        };
 
-    let isBedTouched = false;
-    let isCheckInTimeTouched = false;
+		        const checkInStr = formatDate(selectedDates[0]);
+		        const checkOutStr = formatDate(selectedDates[1]);
+
+		        document.querySelector("#checkIn").value = checkInStr;
+		        document.querySelector("#checkOut").value = checkOutStr;
+
+		        const summary = document.querySelector("#dateSummary");
+		        if (summary) {
+		            summary.style.display = "block";
+		            summary.textContent = `📅 체크인 : ${checkInStr} ➜ 체크아웃 : ${checkOutStr}`;
+		        }
+
+		        calculateTotalAmount();
+		        updateSummaryBox();
+		    } else {
+		        document.querySelector("#checkIn").value = "";
+		        document.querySelector("#checkOut").value = "";
+		        const summary = document.querySelector("#dateSummary");
+		        if (summary) {
+		            summary.style.display = "none";
+		            summary.textContent = "";
+		        }
+		        calculateTotalAmount();
+		        updateSummaryBox();
+		    }
+		}
+	});
 
     // 침대 옵션 처리
     document.querySelectorAll('input[name="bed"]').forEach(cb => {
         cb.addEventListener('change', () => {
-            isBedTouched = true;
             const selectedBeds = Array.from(document.querySelectorAll('input[name="bed"]:checked'))
                 .map(b => b.value);
             document.querySelector('#selectedBed').value = selectedBeds.join(',');
+			calculateTotalAmount();
             updateSummaryBox();
         });
     });
@@ -43,56 +84,42 @@ window.addEventListener("DOMContentLoaded", () => {
     // 체크인 시간 처리
     document.querySelectorAll('input[name="checkInTime"]').forEach(radio => {
 	    radio.addEventListener('change', (e) => {
-	        isCheckInTimeTouched = true;
 	        document.querySelector('#selectedCheckInTime').value = e.target.value;
-	
-	        console.log("선택된 라디오:", e.target);
-	        console.log("해당 id:", e.target.id);
-	        console.log("label 요소:", document.querySelector(`label[for="${e.target.id}"]`));
 	
 	        updateSummaryBox();
 	    });
 	});
 	
-	// 체크인 날짜와 체크아웃 날짜 이전 이후 선택 알람 처리
-	document.querySelector("#checkIn").addEventListener("change", (e)=>{
-		const cIn = document.querySelector("#checkIn").value.trim();
-		const cOut = document.querySelector("#checkOut").value.trim();
-		if (cIn && cOut) {
-			const checkIn = new Date(cIn);
-		    const checkOut = new Date(cOut);
-
-		    if (checkIn > checkOut) {
-				e.preventDefault();
-		        showAlertModal("체크인 날짜는 체크아웃 날짜 이전으로 선택해 주세요");
-				document.querySelector("#checkIn").value = "";
-				document.querySelector("#checkIn").focus();
-		        return;
-			}
-		}
-	});
-	document.querySelector("#checkOut").addEventListener("change", (e)=>{
-		const cIn = document.querySelector("#checkIn").value.trim();
-		const cOut = document.querySelector("#checkOut").value.trim();
-		if (cIn && cOut) {
-			const checkIn = new Date(cIn);
-			const checkOut = new Date(cOut);
-
-			if (checkIn > checkOut) {
-				e.preventDefault();
-				showAlertModal("체크아웃 날짜는 체크인 날짜 이후로 선택해 주세요");
-				document.querySelector("#checkOut").value = "";
-				document.querySelector("#checkOut").focus();
-				return;
-			}
-		}
-	});
-
 	// 총 금액 처리
     function calculateTotalAmount() {
         const pricePerDay = getSelectedRoomPrice();
         const days = calculateStayDays();
-        const total = pricePerDay * days;
+        const basicTotal = pricePerDay * days;
+		
+		// 인원 추가금
+		// 성인 추가 인원 금액 계산 (기본 2명은 제외)
+		const addAdultCount = Math.max(0, pax.adult-2);
+		const addAdult = addAdultCount*50000;
+		
+		// 어린이 추가 인원 금액 계산
+		const addChildren = pax.children*25000;
+		
+		// 유아 추가 인원 금액 계산
+		const addInfant = pax.infant*10000;
+		
+		// 침대 추가 금액 계산		
+		const addBeds = Array.from(document.querySelectorAll('input[name="bed"]:checked'));
+		let addExtraBed = 0;
+		let addInfantBed = 0;
+
+		addBeds.forEach(e => {
+		    if(e.value === "extraBed") addExtraBed += 55000;
+		    if(e.value === "infantBed") addInfantBed += 15000;
+		});
+
+
+		const total = basicTotal + addAdult + addChildren + addInfant + addExtraBed + addInfantBed;
+		
         document.querySelector('#totalAmountValue').value = total;
     }
 	
@@ -104,14 +131,6 @@ window.addEventListener("DOMContentLoaded", () => {
         const price = selectedOption.getAttribute('data-price');
         return price ? parseInt(price, 10) : 0;
     }
-	
-	// 모달창 띄우기
-	function showAlertModal(message){
-	    const modalBody = document.querySelector("#alertModalBody");
-	    modalBody.textContent = message;
-	    const modal = new bootstrap.Modal(document.querySelector("#alertModal"));
-	    modal.show();
-	}
 
 	// 숙박일 계산
     function calculateStayDays() {
@@ -139,18 +158,18 @@ window.addEventListener("DOMContentLoaded", () => {
         }
 
         // 체크인 시간 옵션: 기본값은 '정규 시간'
-        const checkInRadio = document.querySelector('input[name="checkInTime"]:checked');
-        const checkInOption = document.querySelector("#checkInOption");
+		const checkInRadio = document.querySelector('input[name="checkInTime"]:checked');
+		const checkInOption = document.querySelector("#checkInOption");
 
-        let checkInLabel = "정규 시간";  // 기본값
-        if (checkInRadio) {
-            const labelEl = checkInRadio.closest('.form-check')?.querySelector('label');
-            if (labelEl) checkInLabel = labelEl.textContent;
-        }
+		let checkInLabel = "정규 시간";  // 기본값
+		if (checkInRadio) {
+		    const labelEl = document.querySelector(`label[for="${checkInRadio.id}"]`);
+		    if (labelEl) checkInLabel = labelEl.textContent.trim();
+		}
 
-        if (checkInOption) {
-            checkInOption.textContent = checkInLabel;
-        }
+		if (checkInOption) {
+		    checkInOption.textContent = checkInLabel;
+		}
 
         // 총 인원
         const totPerson = pax.adult + pax.children + pax.infant;
@@ -179,7 +198,6 @@ window.addEventListener("DOMContentLoaded", () => {
         const selectedOption = roomSelect.options[roomSelect.selectedIndex];
         const name = selectedOption.getAttribute("data-name");
         const price = selectedOption.getAttribute("data-price");
-        console.log("선택 객실:", name, price);
 
         document.querySelector("#selectedRoomNameDisplay").textContent = name;
         document.querySelector("#roomPrice").textContent = Number(price).toLocaleString() + "원";
@@ -191,14 +209,43 @@ window.addEventListener("DOMContentLoaded", () => {
         calculateTotalAmount();
         updateSummaryBox();
     });
-    document.querySelector("#checkIn").addEventListener("change", () => {
-        calculateTotalAmount();
-        updateSummaryBox();
-    });
-    document.querySelector("#checkOut").addEventListener("change", () => {
-        calculateTotalAmount();
-        updateSummaryBox();
-    });
+	
+	// 필수 옵션 선택 안 했을 때 모달 처리
+	const form = document.querySelector("#bookForm");
+	form.addEventListener("submit", (e)=>{
+		// 필수 옵션 항목들 (객실, 체크인과 체크아웃 날짜, 인원)	
+		const roomSelect = document.querySelector("#bookRoomNum");
+		const checkIn = document.querySelector("#checkIn").value;
+		const checkOut = document.querySelector("#checkOut").value;
+		const totalPersons = pax.adult + pax.children + pax.infant;
+
+		let alertMessage = "";
+		if(!roomSelect.value){
+			alertMessage = "객실은 선택해 주세요";
+		} else if(!checkIn || !checkOut){
+			alertMessage = "체크인 체크아웃 날짜를 선택해 주세요"
+		} else if(pax.adult < 1) {
+		    alertMessage = "성인은 최소 1명 이상이어야 합니다";
+		} else if((pax.adult + pax.children + pax.infant) < 1) {
+		    alertMessage = "최소 한 명 이상의 투숙 인원을 선택해 주세요";
+		}
+		
+		if(alertMessage){
+			e.preventDefault();
+			showAlertModal(alertMessage);
+			return false;
+		}
+
+	});
+
+	// 모달 창 띄우기
+	function showAlertModal(message) {
+		const modalBody = document.querySelector("#alertModalBody");
+		modalBody.textContent = message;
+		
+		const alertModal = new bootstrap.Modal(document.querySelector("#alertModal"))
+		alertModal.show();
+	}
 
     // 초기 실행
     updateUI();
