@@ -90,7 +90,7 @@ public class NotificationDao {
 					      (n.noti_image_type = 'stay'
 					       AND img.image_target_id = s.stay_num
 					       AND img.image_sort_order = 1)
-					   OR (n.noti_image_type = 'comment'
+					   OR (n.noti_image_type = 'profile'
 					       AND img.image_target_id = u.users_num
 					       AND img.image_sort_order = 1)
 					    )

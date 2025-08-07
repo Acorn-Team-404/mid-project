@@ -1,3 +1,5 @@
+<%@page import="model.noti.NotificationDto"%>
+<%@page import="model.noti.NotificationDao"%>
 <%@page import="model.post.CommentDto"%>
 <%@page import="model.post.CommentDao"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -45,6 +47,36 @@
 	
 	// DB 저장
 	boolean isSuccess = CommentDao.getInstance().insert(dto);
+	
+	
+	// 댓글 작성 시 댓글 알림 INSERT
+	if(isSuccess) {
+		long notiRecipientNum = targetWriter;
+		long notiSenderNum = usersNum;
+		int notiTypeCode = 20;
+		int notiTargetTypeCode = 20;
+		String notiTargetNum = String.valueOf(usersNum);
+		String notiMessage = content;
+		
+		NotificationDto notiDto = new NotificationDto();
+		
+		notiDto.setNotiRecipientNum(notiRecipientNum);
+		notiDto.setNotiSenderNum(notiSenderNum);
+		notiDto.setNotiTypeCode(notiTypeCode);
+		notiDto.setNotiTargetTypeCode(notiTargetTypeCode);
+		notiDto.setNotiTargetNum(notiTargetNum);
+		notiDto.setNotiMessage(notiMessage);
+		notiDto.setNotiImageType("profile");
+		
+		boolean isNotiSuccess = NotificationDao.getInstance().notiInsert(notiDto);
+		
+		if(isNotiSuccess) {
+			System.out.println("알림 데이터 저장 성공");
+		} else {
+			System.out.println("알림 데이터 저장 실패");
+		}
+	}
+	
 	
 	// 응답 처리
 	String cPath = request.getContextPath();
