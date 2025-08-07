@@ -14,7 +14,7 @@
   	</div>
   	<div class="offcanvas-body">
   	
-		<!-- 알림카드가 생성될 body -->
+		<!-- SSE Servlet으로 알림카드가 생성될 body -->
 		
   	</div>
 </div>

@@ -68,6 +68,7 @@ public class InqServlet extends HttpServlet{
 				notiDto.setNotiTargetTypeCode(notiTargetTypeCode);
 				notiDto.setNotiTargetNum(notiTargetNum);
 				notiDto.setNotiMessage(notiMessage);
+				notiDto.setNotiImageType("inquiry");
 				
 				boolean isNotiSuccess = NotificationDao.getInstance().notiInsert(notiDto);
 				

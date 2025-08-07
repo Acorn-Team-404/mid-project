@@ -57,16 +57,16 @@ function initializeSSE() {
 			// 예약 타입 카드
 			if(noti.typeCode == 10) {
 				notiCard = `
-					<div class="noti-card d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25" data-noti-num="${noti.notiNum}" onclick="location.href='${contextPath}/mypage/detail?bookNum=${noti.bookNum}'">
+					<div class="noti-card shadow-sm d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25" data-noti-num="${noti.notiNum}" onclick="location.href='${contextPath}/mypage/detail?bookNum=${noti.bookNum}'">
 						<span class="read-dot ${noti.readCode === 11 ? 'd-none' : ''} position-absolute top-0 end-0 d-inline-block rounded-circle bg-semired" style="width: 11px; height: 11px;"></span>
 						<div class="noti-img-wrapper ratio ratio-1x1">
-							<img class="img-fluid object-fit-cover rounded-3" src="https://picsum.photos/id/237/200/300" alt="" />
+							<img class="img-fluid object-fit-cover rounded-3" src="${contextPath}/show.img?imageName=${noti.imageName}" alt="" />
 						</div>
 						<div class="noti-text-wrapper d-flex flex-column">
 							<div class="d-flex justify-content-between position-relative">
 								<div class="d-flex flex-column ps-3 flex-grow-1">
 									<span class="text-secondary fs-8">${noti.bookCheckIn + " ~ " + noti.bookCheckOut}</span>
-									<span class="text-semiblack fw-semibold fs-6">${noti.stayName}</span>
+									<span class="text-semiblack fw-semibold fs-6" style="max-width: 140px;">${noti.stayName}</span>
 								</div>
 								<div class="noti-type-wrapper position-absolute end-0">
 									<span class="text-secondary fs-8">${noti.type}</span>
@@ -74,7 +74,7 @@ function initializeSSE() {
 							</div>
 							<hr />
 							<div class="noti-message-wrapper d-flex ps-3 justify-content-between">
-								<span class="text-semiblack fs-7">${noti.message}</span>
+								<span class="text-semiblack fs-7" style="max-width: 130px;">${noti.message}</span>
 								<span class="text-secondary fs-8">${noti.daysAgo}</span>
 							</div>
 						</div>
@@ -86,16 +86,23 @@ function initializeSSE() {
 			// 댓글 타입 카드
 			if(noti.typeCode == 20) {
 				notiCard = `
-					<div class="noti-card d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25" data-noti-num="${noti.notiNum}">
+					<div class="noti-card shadow-sm d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25" data-noti-num="${noti.notiNum}" onclick="location.href='${contextPath}/post/view.jsp?num=${noti.commentParentNum}'">
 						<span class="read-dot ${noti.readCode === 11 ? 'd-none' : ''} position-absolute top-0 end-0 d-inline-block rounded-circle bg-semired" style="width: 11px; height: 11px;"></span>
 						<div class="noti-img-wrapper ratio ratio-1x1">
-							<img class="img-fluid object-fit-cover rounded-3" src="https://picsum.photos/id/237/200/300" alt="" />
+							${
+								noti.imageName
+								? `<img class="img-fluid object-fit-cover rounded-3" src="${contextPath}/show.img?imageName=${noti.imageName}" alt="" />`
+								: `<div class="d-flex justify-content-center align-items-center bg-light rounded-3 overflow-hidden" style="width: 80px; height: 80px;">
+										<i class="bi bi-person-fill" style="font-size:3rem;"></i>
+									</div>`
+							}
+							
 						</div>
 						<div class="noti-text-wrapper d-flex flex-column">
 							<div class="d-flex justify-content-between position-relative">
 								<div class="d-flex flex-column ps-3 flex-grow-1">
 									<span class="text-secondary fs-8">${noti.createdAt}</span>
-									<span class="text-semiblack fw-semibold fs-6">${noti.commentWriter}</span>
+									<span class="text-semiblack fw-semibold fs-6" style="max-width: 140px;">${noti.commentWriter}</span>
 								</div>
 								<div class="noti-type-wrapper position-absolute end-0">
 									<span class="text-secondary fs-8">${noti.type}</span>
@@ -103,7 +110,7 @@ function initializeSSE() {
 							</div>
 							<hr />
 							<div class="noti-message-wrapper d-flex ps-3 justify-content-between">
-								<span class="text-semiblack fs-7">${noti.commentContent}</span>
+								<span class="text-semiblack fs-7" style="max-width: 130px;">${noti.commentContent}</span>
 								<span class="text-secondary fs-8">${noti.daysAgo}</span>
 							</div>
 						</div>
@@ -113,10 +120,10 @@ function initializeSSE() {
 			
 			
 			
-			// 리뷰 타입 카드(미완성)
+			// 리뷰 타입 카드(관리자 기능 부재로 인한 미완성)
 			if(noti.typeCode == 30) {
 				notiCard = `
-					<div class="noti-card d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25" data-noti-num="${noti.notiNum}">
+					<div class="noti-card shadow-sm d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25" data-noti-num="${noti.notiNum}">
 						<span class="read-dot ${noti.readCode === 11 ? 'd-none' : ''} position-absolute top-0 end-0 d-inline-block rounded-circle bg-semired" style="width: 11px; height: 11px;"></span>
 						<div class="noti-img-wrapper ratio ratio-1x1">
 							<img class="img-fluid object-fit-cover rounded-3" src="https://picsum.photos/id/237/200/300" alt="" />
@@ -125,7 +132,7 @@ function initializeSSE() {
 							<div class="d-flex justify-content-between position-relative">
 								<div class="d-flex flex-column ps-3 flex-grow-1">
 									<span class="text-secondary fs-8">${noti.createdAt}</span>
-									<span class="text-semiblack fw-semibold fs-6">${noti.commentWriter}</span>
+									<span class="text-semiblack fw-semibold fs-6" style="max-width: 140px;">${noti.commentWriter}</span>
 								</div>
 								<div class="noti-type-wrapper position-absolute end-0">
 									<span class="text-secondary fs-8">${noti.type}</span>
@@ -133,7 +140,7 @@ function initializeSSE() {
 							</div>
 							<hr />
 							<div class="noti-message-wrapper d-flex ps-3 justify-content-between">
-								<span class="text-semiblack fs-7">${noti.commentContent}</span>
+								<span class="text-semiblack fs-7" style="max-width: 130px;">${noti.commentContent}</span>
 								<span class="text-secondary fs-8">${noti.daysAgo}</span>
 							</div>
 						</div>
@@ -142,14 +149,14 @@ function initializeSSE() {
 			}
 			
 			
-			// 문의 타입 카드(미완성)
+			// 문의 타입 카드(관리자 기능 부재로 인한 미완성)
 			if(noti.typeCode == 40) {
 				notiCard = `
-					<div class="noti-card d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25" data-noti-num="${noti.notiNum}" onclick="location.href='${contextPath}/inquiry/list.jsp'">
+					<div class="noti-card shadow-sm d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25" data-noti-num="${noti.notiNum}" onclick="location.href='${contextPath}/inquiry/list.jsp'">
 						<span class="read-dot ${noti.readCode === 11 ? 'd-none' : ''} position-absolute top-0 end-0 d-inline-block rounded-circle bg-semired" style="width: 11px; height: 11px;"></span>
 						<div class="noti-img-wrapper ratio ratio-1x1">
 							<div class="d-flex justify-content-center align-items-center bg-light rounded-3 overflow-hidden" style="width: 80px; height: 80px;">
-							  <i class="bi bi-person-fill fs-1"></i>
+							  <i class="bi bi-person-fill" style="font-size:3rem;"></i>
 							</div>
 						</div>
 						<div class="noti-text-wrapper d-flex flex-column">
@@ -164,7 +171,7 @@ function initializeSSE() {
 							</div>
 							<hr />
 							<div class="noti-message-wrapper d-flex ps-3 justify-content-between">
-								<span class="text-truncate text-semiblack fs-7" style="max-width: 140px;">${noti.inqContent}</span>
+								<span class="text-truncate text-semiblack fs-7" style="max-width: 130px;">${noti.inqContent}</span>
 								<span class="text-secondary fs-8">${noti.daysAgo}</span>
 							</div>
 						</div>
@@ -172,12 +179,7 @@ function initializeSSE() {
 				`;
 			}
 						
-						
-						
-						
-						
-			
-			
+				
 			// 카드 삽입
 			offcanvasBody.insertAdjacentHTML("afterbegin", notiCard);
 			

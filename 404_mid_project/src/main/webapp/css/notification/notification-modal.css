@@ -44,10 +44,26 @@ hr{
 	font-size: 8px;
 }
 
+
+.me-6 { margin-right: 4rem !important; }   /* 64px */
+.me-7 { margin-right: 5rem !important; }   /* 80px */
+.me-8 { margin-right: 6rem !important; }   /* 96px */
+.me-9 { margin-right: 7rem !important; }   /* 112px */
+.me-10 { margin-right: 8rem !important; }  /* 128px */
+
+
 .text-semiblack{
 	color: rgb(76, 76, 76);
 }
 
 .bg-semired{
 	background-color: rgb(255, 116, 116);
+}
+
+.text-semired{
+	color: rgb(255, 116, 116);
+}
+
+.text-hover-dark:hover {
+  color: #212529 !important; /* Bootstrap의 text-dark */
 }

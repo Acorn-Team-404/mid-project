@@ -223,6 +223,7 @@ public class PaymentsServlet extends HttpServlet {
 					notiDto.setNotiTargetTypeCode(notiTargetTypeCode);
 					notiDto.setNotiTargetNum(notiTargetNum);
 					notiDto.setNotiMessage(notiMessage);
+					notiDto.setNotiImageType("stay");
 					
 					boolean isNotiSuccess = NotificationDao.getInstance().notiInsert(notiDto);
 					

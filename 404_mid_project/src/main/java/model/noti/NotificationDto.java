@@ -14,10 +14,10 @@ public class NotificationDto {
 	private String notiReadGroupId;
 	private int notiReadCode;
 	private String notiCreatedAt;
+	private String notiImageType;
 	
 	
 	// 공통(추가 필드)
-	// private String notiImage;
 	private String notiType;
 	private String notiDaysAgo;
 	private int notiReadCount;
@@ -27,6 +27,7 @@ public class NotificationDto {
 	private String notiBookNum;
 	private String notiCheckIn;
 	private String notiCheckOut;
+	private long notiStayNum;
 	private String notiStayName;
 	
 	
@@ -34,36 +35,34 @@ public class NotificationDto {
 	private String notiCommentWriter;
 	private String notiCommentContent;
 	private String notiCommentParentNum;
+	private long notiCommentUsersNum;
 	
 	
 	// 문의 타입(추가 필드)
+	private long notiInqNum;
 	private String notiInqTitle;
 	private String notiInqContent;
 	
-	
-	public String getNotiBookNum() {
-		return notiBookNum;
-	}
-	
-	public void setNotiBookNum(String notiBookNum) {
-		this.notiBookNum = notiBookNum;
-	}
+	// 이미지 (추가필드)
+	private String notiImageName;
 	
 	
-	public String getNotiInqTitle() {
-		return notiInqTitle;
-	}
-	public void setNotiInqTitle(String notiInqTitle) {
-		this.notiInqTitle = notiInqTitle;
+	
+	public long getNotiCommentUsersNum() {
+		return notiCommentUsersNum;
 	}
 	
-	public String getNotiInqContent() {
-		return notiInqContent;
-	}
-	public void setNotiInqContent(String notiInqContent) {
-		this.notiInqContent = notiInqContent;
+	public void setNotiCommentUsersNum(long notiCommentUsersNum) {
+		this.notiCommentUsersNum = notiCommentUsersNum;
 	}
 	
+	public String getNotiImageName() {
+		return notiImageName;
+	}
+	
+	public void setNotiImageName(String notiImageName) {
+		this.notiImageName = notiImageName;
+	}
 	
 	public long getNotiNum() {
 		return notiNum;
@@ -137,6 +136,12 @@ public class NotificationDto {
 	public void setNotiCreatedAt(String notiCreatedAt) {
 		this.notiCreatedAt = notiCreatedAt;
 	}
+	public String getNotiImageType() {
+		return notiImageType;
+	}
+	public void setNotiImageType(String notiImageType) {
+		this.notiImageType = notiImageType;
+	}
 	public String getNotiType() {
 		return notiType;
 	}
@@ -155,6 +160,12 @@ public class NotificationDto {
 	public void setNotiReadCount(int notiReadCount) {
 		this.notiReadCount = notiReadCount;
 	}
+	public String getNotiBookNum() {
+		return notiBookNum;
+	}
+	public void setNotiBookNum(String notiBookNum) {
+		this.notiBookNum = notiBookNum;
+	}
 	public String getNotiCheckIn() {
 		return notiCheckIn;
 	}
@@ -166,6 +177,12 @@ public class NotificationDto {
 	}
 	public void setNotiCheckOut(String notiCheckOut) {
 		this.notiCheckOut = notiCheckOut;
+	}
+	public long getNotiStayNum() {
+		return notiStayNum;
+	}
+	public void setNotiStayNum(long notiStayNum) {
+		this.notiStayNum = notiStayNum;
 	}
 	public String getNotiStayName() {
 		return notiStayName;
@@ -190,6 +207,24 @@ public class NotificationDto {
 	}
 	public void setNotiCommentParentNum(String notiCommentParentNum) {
 		this.notiCommentParentNum = notiCommentParentNum;
+	}
+	public long getNotiInqNum() {
+		return notiInqNum;
+	}
+	public void setNotiInqNum(long notiInqNum) {
+		this.notiInqNum = notiInqNum;
+	}
+	public String getNotiInqTitle() {
+		return notiInqTitle;
+	}
+	public void setNotiInqTitle(String notiInqTitle) {
+		this.notiInqTitle = notiInqTitle;
+	}
+	public String getNotiInqContent() {
+		return notiInqContent;
+	}
+	public void setNotiInqContent(String notiInqContent) {
+		this.notiInqContent = notiInqContent;
 	}
 	
 	

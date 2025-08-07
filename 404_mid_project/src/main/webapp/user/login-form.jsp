@@ -35,9 +35,7 @@
 <head>
   <meta charset="UTF-8">
   <title>로그인</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-  
+	<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
   <style>
     html, body {
       height: 100%;

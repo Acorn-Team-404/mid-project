@@ -15,11 +15,9 @@
 
 <%-- index에서 include하기 때문에 중복 방지<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include> --%>
 <nav class="navbar navbar-expand-lg sticky-top bg-white border-bottom shadow-sm py-3">
-  <div class="container-fluid align-items-center flex-nowrap">
+  <div class="container-fluid align-items-center">
     <!-- 좌측 로고 -->
-    <a class="navbar-brand fw-bold" href="${pageContext.request.contextPath}/index.jsp">STAYLOG</a>
-    <span><%=usersId %></span> <!-- 현재 세션 상태 확인을 위한 임시코드(지워도 상관없음) -->
-    <span>[<%=usersNum %>]</span> <!-- 현재 세션 상태 확인을 위한 임시코드(지워도 상관없음) -->
+    <a class="navbar-brand fw-semibold ms-3" style="letter-spacing: 0.1em;" href="${pageContext.request.contextPath}/index.jsp">STAYLOG</a>
 
     <!-- 검색창 -->
     <form class="d-flex mx-4 flex-grow-1" role="search">
@@ -27,7 +25,7 @@
         <span class="input-group-text bg-transparent border-0">
           <i class="bi bi-search"></i> <!-- Bootstrap Icons 사용 -->
         </span>
-        <input type="search" class="form-control border-0 bg-transparent fw-semibold" placeholder="어디로 떠날까요?" aria-label="Search">
+        <input type="search" class="form-control border-0 bg-transparent fw-normal" placeholder="<%=usersId == null ? "" : usersId+"님! " %>어디로 떠날까요?" aria-label="Search">
       </div>
     </form>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -36,18 +34,22 @@
 		</button>
 
     <!-- 우측 메뉴(collapse) -->
-    <div class="collapse navbar-collapse" id="navbarNav">
+    <div class="collapse navbar-collapse me-3" id="navbarNav">
 	    <ul class="navbar-nav align-items-center ms-auto fw-semibold">
-	      <li class="nav-item mx-2">
-	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/post/list.jsp">JOURNAL</a>
+	    	<li class="nav-item mx-2 me-5">
+	     	 <a class="nav-link text-nowrap fw-normal fw-bold text-success fs-5" href="${pageContext.request.contextPath}/post/list.jsp">난 슬플 때 여행을 가.. 🍂</a>
 	      </li>
 	      <li class="nav-item mx-2">
-	     	 <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/my-page/my-page.jsp">MYPAGE</a>
+
+	     	 <a class="nav-link text-nowrap fw-normal text-semiblack" href="${pageContext.request.contextPath}/post/list.jsp">JOURNAL</a>
 	      </li>
 	      <li class="nav-item mx-2">
-	      	<a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/test/link.jsp">LINK</a>
+	      	<a class="nav-link text-nowrap fw-normal text-semiblack" href="${pageContext.request.contextPath}/dbtest">DBTest</a>
 	      </li>
-	      <li class="nav-item mx-3">
+	      <li class="nav-item mx-2">
+	      	<a class="nav-link text-nowrap fw-normal text-semiblack" href="${pageContext.request.contextPath}/test/link.jsp">LINK</a>
+	      </li>
+	      <li class="nav-item">
 	        <div class="vr"></div> <!-- 세로 구분선 -->
 	      </li>
 	      <li class="nav-item mx-2">
@@ -56,24 +58,39 @@
         <% if (usersId == null) { %>
           <!-- 비로그인 상태일 때 LOGIN & 회원가입 -->
           <li class="nav-item mx-2">
-            <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/user/login-form.jsp">LOGIN</a>
+            <a class="nav-link text-dark text-nowrap text-muted" href="${pageContext.request.contextPath}/user/login-form.jsp">LOGIN</a>
           </li>
           <li class="nav-item mx-2">
-            <a class="nav-link text-dark d-flex align-items-center text-nowrap" href="${pageContext.request.contextPath}/user/signup-form.jsp">
-              <i class="bi bi-person me-1"></i> 회원가입
+            <a class="nav-link d-flex align-items-center text-nowrap text-dark fw-bold" href="${pageContext.request.contextPath}/user/signup-form.jsp">
+              <i class="bi bi-person-fill me-1 fs-4"></i> 회원가입
             </a>
           </li>
+          <li class="nav-item mx-2">
+	        <div class="vr"></div> <!-- 세로 구분선 -->
+	      </li>
         <% } else { %>
           <!-- 로그인 상태 일 때  알림 & LOGOUT -->
           <li class="nav-item mx-2">
+          	<a class="nav-link text-nowrap d-flex align-items-center gap-1" href="${pageContext.request.contextPath}/my-page/my-page.jsp">
+	          	<i class="bi bi-person-fill fs-3 text-muted"></i>
+	          	<span class="text-semiblack fs-6"><%=usersId %></span> <!-- 현재 세션 상태 확인을 위한 임시코드(지워도 상관없음) -->
+          	</a>
+          </li>
+          <li class="nav-item mx-2">
+	        <div class="vr"></div> <!-- 세로 구분선 -->
+	      </li>
+          <li class="nav-item mx-2">
             <button type="button" class="btn position-relative p-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
-				  <i class="bi bi-bell-fill fs-3 text-dark"></i>
+				  <i class="bi bi-bell-fill fs-4 text-muted"></i>
 				  <span class="noti-btn-count position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger px-2"></span>
 			</button>
           </li>
           <li class="nav-item mx-2">
-            <a class="nav-link text-dark text-nowrap" href="${pageContext.request.contextPath}/logout">
-              <i class="bi bi-box-arrow-right me-1"></i> LOGOUT
+	        <div class="vr"></div> <!-- 세로 구분선 -->
+	      </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link text-nowrap text-muted fw-normal fs-7" href="${pageContext.request.contextPath}/logout">
+              <i class="bi bi-box-arrow-right me-1 fs-6"></i> LOGOUT
             </a>
           </li>
         <% } %>

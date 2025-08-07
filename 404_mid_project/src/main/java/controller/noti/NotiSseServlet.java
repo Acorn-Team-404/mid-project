@@ -109,24 +109,40 @@ public class NotiSseServlet extends HttpServlet {
                         JSONArray jsonArray = new JSONArray();
                         for (NotificationDto tmp : notiList) {
                             JSONObject obj = new JSONObject();
+                            // noti 필수 속성
                             obj.put("notiNum", tmp.getNotiNum());
                             obj.put("senderNum", tmp.getNotiSenderNum());
                             obj.put("message", tmp.getNotiMessage());
                             obj.put("readCode", tmp.getNotiReadCode());
                             obj.put("createdAt", tmp.getNotiCreatedAt());
+                            obj.put("imageType", tmp.getNotiImageType());
                             obj.put("typeCode", tmp.getNotiTypeCode());
+                            
+                            // noti 추가 속성
                             obj.put("type", tmp.getNotiType());
                             obj.put("daysAgo", tmp.getNotiDaysAgo());
                             obj.put("readCount", tmp.getNotiReadCount());
+                            
+                            // 예약 타입
                             obj.put("bookNum", tmp.getNotiBookNum());
                             obj.put("bookCheckIn", tmp.getNotiCheckIn());
                             obj.put("bookCheckOut", tmp.getNotiCheckOut());
+                            obj.put("stayNum", tmp.getNotiStayNum());
                             obj.put("stayName", tmp.getNotiStayName());
+                            
+                            // 댓글 타입
+                            obj.put("commentUsersNum", tmp.getNotiCommentUsersNum());
                             obj.put("commentWriter", tmp.getNotiCommentWriter());
                             obj.put("commentContent", tmp.getNotiCommentContent());
                             obj.put("commentParentNum", tmp.getNotiCommentParentNum());
+                            
+                            // 문의 타입
+                            obj.put("inqNum", tmp.getNotiInqNum());
                             obj.put("inqTitle", tmp.getNotiInqTitle());
                             obj.put("inqContent", tmp.getNotiInqContent());
+                            
+                            // 이미지 table
+                            obj.put("imageName", tmp.getNotiImageName());
                             jsonArray.add(obj);
                         }
 
