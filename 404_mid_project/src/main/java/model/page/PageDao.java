@@ -339,7 +339,7 @@ public class PageDao {
 	}
 	
 	// 글 하나의 정보 불러오기
-	public PageDto getByNum(long pageNum, long stayNum) {
+	public PageDto getByNum(long pageNum) {
 		PageDto dto=null;
 		
 		Connection conn = null;
@@ -349,29 +349,25 @@ public class PageDao {
 			conn = DBConnector.getConn();
 			// 실행할 sql 문
 			String sql = """
-				SELECT p.page_num, p.page_stay_num, s.stay_name, p.page_users_num, u.users_id, p.page_content, p.page_reserve, p.page_guide, p.page_refund
-				FROM page p
-				LEFT JOIN users u ON p.page_users_num = u.users_num
-				LEFT JOIN stay s ON p.page_stay_num = s.stay_num
-				WHERE p.page_num = ? AND p.page_stay_num = ? AND p.page_delete IS NULL
+				SELECT stay_num, stay_name, stay_loc, page_content, stay_addr
+				FROM stay
+				JOIN page ON page_stay_num=stay_num
+				WHERE page_num=?
 			""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 값 바인딩
 			pstmt.setLong(1, pageNum);
-			pstmt.setLong(2, stayNum);
 			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
 			rs = pstmt.executeQuery();
 			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
 			// 단일 : if  /  다중 : while
 			if (rs.next()) {
 				dto=new PageDto();
-				dto.setPageNum(pageNum);
-				dto.setStayNum(rs.getLong("page_stay_num"));
-				dto.setUsersNum(rs.getLong("page_users_num"));;
+				dto.setStayNum(rs.getLong("stay_num"));
+				dto.setStayName(rs.getString("stay_name"));
+				dto.setStayLoc(rs.getString("stay_loc"));
 				dto.setPageContent(rs.getString("page_content"));
-				dto.setPageReserve(rs.getString("page_reserve"));
-				dto.setPageGuide(rs.getString("page_guide"));
-				dto.setPageRefund(rs.getString("page_refund"));
+				dto.setStayAddr(rs.getString("stay_addr"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,3 +1,5 @@
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.sql.Date"%>
 <%@page import="model.pay.PaymentDao"%>
 <%@page import="model.user.UserDto"%>
 <%@page import="model.user.UserDao"%>
@@ -10,20 +12,29 @@
 <%@page import="model.book.BookDto"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%
-  // PaymentsServlet에서 트랜잭션 성공 여부로 결과페이지 분기
-  Boolean success =(Boolean) request.getAttribute("paymentSuccess");
-  if (success == null) success = false;
-  // PaymentServlet에서 포워딩한 예약정보 + 결제 정보
-  BookDto bookDto = (BookDto) request.getAttribute("bookDto"); 
-  PaymentDto paymentDto = (PaymentDto) request.getAttribute("paymentDto");
-  String pay_method_code = PaymentDao.getInstance().getMethodCodeByPayNum(paymentDto.getPayNum());
-  //예약db에 있는 숙소 번호로 예약한 숙소정보 가져오기
-  StayDto stayDto = StayDao.getInstance().getByBookStayNum(bookDto.getBookStayNum());
-  RoomDto roomDto = RoomDao.getInstance().getByNum(bookDto.getBookRoomNum());
-  UserDto usersDto = UserDao.getInstance().getByUserNum(bookDto.getBookUsersNum());
-  
-  String errorCode = (String) request.getAttribute("errorCode");
-  String errorMsg = (String) request.getAttribute("errorMsg");
+  	// PaymentsServlet에서 트랜잭션 성공 여부로 결과페이지 분기
+  	Boolean success =(Boolean) request.getAttribute("paymentSuccess");
+  	if (success == null) success = false;
+  	// PaymentServlet에서 포워딩한 예약정보 + 결제 정보
+  	BookDto bookDto = (BookDto) request.getAttribute("bookDto"); 
+  	PaymentDto paymentDto = (PaymentDto) request.getAttribute("paymentDto");
+  	String pay_method_code = PaymentDao.getInstance().getMethodCodeByPayNum(paymentDto.getPayNum());
+  	//예약db에 있는 숙소 번호로 예약한 숙소정보 가져오기
+  	StayDto stayDto = StayDao.getInstance().getByBookStayNum(bookDto.getBookStayNum());
+  	RoomDto roomDto = RoomDao.getInstance().getByNum(bookDto.getBookRoomNum());
+  	UserDto usersDto = UserDao.getInstance().getByUserNum(bookDto.getBookUsersNum());
+	
+  	//에러 응답코드 
+  	String errorCode = (String) request.getAttribute("errorCode");
+  	String errorMsg = (String) request.getAttribute("errorMsg");
+  	
+	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy년 MM월 dd일");
+  	String checkInDateOnly = bookDto.getBookCheckIn().substring(0, 10);
+	String checkOutDateOnly = bookDto.getBookCheckOut().substring(0, 10);
+	Date checkInDate = Date.valueOf(checkInDateOnly);
+	Date checkOutDate = Date.valueOf(checkOutDateOnly);
+	String checkInFormat = dateFormat.format(checkInDate);
+	String checkOutFormat = dateFormat.format(checkOutDate);
 %>
 
 <!DOCTYPE html>
@@ -85,65 +96,81 @@
   </style>
 </head>
 <body>
+<jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+      <div class="card p-4 shadow-sm">
 
-<div class="container">
-<% if (success) { %>
-  <div class="card">
-    <h2>결제가 완료되었습니다.</h2>
-    
-    <p><strong>예약자 성함 :</strong> <span><%=usersDto.getUsersName()%></span></p>
+        <% if (success) { %>
+          <h2 class="mb-4 text-center">결제가 완료되었습니다.</h2>
 
-    <div class="border-box">
-      <p><strong>체크인 시간 :</strong> <span><%= bookDto.getBookCheckIn() %></span></p>
-      <p><strong>체크아웃 시간 :</strong> <span><%= bookDto.getBookCheckOut() %></span></p>
-    </div>
+          <p><strong>예약자 성함:</strong> <span><%= usersDto.getUsersName() %></span></p>
 
-    <p><strong>숙소명 :</strong> <span><%=stayDto.getStayName() %></span></p>
-    <p><strong>객실명 :</strong> <span></span><%=roomDto.getRoomName() %></p>
-    <p><strong>성인:</strong> <span><%=bookDto.getBookAdult()%></span></p>
-    <p><strong>아동 인원:</strong> <span><%=bookDto.getBookChildren()%></span></p>
-    <p><strong>영유아:</strong> <span><%=bookDto.getBookInfant()%></span></p>
-    <p><strong>총 인원 :</strong> <span><%= bookDto.getBookTotalPax() %></span></p>
-    <p><strong>추가 간이 침대 :</strong> <span><%= bookDto.getBookExtraBed() %></span></p>
-    <p><strong>추가 유아 침대:</strong> <span><%=bookDto.getBookInfantBed()%></span></p>
+          <div class="border-box mb-3">
+            <p><strong>체크인:</strong> <span><%= checkInFormat %></span></p>
+            <p><strong>체크아웃:</strong> <span><%= checkOutFormat %></span></p>
+          </div>
 
-    <div class="border-box">
-      <p><strong>고객 요청사항 :</strong></p>
-      <p><span><%= bookDto.getBookRequest() %></span></p>
-    </div>
-    
-	<p><strong>결제 수단 :</strong> <span><%= pay_method_code %></span></p>
-    <p><strong>최종 결제 금액 :</strong> <span><%= bookDto.getBookTotalAmount() %></span></p>
+          <div class="row">
+            <div class="col-md-6 mb-2">
+              <strong>숙소명:</strong> <span><%= stayDto.getStayName() %></span>
+            </div>
+            <div class="col-md-6 mb-2">
+              <strong>객실명:</strong> <span><%= roomDto.getRoomName() %></span>
+            </div>
+          </div>
 
-    <!-- 버튼 영역 -->
-    <div class="row mt-4">
-      <div class="col-6">
-        <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-dark w-100">홈으로</a>
-      </div>
-      <div class="col-6">
-        <a href="${pageContext.request.contextPath}/my-page/preview.jsp" class="btn btn-dark w-100">예약내역 보기</a>
+          <div class="row">
+            <div class="col-4"><strong>성인:</strong> <%= bookDto.getBookAdult() %></div>
+            <div class="col-4"><strong>아동:</strong> <%= bookDto.getBookChildren() %></div>
+            <div class="col-4"><strong>영유아:</strong> <%= bookDto.getBookInfant() %></div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col-md-6"><strong>총 인원:</strong> <%= bookDto.getBookTotalPax() %></div>
+            <div class="col-md-6"><strong>추가 침대:</strong> <%= bookDto.getBookExtraBed() %> / 유아침대: <%= bookDto.getBookInfantBed() %></div>
+          </div>
+
+          <div class="border-box my-3">
+            <p><strong>고객 요청사항:</strong></p>
+            <p><%= bookDto.getBookRequest() %></p>
+          </div>
+
+          <p><strong>결제 수단:</strong> <%= pay_method_code %></p>
+          <p><strong>최종 결제 금액:</strong> <%= bookDto.getBookTotalAmount() %>원</p>
+
+          <div class="row mt-4">
+            <div class="col-6">
+              <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-dark w-100">홈으로</a>
+            </div>
+            <div class="col-6">
+              <a href="${pageContext.request.contextPath}/my-page/preview.jsp" class="btn btn-dark w-100">예약내역</a>
+            </div>
+          </div>
+
+        <% } else { %>
+          <h2 class="text-danger text-center mb-4">결제를 실패했습니다</h2>
+
+          <div class="border-box mb-3">
+            <p><strong>오류 코드:</strong> <%= errorCode != null ? errorCode : "알 수 없음" %></p>
+            <p><strong>오류 메시지:</strong> <%= errorMsg != null ? errorMsg : "일시적인 오류가 발생했습니다." %></p>
+          </div>
+
+          <div class="row">
+            <div class="col-6">
+              <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-dark w-100">홈으로</a>
+            </div>
+            <div class="col-6">
+              <a href="${pageContext.request.contextPath}/booking/booking-page.jsp" class="btn btn-dark w-100">다시 결제</a>
+            </div>
+          </div>
+        <% } %>
+
       </div>
     </div>
   </div>
-<% } else { %>
-  <div class="card">
-    <h2 style="color: #dc3545;">결제를 실패했습니다</h2>
+</div>
 
-    <div class="border-box">
-      <p><strong>오류 코드:</strong> <span><%= errorCode != null ? errorCode : "알 수 없음" %></span></p>
-      <p><strong>오류 메시지:</strong> <span><%= errorMsg != null ? errorMsg : "일시적인 오류가 발생했습니다. 다시 시도해주세요." %></span></p>
-    </div>
-
-    <!-- 버튼 영역 -->
-    <div class="row mt-4">
-      <div class="col-6">
-        <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-dark w-100">홈으로</a>
-      </div>
-      <div class="col-6">
-        <a href="${pageContext.request.contextPath}/booking/booking-page.jsp" class="btn btn-dark w-100">다시 결제하기</a>
-      </div>
-    </div>
-  </div>
-<% } %>
+<jsp:include page="/WEB-INF/include/footer.jsp"></jsp:include>
 </body>
-</html>

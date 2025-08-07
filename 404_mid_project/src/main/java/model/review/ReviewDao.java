@@ -25,6 +25,72 @@ public class ReviewDao {
 	      return dao;
 	   }
 	   
+	   // 예약상태 코드 11, 10 > 예약확정, 예약 대기로 바꾸기 위한 메소드
+	   public String getReservationStatusName(int code) {
+		   // 필요한 객체를 담을 지역변수를 미리 만든다.
+		// ex) List<DTO> list=new ArrayList<>();
+		String name = "알 수 없음";
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			// 실행할 sql 문
+			String sql = """
+					SELECT cc_code_name
+					FROM common_code
+					WHERE cc_group_id = 'RESERVATION_STATUS' AND cc_code = ?
+					""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 값 바인딩
+			pstmt.setInt(1, code);
+			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+			// 단일 : if  /  다중 : while
+			if (rs.next()) {
+				name = rs.getString("cc_code_name");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		} // 하단에 return 값 넣어주셔야함!
+		return name;
+	   }
+	   
+	   // 해당 예약 번호로 작성 된 리뷰가 있는지 확인하는 메소드
+	   public boolean hasReview(String bookNum) {
+		   	// 필요한 객체를 담을 지역변수를 미리 만든다.
+			// ex) List<DTO> list=new ArrayList<>();
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			try {
+				conn = DBConnector.getConn();
+				// 실행할 sql 문
+				String sql = """
+						SELECT COUNT(*) FROM review WHERE review_book_num = ?
+						""";
+				pstmt = conn.prepareStatement(sql);
+				// ? 에 값 바인딩
+				pstmt.setString(1, bookNum);
+				// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+				rs = pstmt.executeQuery();
+				// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+				// 단일 : if  /  다중 : while
+				if (rs.next()) {
+					return rs.getInt(1) > 0;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				DBConnector.close(rs, pstmt, conn);
+			} // 하단에 return 값 넣어주셔야함!
+			return false;
+	   }
+	   
+	   
 	   //특정 숙소번호에 해당하는 리뷰 가져오기
 	   public List<ReviewDto> getByStayNum(long stayNum){
 		   
@@ -108,4 +174,89 @@ public class ReviewDao {
 		}
 	   }
 	   
+	   // 숙소별 전체 리뷰 개수 리턴하는 메소드
+	   public long getCountAll(Long stayNum) {
+		   // 필요한 객체를 담을 지역변수를 미리 만든다.
+		   // ex) List<DTO> list=new ArrayList<>();
+		   long count=0;
+		   Connection conn = null;
+		   PreparedStatement pstmt = null;
+		   ResultSet rs = null;
+		   try {
+			   conn = DBConnector.getConn();
+				// 실행할 sql 문
+			   String sql = """
+			   		SELECT COUNT(*) AS count
+					FROM review
+					WHERE review_stay_num = ?
+				""";
+				pstmt = conn.prepareStatement(sql);
+				// ? 에 값 바인딩
+				pstmt.setLong(1, stayNum);
+				// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+				rs = pstmt.executeQuery();
+				// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+				// 단일 : if  /  다중 : while
+				if (rs.next()) {
+					count=rs.getLong("count");
+				}
+		   } catch (Exception e) {
+			   e.printStackTrace();
+		   } finally {
+			   DBConnector.close(rs, pstmt, conn);
+		   } // 하단에 return 값 넣어주셔야함!
+		   return count;
+	   }
+	   // 특정 page 에 해당하는 row 만 select 해서 리턴하는 메소드
+	   // ReviewDto 객체에 startRowNum 과 endRowNum 을 담아와서 select
+	   public List<ReviewDto> selectPageByNum(ReviewDto dto){
+		   // 필요한 객체를 담을 지역변수를 미리 만든다.
+		   // ex) List<DTO> list=new ArrayList<>();
+		   List<ReviewDto> list=new ArrayList<>();
+		   Connection conn = null;
+		   PreparedStatement pstmt = null;
+		   ResultSet rs = null;
+			try {
+				conn = DBConnector.getConn();
+				// 실행할 sql 문
+				String sql = """
+					SELECT *
+						FROM
+							(SELECT result1.*, ROWNUM AS rnum
+							FROM	
+								(
+								SELECT review_id, review_users_id, review_rating, review_comment, review_created_at,review_stay_num
+								FROM REVIEW
+								WHERE review_stay_num = ?
+								ORDER BY review_created_at DESC
+								) result1
+							)
+						WHERE rnum BETWEEN ? AND ?
+				""";
+				pstmt = conn.prepareStatement(sql);
+				// ? 에 값 바인딩
+				pstmt.setLong(1, dto.getReviewStayNum());
+				pstmt.setLong(2, dto.getStartRowNum());
+				pstmt.setLong(3, dto.getEndRowNum());
+				// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+				rs = pstmt.executeQuery();
+				// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+				// 단일 : if  /  다중 : while
+				while (rs.next()) {
+					ReviewDto dto2=new ReviewDto();
+					dto2.setReviewId(rs.getLong("review_id"));
+					dto2.setUsersId(rs.getString("review_users_id"));
+					dto2.setRating(rs.getInt("review_rating"));
+		            dto2.setComment(rs.getString("review_comment"));
+		            dto2.setCreatedAt(rs.getTimestamp("review_created_at"));
+		            dto2.setReviewStayNum(rs.getLong("review_stay_num"));
+					list.add(dto2);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				DBConnector.close(rs, pstmt, conn);
+			} // 하단에 return 값 넣어주셔야함!
+				return list;	   
+		   }
 }

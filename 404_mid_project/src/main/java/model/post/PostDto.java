@@ -11,7 +11,7 @@ public class PostDto {
 	private String postCreatedAt;
 	private String postUpdatedAt;
 	private String postDeleted;
-	private String usersID;
+	private String postWriterId;
 	//페이징 처리를 위한 필드
 	private int startRowNum;
 	private int endRowNum;
@@ -77,11 +77,11 @@ public class PostDto {
 	public void setPostDeleted(String postDeleted) {
 		this.postDeleted = postDeleted;
 	}
-	public String getUsersID() {
-		return usersID;
+	public String getPostWriterId() {
+		return postWriterId;
 	}
-	public void setUsersID(String usersID) {
-		this.usersID = usersID;
+	public void setPostWriterId(String postWriterId) {
+		this.postWriterId = postWriterId;
 	}
 	public int getStartRowNum() {
 		return startRowNum;
@@ -101,6 +101,7 @@ public class PostDto {
 	public void setPostKeyword(String postKeyword) {
 		this.postKeyword = postKeyword;
 	}
+	
 	
 	
 }

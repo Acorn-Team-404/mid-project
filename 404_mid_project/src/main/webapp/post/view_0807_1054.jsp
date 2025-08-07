@@ -1,6 +1,3 @@
-<%@page import="model.image.ImageDto"%>
-<%@page import="model.image.ImageDao"%>
-
 <%@page import="java.util.Objects"%>
 <%@page import="model.post.CommentDto"%>
 <%@page import="java.util.List"%>
@@ -31,9 +28,6 @@
   	List<CommentDto> commentList = CommentDao.getInstance().selectAll(num);
   	
   	
-  	List<ImageDto> carouselImages = ImageDao.getInstance().getListByTarget("post", num); // post 영역
-    int size = carouselImages.size();
-  	
 %>
 <!DOCTYPE html>
 <html>
@@ -41,7 +35,7 @@
 <meta charset="UTF-8">
 <title>/post/view.jsp</title>
 <jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
-<link rel="stylesheet" type="text/css" href="../css/post/post.css">
+<link rel="stylesheet" type="text/css" href="../css/post/post-form.css">
 </head>
 <body>
 	<jsp:include page="/WEB-INF/include/navbar.jsp">
@@ -50,68 +44,33 @@
 	
 	
 	<%if(dto==null){ %>
-	<div class="container">
-		<div class="alert alert-danger mt-5">
-			해당 게시글을 찾을 수 없습니다.
+		<div class="container">
+			<div class="alert alert-danger mt-5">
+				해당 게시글을 찾을 수 없습니다.
+			</div>
 		</div>
-	</div>
 	<%} %>
 	
-	<div>
 	
-		<!-- carousel -->
-		<% if (size > 0) { %>
-			<div id="carouselExampleIndicators" class="carousel slide">
-				 <div class="carousel-indicators">
-				   <% for (int i = 0; i < size; i++) { %>
-				     <button type="button"
-				             data-bs-target="#carouselExampleIndicators"
-				             data-bs-slide-to="<%= i %>"
-				             class="<%= (i == 0) ? "active" : "" %>"
-				             aria-current="<%= (i == 0) ? "true" : "" %>"
-				             aria-label="Slide <%= i + 1 %>"></button>
-				  	<% } %>
-				</div>
-	
-			  <div class="carousel-inner ratio ratio-16x9">
-					<% for (int i = 0; i < size; i++) {
-					     ImageDto img = carouselImages.get(i);
-					%>
-					  <div class="carousel-item <%= (i == 0) ? "active" : "" %>">
-					    <img src="<%= request.getContextPath() %>/show.img?imageName=<%= img.getImageSavedName() %>"
-					     class="d-block w-100"
-					     alt="<%= img.getImageOriginalName() %>">
-					  </div>
-					<% } %>
-			  </div>
-	
-			  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-			    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-			    <span class="visually-hidden">Previous</span>
-			  </button>
-			  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-			    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-			    <span class="visually-hidden">Next</span>
-			  </button>
-			</div>
-			<% } else { %>
-			  <p>등록된 이미지가 없습니다.</p>
-			<% } %>
-		</div> <!-- carousel -->
-	
-	
+	<!-- 이미지..경로 필요!!! -->
+	<jsp:include page="/WEB-INF/include/post-carousel.jsp"></jsp:include>
 	
 	<div class="container">
 	
 		<div> <!-- 제목 -->
-			<h1 class="text-center my-5"><%=dto.getPostTitle() %></h1>
+			<h1 class="text-center my-4"><%=dto.getPostTitle() %></h1>
 		</div>
-		
-		
-		
+		<div> <!-- 수정/삭제 버튼 -->
+			<%if(dto.getPostWriterNum().equals(usersNum)){ %>
+			<div class="text-end pt-2">
+				<a class="btn btn-warning btn-sm" href="update.post?num=<%=dto.getPostNum()%>">Edit</a>
+				<a class="btn btn-danger btn-sm" href="delete.post?num=<%=dto.getPostNum()%>">Delete</a>
+			</div>
+			<%} %>
+		</div>
 		<!-- 본문 -->
-		<div class="container col-10 card-body post-content">
-			<%= dto.getPostContent() == null ? "내용없음" : dto.getPostContent().replaceAll("\n", "<br>") %>
+		<div class="card-body">
+			<%= dto.getPostContent() == null ? "" : dto.getPostContent().replaceAll("\n", "<br>") %>
 		</div>
 
 			<!-- 게시글 정보 -->		
@@ -149,19 +108,12 @@
 				
 			</div> <!-- 게시글 정보 -->	
 			
-			<div class="d-flex col-10 justify-content-end mx-auto my-4"> <!-- 수정/삭제 버튼 -->
-				<%if(dto.getPostWriterNum().equals(usersNum)){ %>
-					<div class="text-end pt-2">
-						<a class="btn btn-sm btn-outline-secondary" href="update.post?num=<%=dto.getPostNum()%>">Edit</a>
-						<a class="btn btn-sm btn-outline-secondary" href="delete.post?num=<%=dto.getPostNum()%>">Delete</a>
-					</div>
-				<%} %>
-			</div>
+			
 		
 		
-		<!-- 댓글 -->
-		<div class="card col-10 mx-auto my-4">
-		  <div class="card-header bg-secondary text-white">
+			<!-- 댓글 -->
+		<div class="card my-3">
+		  <div class="card-header bg-primary text-white">
 		    댓글을 입력해 주세요
 		  </div>
 		  <div class="card-body">
@@ -176,13 +128,13 @@
 		        <textarea id="commentContent" name="content" rows="5" class="form-control" placeholder="댓글을 입력하세요"></textarea>
 		      </div>
 		
-		      <button type="submit" class="btn btn-sm btn-outline-secondary">등록</button>
+		      <button type="submit" class="btn btn-success">등록</button>
 		    </form>
 		  </div>
 		</div>
 		
 		<!-- 댓글 목록 출력하기 -->
-		<div class="comments col-10 mx-auto my-4">
+		<div class="comments">
 			<%for(CommentDto tmp:commentList){ %>
 			<!-- 대댓글은 자신의 글번호와 댓글의 그룹번호가 다름->왼쪽 마진(들여쓰기) -->
 				<div class="card mb-3 <%=tmp.getCommentNum() == tmp.getCommentGroupNum() ? "" : "ms-5 re-re" %>">
@@ -220,11 +172,11 @@
 			                            <strong><%=tmp.getCommentWriterId() %></strong>
 			                            <span>@<%=tmp.getCommentTargetWriterId() %></span>
 			                        </div>
-			                        <small class="text-muted ms-auto"><%=tmp.getCommentCreatedAt() %></small>
+			                        <small class="position-absolute bottom-0 end-0 m-3"><%=tmp.getCommentCreatedAt() %></small>
 		                    	</div>
 		                    	<pre><%=tmp.getCommentContent() %></pre>
 		                    	<!-- 댓글 작성자가 로그인된 userName이라면 수정폼 / 아니면 댓글폼 -->
-		                    	<%if(isLogin && usersNum.equals(tmp.getCommentWriter())){ %>
+		                    	<%if(tmp.getCommentWriter() == usersNum){ %>
 		                    		<!-- 수정 버튼 (본인에게만 보임) -->
 				                    <button class="btn btn-sm btn-outline-secondary edit-btn">수정</button>
 				
@@ -241,7 +193,7 @@
 	                    			</div>	
 		                    	
 		                    	<%}else{ %>
-			                    	<button class="btn btn-sm btn-outline-secondary show-reply-btn">댓글</button>  
+			                    	<button class="btn btn-sm btn-outline-primary show-reply-btn">댓글</button>  
 		                   			<!-- 댓글 입력 폼 (처음에는 숨김) -->
 		                   			<div class="d-none form-div">
 		                       			<form action="save-comment.jsp" method="post">

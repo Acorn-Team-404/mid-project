@@ -1,8 +1,7 @@
 package controller.post;
 
-import java.io.File;
+
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.List;
 
 import jakarta.servlet.ServletException;
@@ -16,12 +15,14 @@ import model.post.CommentDto;
 import model.post.PostDao;
 import model.post.PostDto;
 
+
 @WebServlet("*.post")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 10, // 업로드 처리하기 위한 메모리 사이즈(10 Mega byte)
 		maxFileSize = 1024 * 1024 * 50, // 업로드되는 최대 파일 사이즈(50 Mega byte)
 		maxRequestSize = 1024 * 1024 * 60 // 이 요청의 최대 사이즈(60 Mega byte), 파일외의 다른 문자열도 전송되기 때문에
 )
 public class PostServlet extends HttpServlet {
+	
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
@@ -55,12 +56,13 @@ public class PostServlet extends HttpServlet {
 			// 게시글 조회 - DB
 			PostDto dto = dao.getByPostNum(num);
 			Long usersNum = (Long) req.getSession().getAttribute("usersNum");
-			if(!dto.getPostWriterNum().equals(usersNum)){
+			Long postWriterNum = dto.getPostWriterNum();
+			if(usersNum != null && postWriterNum != null && !postWriterNum.equals(usersNum)){
 			PostDao.getInstance().addViews(num);
 			
 			} //로그인했는지 여부 알아내기 
-			boolean isLogin = usersNum == null ? false : true;
-			
+			boolean isLogin = usersNum != null;
+			req.setAttribute("isLogin", isLogin);
 
 			// 댓글 목록을 DB에서 읽어오기
 			List<CommentDto> commentList = CommentDao.getInstance().selectAll(num);
@@ -80,7 +82,7 @@ public class PostServlet extends HttpServlet {
 				req.setAttribute("post", dto);
 				req.getRequestDispatcher("/post/form.jsp").forward(req, res);
 			}else {
-				res.sendRedirect("view.post?num=" + num);
+				res.sendRedirect("/view.post?num=" + num);
 			}
 			
 			
@@ -88,12 +90,13 @@ public class PostServlet extends HttpServlet {
 		} else if (path.equals("/upload.post")) {
 			System.out.println("게시글 업로드");
 			// 글 작성자는 세션 객체로부터 얻기
-			Long writerLong = (Long) req.getSession().getAttribute("usersNum");
+			Long writerNum = (Long) req.getSession().getAttribute("usersNum");
+			
 			PostDto dto = new PostDto();
 
 			int num = dao.getSequence();
 			dto.setPostNum(num);
-			dto.setPostWriterNum(writerLong); // 로그인된 사용자 번호 (임시)
+			dto.setPostWriterNum(writerNum); // 로그인된 사용자 번호 (임시)
 			dto.setPostStayNum(1); // 게시글 관련 숙소 번호 (임시)
 			dto.setPostType(0); // 게시글 타입 0:일반, 1:공지 등
 			dto.setPostTitle(req.getParameter("title"));
@@ -112,9 +115,17 @@ public class PostServlet extends HttpServlet {
 		} else if (path.equals("/update.post")) {
 			int num = Integer.parseInt(req.getParameter("num"));
 			
+			String title = req.getParameter("title");
+			if (title == null || title.trim().isEmpty()) {
+			    System.out.println("제목이 비어있습니다."); // 디버깅 로그
+			    req.setAttribute("error", "제목을 입력해주세요.");
+			    req.getRequestDispatcher("/post/edit-form.jsp").forward(req, res);
+			    return;
+			}
+			
 			PostDto dto = new PostDto();
-			dto.setPostNum(Integer.parseInt(req.getParameter("num")));
-			dto.setPostTitle(req.getParameter("title"));
+			dto.setPostNum(num);
+			dto.setPostTitle(title);
 			dto.setPostContent(req.getParameter("content"));
 			
 			boolean success = dao.update(dto);
@@ -132,6 +143,11 @@ public class PostServlet extends HttpServlet {
 			dao.deleteByNum(num);
 			res.sendRedirect("list.post");
 		}
+		
 
 	}
+
+
+	
+
 }
