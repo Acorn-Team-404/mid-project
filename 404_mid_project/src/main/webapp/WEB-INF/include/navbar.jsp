@@ -40,6 +40,7 @@
 	     	 <a class="nav-link text-nowrap fw-normal fw-bold text-success fs-5" href="${pageContext.request.contextPath}/post/list.jsp">난 슬플 때 여행을 가.. 🍂</a>
 	      </li>
 	      <li class="nav-item mx-2">
+
 	     	 <a class="nav-link text-nowrap fw-normal text-semiblack" href="${pageContext.request.contextPath}/post/list.jsp">JOURNAL</a>
 	      </li>
 	      <li class="nav-item mx-2">

@@ -1,10 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 	String url = request.getParameter("url");
-	if (url == null) {
+	if (url == null || url.contains("loginform.jsp")) {
 		String cPath = request.getContextPath();
-		url = cPath + "/index.jsp";
+		url = cPath + "/index.jsp";  // 또는 기본 이동 페이지
 	}
+	
+	String msg = (String) request.getAttribute("modalMessage");
+	Boolean goBack = (Boolean) request.getAttribute("goBack");
+	Boolean isValid = (Boolean) request.getAttribute("isValid");
+	
+	
+	
 	
 	//쿠키에 저장된 아이디와 비밀번호를 담을 변수
 	String savedUsersId="";
@@ -94,11 +101,11 @@
 	}
     
   </style>
+  <jsp:include page="/WEB-INF/include/user-modal.jsp" />
 </head>
 <body>
-  <!-- 네비바는 여기 바디 안에 유지 -->
+    <!-- 네비바는 여기 바디 안에 유지 -->
   <jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
-
   <!-- wrapper로 로그인 박스를 감싸서 정중앙 정렬 -->
   <div class="wrapper">
     <div class="login-box">
@@ -133,5 +140,28 @@
       </form>
     </div>
   </div>
+  
+  <script>
+  
+    const isValid = <%= (isValid == null) ? "null" : (isValid ? "true" : "false") %>;
+    const msg = "<%= msg != null ? msg : "" %>";
+
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("isValid:", isValid, "| msg:", msg);
+        if (isValid === false && msg) {
+          showInfoModal(msg);
+        }
+      });
+    
+	  
+    function showInfoModal(message) {
+    	  const modalMessage = document.getElementById("modalMessage");
+    	  modalMessage.textContent = message;
+
+    	  const infoModal = new bootstrap.Modal(document.getElementById('infoModal'));
+    	  infoModal.show();
+    	}  
+  </script>
+
 </body>
 </html>

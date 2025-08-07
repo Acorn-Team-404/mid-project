@@ -165,7 +165,7 @@
 															%>
 														<!-- 캐러셀 컨테이너 -->
 														<div id="<%= modalCarouselId %>" class="carousel slide" data-bs-ride="carousel">
-															<div class="carousel-inner rounded" style="height: 240px;">
+															<div class="carousel-inner ratio ratio-4x3 rounded overflow-hidden">
 																<% for (int j = 0; j < imageList.size(); j++) {
 																   String savedName = imageList.get(j).getImageSavedName();
 																%>
@@ -201,8 +201,10 @@
 																<p><strong>최대 인원:</strong> <%= room.getRoomPaxMax() %>명</p>
 																<p><strong>가격:</strong> ₩<%= room.getRoomPrice() %></p>
 																<hr/>
-																<p><strong>객실 상세 설명:</strong></p>
-																<div class="room-content"><%= room.getRoomContent().replaceAll("\n", "<br/>") %></div>
+																<div>
+																<p><strong>객실 상세 설명:</strong><br/><%= room.getRoomContent().replaceAll("\n", "<br/>") %></p>
+																<p><strong>편의 시설:</strong><br/><%=room.getRoomStayFacilities() %></p>
+																</div>
 													    </div>
 													  </div>
 													</div>
