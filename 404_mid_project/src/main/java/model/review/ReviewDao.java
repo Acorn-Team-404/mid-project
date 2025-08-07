@@ -25,6 +25,72 @@ public class ReviewDao {
 	      return dao;
 	   }
 	   
+	   // 예약상태 코드 11, 10 > 예약확정, 예약 대기로 바꾸기 위한 메소드
+	   public String getReservationStatusName(int code) {
+		   // 필요한 객체를 담을 지역변수를 미리 만든다.
+		// ex) List<DTO> list=new ArrayList<>();
+		String name = "알 수 없음";
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			// 실행할 sql 문
+			String sql = """
+					SELECT cc_code_name
+					FROM common_code
+					WHERE cc_group_id = 'RESERVATION_STATUS' AND cc_code = ?
+					""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 값 바인딩
+			pstmt.setInt(1, code);
+			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+			// 단일 : if  /  다중 : while
+			if (rs.next()) {
+				name = rs.getString("cc_code_name");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		} // 하단에 return 값 넣어주셔야함!
+		return name;
+	   }
+	   
+	   // 해당 예약 번호로 작성 된 리뷰가 있는지 확인하는 메소드
+	   public boolean hasReview(String bookNum) {
+		   	// 필요한 객체를 담을 지역변수를 미리 만든다.
+			// ex) List<DTO> list=new ArrayList<>();
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			try {
+				conn = DBConnector.getConn();
+				// 실행할 sql 문
+				String sql = """
+						SELECT COUNT(*) FROM review WHERE review_book_num = ?
+						""";
+				pstmt = conn.prepareStatement(sql);
+				// ? 에 값 바인딩
+				pstmt.setString(1, bookNum);
+				// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+				rs = pstmt.executeQuery();
+				// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+				// 단일 : if  /  다중 : while
+				if (rs.next()) {
+					return rs.getInt(1) > 0;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				DBConnector.close(rs, pstmt, conn);
+			} // 하단에 return 값 넣어주셔야함!
+			return false;
+	   }
+	   
+	   
 	   //특정 숙소번호에 해당하는 리뷰 가져오기
 	   public List<ReviewDto> getByStayNum(long stayNum){
 		   
