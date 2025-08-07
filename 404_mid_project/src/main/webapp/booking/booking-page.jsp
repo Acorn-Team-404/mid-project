@@ -28,29 +28,11 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/book-mina/room-info.css" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/book-kcr/booking-page.css" />
 <jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/include/alert-modal.jsp"></jsp:include>
 </head>
 <body>
 	<jsp:include page="/WEB-INF/include/navbar.jsp" />
-	<!-- 알람 모달창 -->
-	<div class="modal fade" id="alertModal" tabindex="-1" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered">
-	    	<div class="modal-content">
-	    		<div class="modal-header no-border">
-	       			<h5 class="modal-title">알림</h5>
-	        		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
-	      		</div>
-	      		<div class="modal-body" id="alertModalBody">
-	        		<!-- 메시지 삽입 -->
-	      		</div>
-	      		<div class="modal-footer no-border">
-	        		<button type="button" class="btn btn-primary" data-bs-dismiss="modal">확인</button>
-	      		</div>
-	    		</div>
-	  	</div>
-	</div>
-	
-	
-	
+	<jsp:include page="/WEB-INF/include/alert-modal.jsp"/>
 	<!-- 하단 영역 -start -->
 	<div class="container my-4">
 	<!-- 캐러셀 영역 -start -->
@@ -94,7 +76,7 @@
 			<% } %>
 		</div>
 		<!-- 캐러셀 영역 -end -->
-		<form action="${pageContext.request.contextPath}/booking/submit" method="post">
+		<form action="${pageContext.request.contextPath}/booking/submit" id="bookForm" method="post">
     	<!-- 이부분 필수 -->
     	<input type="hidden" name="bookStayNum" value="${param.stayNum}"/>
         <div class="row align-items-stretch">
@@ -214,74 +196,83 @@
 						    </div>
 						  </div>
 						  <% } %>
-	            <div class="">
+	            <div>
 	                <div class="left-container mb-4">
-	                    <h1>예약자 정보</h1>
+	                    <h1 class="mb-4">예약자 정보</h1>
 	                    <input type="hidden" name="usersNum" id="userNum" value="${usersNum}"/>
 	
-	                    <div class="mb-3">
-	                        <label for="usersName" class="form-label">이름</label>
-	                        <p>${usersName}</p>
+	                    <div class="d-flex mb-4">
+	                        <label for="usersName" class="form-label col-3 mb-0">이름</label>
+	                        <p class="mb-0">${usersName}</p>
 	                        <input type="hidden" name="usersName" id="userName" value="${usersName}"/>
 	                    </div>
 	
-	                    <div class="mb-3">
-	                        <label for="email" class="form-label">이메일</label>
-	                        <p>${email}</p>
+	                    <div class="d-flex mb-4">
+	                        <label for="email" class="form-label col-3 mb-0">이메일</label>
+	                        <p class="mb-0">${email}</p>
 	                        <input type="hidden" name="email" id="email" value="${email}"/>
 	                    </div>
 	
-	                    <div class="mb-4">
-	                        <label for="phone" class="form-label">전화번호</label>
-	                        <p>${phone}</p>
+	                    <div class="d-flex mb-4">
+	                        <label for="phone" class="form-label col-3 mb-0">전화번호</label>
+	                        <p class="mb-0">${phone}</p>
 	                        <input type="hidden" name="phone" id="phone" value="${phone}"/>
 	                    </div>
 	
-	                    <div class="border-top mb-4">
-	                        <h2 class="mt-3">옵션</h2>
-	                        <p>숙박 시 제공되는 옵션을 선택하세요</p>
-	
-	                        <label class="form-label">추가 침대</label><br/>
-	                        <div class="form-check form-check-inline">
-	                            <input class="form-check-input" type="checkbox" name="bed" value="extraBed" id="extraBed" data-label="간이 침대"/>
-	                            <label class="form-check-label" for="extraBed">간이 침대</label>
-	                        </div>
-	                        <div class="form-check form-check-inline">
-	                            <input class="form-check-input" type="checkbox" name="bed" value="infantBed" id="infantBed" data-label="유아 침대"/>
-	                            <label class="form-check-label" for="infantBed">유아 침대</label>
-	                        </div>
-	
-	                        <div class="mt-3">
-	                            <label class="form-label">도착</label><br/>
-	                            <div class="form-check">
-	                                <input class="form-check-input" type="radio" name="checkInTime" value="standard" id="checkInStandard" checked data-label="정규 시간"/>
-	                                <label class="form-check-label" for="checkInStandard">정규 시간</label>
-	                            </div>
-	                            <div class="form-check">
-	                                <input class="form-check-input" type="radio" name="checkInTime" value="early" id="checkInEarly" data-label="이른 체크인"/>
-	                                <label class="form-check-label" for="checkInEarly">이른 체크인</label>
-	                            </div>
-	                            <div class="form-check">
-	                                <input class="form-check-input" type="radio" name="checkInTime" value="late" id="checkInLate" data-label="늦은 도착"/>
-	                                <label class="form-check-label" for="checkInLate">늦은 도착</label>
-	                            </div>
-	                        </div>
+	                    <div class="mb-4">
+	                        <h2>옵션</h2>
+	                        <p class="text-muted">숙박 시 제공되는 옵션을 선택하세요</p>                    
+	                    		
+							<div class="row mb-2">
+								<div class="col-md-6 d-flex">
+									<label class="form-label mb-0">추가 침대</label>
+								</div>
+								<div class="col-md-6 d-flex">
+									<label class="form-label mb-0">도착</label>
+								</div>
+							</div>
+	                        	<div class="row">
+	                        		<div class="col-md-6 d-flex flex-column" style="gap: 0.5rem;">
+	                        			<div>
+	                        				<input class="form-check-input" type="checkbox" name="bed" value="extraBed" id="extraBed" data-label="간이 침대"/>
+										<label class="form-check-label" for="extraBed">간이 침대</label>
+	                        			</div>
+									<div>
+										<input class="form-check-input" type="checkbox" name="bed" value="infantBed" id="infantBed" data-label="유아 침대"/>
+										<label class="form-check-label" for="infantBed">유아 침대</label>
+									</div>
+	                        		</div>
+	                        		<div class="col-md-6 d-flex flex-column" style="gap: 0.5rem;">
+	                        			<div>
+	                        				<input class="form-check-input" type="radio" name="checkInTime" value="standard" id="checkInStandard" checked data-label="정규 시간"/>
+										<label class="form-check-label" for="checkInStandard">정규 시간</label>
+	                        			</div>
+	                        			<div>
+	                        				<input class="form-check-input" type="radio" name="checkInTime" value="early" id="checkInEarly" data-label="이른 체크인"/>
+										<label class="form-check-label" for="checkInEarly">이른 체크인</label>
+	                        			</div>
+	                        			<div>
+	                        				<input class="form-check-input" type="radio" name="checkInTime" value="late" id="checkInLate" data-label="늦은 도착"/>
+										<label class="form-check-label" for="checkInLate">늦은 도착</label>
+	                        			</div>
+	                        		</div>
+	                        	</div>    		
 	                    </div>
 	
-	                    <div class="mb-2">
-	                        <h2>추가 요청사항</h2>
-	                        <textarea name="bookRequest" id="bookRequest" class="form-control" rows="5" placeholder="요청사항을 입력해 주세요."></textarea>
+	                    <div class="mb-3">
+	                        <h2 class="mb-3">추가 요청사항</h2>
+	                        <textarea name="bookRequest" id="bookRequest" class="form-control" rows="5" placeholder="요청사항을 입력해 주세요"></textarea>
 	                    </div>
 	                    
-	                    <div class="mt-4 pt-2">
+	                    <div class="mt-4 pt-3">
 							<!-- 예약 안내사항 -->
-							<div class="border-top py-3 mb-4">
+							<div class="border-top py-3 mb-3">
 							    <h5 class="fw-semibold">예약 안내사항</h5>
 							    <p class="mb-0"><%= guide.getGuideInformation().replaceAll("\n", "<br/>") %></p>
 							</div>
 							
 							<!-- 이용 안내 -->
-							<div class="border-top py-3 mb-4">
+							<div class="border-top py-3 mb-3">
 							    <h5 class="fw-semibold">이용 안내</h5>
 							    <p class="mb-0"><%= guide.getStayPolicy().replaceAll("\n", "<br/>") %></p>
 							</div>
@@ -317,13 +308,19 @@
                             <option disabled>객실 정보가 없습니다</option>
                         <% } %>
                     </select>
-
+                    
+                    <!-- 체크인 체크아웃 선택 한 번에 해보기 -->
                     <div class="mb-3 mt-3">
-                        <label for="checkIn" class="form-label">체크인 날짜</label>
-                        <input type="date" name="checkIn" id="checkIn" class="form-control"/>
-
-                        <label for="checkOut" class="form-label mt-2">체크아웃 날짜</label>
-                        <input type="date" name="checkOut" id="checkOut" class="form-control"/>
+						<label for="dateRange" class="form-label">날짜 선택</label>
+						<input type="text" id="dateRange" class="form-control" placeholder="체크인 - 체크아웃"/>
+                    		<input type="hidden" name="checkIn" id="checkIn" />
+						<input type="hidden" name="checkOut" id="checkOut" />
+						
+						<!-- 선택한 날짜 표시 -->
+						<div class="p-3 mt-2 rounded border shadow-sm" id="dateSummary" 
+							style="display: none; background-color: #e9f5ff; color: #0c5460; font-size: 0.95rem;">
+						</div>
+                    		
                     </div>
 
                     <div class="mb-3">
@@ -355,17 +352,41 @@
                             <input type="hidden" name="infant" id="infant" value="0"/>
                             <button type="button" class="btn btn-outline-primary count-btn" onclick="changeCount('infant', 1)">+</button>
                         </div>
-
-                        <strong class="mt-2">총 인원 : <span id="totPerson">1</span>명</strong>
                     </div>
 
-                    <div class="mb-4">
-                        <strong>객실 이름 :</strong> <span id="selectedRoomNameDisplay"></span><br/>
-                        <strong>객실 가격 :</strong> ₩ <span id="roomPrice">선택하세요</span><br />
-                        <strong>추가 침대 :</strong> <span id="bedOption"></span><br/>
-                        <strong>도착 시간 :</strong> <span id="checkInOption"></span><br/>
-                        <strong>총액 :</strong> ₩ <span id="totalAmount"></span>
-                    </div>
+					<!-- 예약 요악 -->
+                    <div class="mb-4 border-top">
+					    <div class="d-flex mb-4 mt-3">
+					        <label class="form-label col-3 mb-0 fs-6 fw-normal text-dark">객실 이름</label>
+					        <p class="mb-0 fs-6 fw-normal text-dark" id="selectedRoomNameDisplay">-</p>
+					    </div>
+					
+					    <div class="d-flex mb-4">
+					        <label class="form-label col-3 mb-0 fs-6 fw-normal text-dark">객실 가격</label>
+					        <p class="mb-0 fs-6 fw-normal text-dark">₩ <span id="roomPrice">선택하세요</span></p>
+					    </div>
+					
+					    <div class="d-flex mb-4">
+					        <label class="form-label col-3 mb-0 fs-6 fw-normal text-dark">추가 침대</label>
+					        <p class="mb-0 fs-6 fw-normal text-dark" id="bedOption">선택된 옵션이 없습니다</p>
+					    </div>
+					
+					    <div class="d-flex mb-4">
+					        <label class="form-label col-3 mb-0 fs-6 fw-normal text-dark">도착 시간</label>
+					        <p class="mb-0 fs-6 fw-normal text-dark" id="checkInOption">정규 시간</p>
+					    </div>
+					
+					    <div class="d-flex mb-4">
+					        <label class="form-label col-3 mb-0 fs-6 fw-normal text-dark">총 인원</label>
+					        <p class="mb-0 fs-6 fw-normal text-dark"><span id="totPerson">1</span>명</p>
+					    </div>
+					
+					    <div class="d-flex mb-2 pt-1">
+					        <label class="form-label col-3 mb-0 fs-6 fw-normal text-dark">총액</label>
+					        <p class="mb-0 fs-6 fw-normal text-dark">₩ <span id="totalAmount">0</span></p>
+					    </div>
+					</div>
+
 
                     <!-- JS에서 설정한 값을 서블릿에 넘기기 위한 hidden input들 -->
                     <input type="hidden" name="selectedBed" id="selectedBed" value=""/>
@@ -400,9 +421,6 @@
 	      }
 		});
 	});
-	/* 미나 영역 -end */
-
-
 	</script>
 	<script src="${pageContext.request.contextPath}/js/booking/book.js"></script>
 </body>
