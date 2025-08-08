@@ -227,7 +227,7 @@
 
                 if (startDate > endDate) {
                     e.preventDefault();
-                    showAlertModal("시작일은 종료일과 같거나 이전이어야 합니다.");
+                    showAlertModal("종료일은 시작일과 같거나 이후여야 합니다.");
                     return;
                 }
             }
@@ -245,6 +245,15 @@
             	showAlertModal("종료일을 선택해주세요.");
             	return;
          	}
+            
+            const startDate = new Date(start);
+            const endDate = new Date(end);
+
+            if (startDate > endDate) {
+                e.preventDefault();
+                showAlertModal("시작일은 종료일과 같거나 이전이어야 합니다.");
+                return;
+            }
         });
         
         document.querySelector("#clearBtn").addEventListener("click", (e)=>{

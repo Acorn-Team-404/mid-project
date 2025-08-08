@@ -109,7 +109,7 @@
             </div>
             <div class="form-section">
             	<p class="form-label mt-2">문의내용</p>
-            	<div class="form-control bg-light border-1 mt-2" style="height: auto; min-height: 150px;">
+            	<div class="form-control bg-light border-1 mt-2" style="height: auto; min-height: 10px;">
 				    <%=inqDto.getTitle() %>
 				</div>
 				<div class="form-control bg-light border-1 mt-2" style="height: auto; min-height: 150px;">

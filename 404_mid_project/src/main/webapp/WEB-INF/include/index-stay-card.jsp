@@ -23,8 +23,8 @@
         int    stars  = (int)Math.round(avg);             // 반올림해서 별개수
         String avgStr = String.format("%.1f", avg);       // 화면용 소수1자리
         String viewUrl = request.getContextPath()
-                + "/page/page-view.jsp?pageNum=" 
-                + dto.getLatestPageNum();
+                + "/page/page-view.jsp?stayNum=" 
+                + dto.getStayNum();
         // 이미지 파일명 가져오기
         String imageName = dto.getImageName();
         String imageUrl;

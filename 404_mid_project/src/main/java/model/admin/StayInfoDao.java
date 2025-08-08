@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.page.PageDto;
 import model.room.RoomDto;
 import model.util.DBConnector;
 
@@ -230,4 +231,42 @@ public class StayInfoDao {
 
         return pageNum;
     }
+    
+	// 글 하나의 정보 불러오기
+	public StayInfoDto getByNum(long stayNum) {
+		StayInfoDto dto=null;
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			// 실행할 sql 문
+			String sql = """
+				SELECT stay_num, stay_name, stay_loc, stay_content, stay_addr
+				FROM stay
+				WHERE stay_num=?
+			""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 값 바인딩
+			pstmt.setLong(1, stayNum);
+			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+			// 단일 : if  /  다중 : while
+			if (rs.next()) {
+				dto=new StayInfoDto();
+				dto.setStayNum(rs.getLong("stay_num"));
+				dto.setStayName(rs.getString("stay_name"));
+				dto.setStayLoc(rs.getString("stay_loc"));
+				dto.setStayContent(rs.getString("stay_content"));
+				dto.setStayAddr(rs.getString("stay_addr"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		} // 하단에 return 값 넣어주셔야함!
+		return dto;
+	}
 }
