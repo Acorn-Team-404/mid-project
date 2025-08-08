@@ -25,6 +25,46 @@ public class PostDao {
 		return dao;
 	}
 	
+	// 사용자 번호로 게시글 목록을 조회 하는 메소드
+	public List<PostDto> getPostUsersNum(Long usersNum){
+		// 필요한 객체를 담을 지역변수를 미리 만든다.
+		// ex) List<DTO> list=new ArrayList<>();
+		List<PostDto> list = new ArrayList<PostDto>();
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			// 실행할 sql 문
+			String sql = """
+					SELECT post_num, post_title, post_created_at,post_writer_num
+					FROM posts
+					WHERE post_writer_num = ?
+					ORDER BY post_created_at DESC
+					""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 값 바인딩
+			pstmt.setLong(1, usersNum);
+			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+			// 단일 : if  /  다중 : while
+			while (rs.next()) {
+			PostDto dto = new PostDto();
+			dto.setPostNum(rs.getInt("post_num"));
+			dto.setPostTitle(rs.getString("post_title"));
+			dto.setPostCreatedAt(rs.getString("post_created_at"));
+			dto.setPostWriterNum(rs.getLong("post_writer_num"));
+			list.add(dto);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		} // 하단에 return 값 넣어주셔야함!
+		return list;
+	}
+	
 	
 	// 게시글 리스트
 	public List<PostDto> selectAll(){
