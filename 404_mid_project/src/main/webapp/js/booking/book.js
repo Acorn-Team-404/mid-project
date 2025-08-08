@@ -27,6 +27,41 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     };
 	
+	let datePicker;
+	
+	// room 테이블에서 해당 객실을 예약한 날짜를 불러와서 블럭처리
+	function loadDisabledDates(bookRoomNum) {
+	    fetch(`${CONTEXT_PATH}/getDisabledDates?bookRoomNum=${bookRoomNum}`)
+	        .then(res => res.json())
+	        .then(disabledDates => {
+	            if (datePicker) {
+	                datePicker.destroy(); // 기존 datepicker 제거
+	            }
+	            datePicker = flatpickr("#dateRange", {
+	                mode: "range",
+	                minDate: "today",
+	                dateFormat: "Y-m-d",
+	                locale: flatpickr.l10ns.ko,
+	                disable: disabledDates, // 예약 불가 날짜
+	                onChange: function (selectedDates, dateStr) {
+	                    // 기존 onChange 로직 그대로
+	                }
+	            });
+	        })
+	        .catch(err => console.error(err));
+	}
+
+	// 객실 변경 시 불가 날짜 불러오기
+	document.querySelector("#bookRoomNum").addEventListener("change", (e) => {
+	    const bookRoomNum = e.target.value;
+	    if (bookRoomNum) {
+	        loadDisabledDates(bookRoomNum);
+	    }
+	});
+
+	
+	
+	
 	// 체크인 - 체크아웃 날짜
 	flatpickr("#dateRange", {
 	    mode: "range",
