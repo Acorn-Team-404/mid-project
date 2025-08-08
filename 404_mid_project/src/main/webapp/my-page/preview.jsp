@@ -82,14 +82,13 @@
                         		<!-- 만약 예약코드가 11이면  -->
                             <% if (statusCode == 11) {
                                 boolean hasReview = ReviewDao.getInstance().hasReview(bookNum);
-                                long pageNum = StayInfoDao.getInstance().getPageNumByStayNum(stayNum);
                                 // 앵커(#review-section)까지 포함한 전체 URL을 한번에 조립
                                 String reviewUrl = request.getContextPath()
                                                  + "/page/page-view.jsp"
-                                                 + "?pageNum=" + pageNum
+                                                 + "?stayNum=" + stayNum
                                                  + "#review-section";
                                 if (hasReview) { %> <%--예약 번호로 리뷰 쓴 기록이 있다면 리뷰를 썼으면 리뷰 보기로 나오고--%>
-                                    <a href="<%= request.getContextPath() %>/page/page-view.jsp?pageNum=<%=pageNum%>#review-section" class="btn btn-sm btn-light">리뷰 보기</a>
+                                    <a href="<%= request.getContextPath() %>/page/page-view.jsp?stayNum=<%=stayNum%>#review-section" class="btn btn-sm btn-light">리뷰 보기</a>
                             <%  } else { %><!-- 리뷰를 안 썼으면 리뷰 쓰기로 나오고 -->
                                     <a href="<%= request.getContextPath() %>/review/review-form.jsp?bookNum=<%= bookNum %>&stayNum=<%= stayNum %>" class="btn btn-sm btn-secondary">리뷰 쓰기</a>
                             <%  }
