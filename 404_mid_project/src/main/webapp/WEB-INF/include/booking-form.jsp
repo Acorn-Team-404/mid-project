@@ -194,8 +194,6 @@
 
 <script>
 	window.addEventListener("DOMContentLoaded", () => {
-	    alert("JS 로드됨");
-	
 	    const pax = {
 	        adult: parseInt(document.querySelector("#adult").value) || 0,
 	        children: parseInt(document.querySelector("#children").value) || 0,

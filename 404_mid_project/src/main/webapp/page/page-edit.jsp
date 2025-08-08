@@ -4,7 +4,7 @@
     pageEncoding="UTF-8"%>
 <%
     long pageNum = Long.parseLong(request.getParameter("page_num"));
-    PageDto dto = PageDao.getInstance().getByNum(pageNum);
+    PageDto dto = PageDao.getInstance().getBy(pageNum);
 %>
 <!DOCTYPE html>
 <html>

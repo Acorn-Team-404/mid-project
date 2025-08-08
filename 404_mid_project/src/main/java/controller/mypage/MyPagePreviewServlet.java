@@ -35,6 +35,6 @@ public class MyPagePreviewServlet  extends HttpServlet{
 		}
 		// jsp로 포워딩
 		req.setAttribute("booking", dto);
-		req.getRequestDispatcher("/my-page/preview-detail.jsp").forward(req, resp);
+		req.getRequestDispatcher("/booking/confirm").forward(req, resp);
 	}
 }

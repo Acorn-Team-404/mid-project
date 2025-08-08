@@ -6,7 +6,7 @@
 <%@ page import="model.image.ImageDao" %>
 
 <%
-  // 예시: 현재 숙소 번호를 파라미터로 받는다고 가정
+  // 현재 숙소 번호를 파라미터로 받는다고 가정
   int stayNum = Integer.parseInt(request.getParameter("stayNum"));
   List<RoomDto> roomList = RoomDao.getInstance().getRoomListByStayNum(stayNum);
   
@@ -35,43 +35,25 @@
 			        <p class="room-type"><%= room.getStayName() %> 숙소명</p>
 			        <input type="hidden" name="roomType" id="roomType" value="<%= room.getRoomType() %>">
 		    	</div> --%>
-            
-           <!-- ✅ 캐러셀 이미지 영역 -->
-           <div class="col-md-5">
-             <% if (imageList != null && !imageList.isEmpty()) { %>
-             <!-- ✅ (1) 캐러셀 컨테이너에 h-100 추가: 이미지 영역 전체 높이를 꽉 채움 -->
-             <div id="<%= carouselId %>" class="carousel slide h-100" data-bs-ride="carousel">
-         	    <!-- ✅ (2) 비율 유지 클래스 ratio-4x3 + 높이 유지 h-100 -->
-               <div class="carousel-inner h-100 ratio ratio-4x3 rounded overflow-hidden">
-                 <% for (int j = 0; j < imageList.size(); j++) { 
-               		  String savedName = imageList.get(j).getImageSavedName();
-                 %>
-                 <div class="carousel-item <%= (j == 0) ? "active" : "" %>">
-                 		<!-- ✅ (3) object-fit-cover: 비율 유지하며 꽉 채움, 이미지 찌그러짐 방지 -->
-      								<!-- ✅ h-100: 부모 비율에 맞춰 세로도 100% 채움 -->
-                    <img src="<%= request.getContextPath() %>/show.img?imageName=<%= savedName %>"
-								         class="d-block w-100 h-100 object-fit-cover"
-								         alt="객실 이미지 <%= j + 1 %>">
-                 </div>
-                 <% } %>
-               </div>
-               <% if (imageList.size() > 1) { %>
-               <button class="carousel-control-prev" type="button" data-bs-target="#<%= carouselId %>" data-bs-slide="prev">
-                 <span class="carousel-control-prev-icon"></span>
-               </button>
-               <button class="carousel-control-next" type="button" data-bs-target="#<%= carouselId %>" data-bs-slide="next">
-                 <span class="carousel-control-next-icon"></span>
-               </button>
-               <% } %>
-             </div>
-             <% } else { %>
-             	<!-- ✅ (4) 이미지가 없을 때도 동일한 비율 유지: ratio-4x3로 래핑 -->
-								<div class="ratio ratio-4x3">
-              	 <img src="<%= request.getContextPath() %>/images/no-image.png"
-               	     class="img-fluid h-100 w-100" alt="기본 이미지">
-            		</div>
-             <% } %>
-           </div>
+		    	
+		    	<!-- ✅ 첫 번째 이미지만 보여주는 영역 -->
+				<div class="col-md-5">
+				  	<% if (imageList != null && !imageList.isEmpty()) { %>
+				    <div class="rounded overflow-hidden w-100 h-100">
+				      <img src="<%= request.getContextPath() %>/show.img?imageName=<%= imageList.get(0).getImageSavedName() %>"
+				           class="w-100 h-100 object-fit-cover"
+				           alt="객실 이미지">
+				    </div>
+				  <% } else { %>
+				    <!-- 이미지가 없을 때도 동일한 비율 유지 -->
+				    <div class="rounded overflow-hidden w-100 h-100">
+				      <img src="<%= request.getContextPath() %>/images/no-image.png"
+				           class="w-100 h-100 object-fit-cover"
+				           alt="기본 이미지">
+				    </div>
+				  <% } %>
+				</div>
+
 
             <!-- ✅ 객실 정보 -->
             <div class="col-md-7 p-3 d-flex flex-column justify-content-between">
@@ -101,14 +83,46 @@
 			      </div>
 			      <div class="modal-body">
 			        <div class="row">
-			          <div class="col-md-6 ">
-			            <%-- 첫 번째 이미지 보여주기 --%>
-			            <% if (imageList != null && !imageList.isEmpty()) { %>
-			              <img src="<%= request.getContextPath() %>/show.img?imageName=<%= imageList.get(0).getImageSavedName() %>" class="img-fluid room-image rounded" alt="객실 이미지">
-			            <% } else { %>
-			              <img src="<%= request.getContextPath() %>/images/no-image.png" class="img-fluid room-image" alt="기본 이미지">
-			            <% } %>
-			          </div>
+			        
+			        
+					<!-- 모달창 안에 이미지 슬라이드 영역 -->
+					<div class="col-md-6">
+					  <% 
+					    String modalCarouselId = "modal-carousel-room-" + room.getRoomNum();
+					    if (imageList != null && !imageList.isEmpty()) { 
+					  %>
+					    <!-- 캐러셀 컨테이너 -->
+					    <div id="<%= modalCarouselId %>" class="carousel slide" data-bs-ride="carousel">
+					      <div class="carousel-inner rounded" style="height: 240px;">
+					        <% for (int j = 0; j < imageList.size(); j++) {
+					              String savedName = imageList.get(j).getImageSavedName();
+					        %>
+					          <div class="carousel-item <%= (j == 0) ? "active" : "" %>">
+					            <img src="<%= request.getContextPath() %>/show.img?imageName=<%= savedName %>"
+					                 class="d-block w-100 h-100 object-fit-cover"
+					                 alt="객실 이미지 <%= j + 1 %>">
+					          </div>
+					        <% } %>
+					      </div>
+					      <% if (imageList.size() > 1) { %>
+					        <button class="carousel-control-prev" type="button" data-bs-target="#<%= modalCarouselId %>" data-bs-slide="prev">
+					          <span class="carousel-control-prev-icon"></span>
+					        </button>
+					        <button class="carousel-control-next" type="button" data-bs-target="#<%= modalCarouselId %>" data-bs-slide="next">
+					          <span class="carousel-control-next-icon"></span>
+					        </button>
+					      <% } %>
+					    </div>
+					  <% } else { %>
+					    <!-- 이미지가 없을 경우 기본 이미지 -->
+					    <div class="ratio ratio-4x3 rounded overflow-hidden">
+					      <img src="<%= request.getContextPath() %>/images/no-image.png"
+					           class="img-fluid h-100 w-100 object-fit-cover"
+					           alt="기본 이미지">
+					    </div>
+					  <% } %>
+					</div>
+			          
 			          <div class="col-md-6">
 			            <p><strong>숙소명:</strong> <%= room.getRoomStayName() %></p>
 			            <p><strong>타입:</strong> <%= room.getRoomType() %></p>
@@ -135,7 +149,27 @@
 /*     function selectRoom(roomNum, roomName, roomPrice) {
       alert("선택된 객실: " + roomName + " (가격: ₩" + roomPrice + ")");
       // 예약 폼 등으로 이동하거나, roomNum을 hidden 필드에 설정하는 식으로 처리
-    } */
+    } 
+*/
+		//모달이 닫힐 때 내부 스크린리더에서 내용 읽히는 것을 hidden 처리하기 위해
+		const modals = document.querySelectorAll('.modal');
+		modals.forEach(modal => {
+			// 닫히기 직전에 포커스를 다른 곳으로 옮긴다.
+			modal.addEventListener('hide.bs.modal', () => {
+				//  모달 내부에 포커스가 있으면, body 또는 지정한 요소로 포커스를 이동
+				if (modal.contains(document.activeElement)) {
+					document.body.focus(); // 또는 원하는 버튼, div 등
+				}
+	        });
+			// 완전히 닫힌 후 처리 (보조)
+			modal.addEventListener('hidden.bs.modal', () => {
+				// 혹시라도 포커스가 남아있다면 한 번 더 옮기기
+			    if (modal.contains(document.activeElement)) {
+			       document.body.focus();
+			       }
+				});
+			});
+		
   </script>
 </body>
 </html>

@@ -12,7 +12,7 @@
     String pageRefund = request.getParameter("pageRefund");
 	
 	// 글 작성자와 로그인된 usersId 이 동일한지 비교해서 동일하지 않으면 에러를 응답한다
-	String writer=PageDao.getInstance().getByNum(pageNum).getUsersId(); // 삭제할 글 작성자 ★★★ 중복값 불가능한 거 id인지 name인지 학인해야 함 ★★★
+	String writer=PageDao.getInstance().getBy(pageNum).getUsersId(); // 삭제할 글 작성자 ★★★ 중복값 불가능한 거 id인지 name인지 학인해야 함 ★★★
 	String usersId=(String)session.getAttribute("usersId");
 		
 	// 만일 글 작성자와 로그인된 usersId 하고 같지 않다면

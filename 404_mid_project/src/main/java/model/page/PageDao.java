@@ -142,7 +142,7 @@ public class PageDao {
 				FROM
 					(SELECT result1.*, ROWNUM AS rnum
 					FROM
-						(SELECT p.page_num, p.page_stay_num, s.stay_name, page_content, page_reserve, page_guide, page_refund, p.page_created_at
+						(SELECT p.page_num, p.page_stay_num, p.page_users_num, s.stay_name, s.stay_loc, p.page_content, p.page_reserve, p.page_guide, p.page_refund, p.page_created_at
 						FROM page p
 						JOIN stay s ON p.page_stay_num = s.stay_num
 						JOIN users u ON p.page_users_num = u.users_num
@@ -162,9 +162,10 @@ public class PageDao {
 				PageDto dto2=new PageDto();
 				// ResultSet 으로부터 얻어낸 회원 번호를 PageDto 객체의 setter 메소드를 이용해서 dto 에 저장
 				dto2.setPageNum(rs.getLong("page_num"));
-				dto2.setStayNum(rs.getLong("stay_num"));
-				dto2.setUsersNum(rs.getLong("users_num"));
+				dto2.setStayNum(rs.getLong("page_stay_num"));
+				dto2.setUsersNum(rs.getLong("page_users_num"));
 				dto2.setStayName(rs.getString("stay_name"));
+				dto2.setStayLoc(rs.getString("stay_loc"));
 				dto2.setPageContent(rs.getString("page_content"));
 				dto2.setPageReserve(rs.getString("page_reserve"));
 				dto2.setPageGuide(rs.getString("page_guide"));
@@ -334,7 +335,7 @@ public class PageDao {
 	}
 	
 	// 글 하나의 정보 불러오기
-	public PageDto getByNum(long num) {
+	public PageDto getBy(long pageNum) {
 		PageDto dto=null;
 		
 		Connection conn = null;
@@ -344,24 +345,27 @@ public class PageDao {
 			conn = DBConnector.getConn();
 			// 실행할 sql 문
 			String sql = """
-				SELECT p.page_num, p.page_stay_num, s.stay_name, p.page_users_num, u.users_id, p.page_content, p.page_reserve, p.page_guide, p.page_refund
+				SELECT p.page_num, p.page_stay_num, s.stay_name, s.stay_loc, p.page_users_num, u.users_id, p.page_content, p.page_reserve, p.page_guide, p.page_refund
 				FROM page p
-				INNER JOIN users u ON p.page_users_num = u.users_num
-				INNER JOIN stay s ON p.page_stay_num = s.stay_num
+				LEFT JOIN users u ON p.page_users_num = u.users_num
+				LEFT JOIN stay s ON p.page_stay_num = s.stay_num
 				WHERE p.page_num = ?
 			""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 값 바인딩
-			pstmt.setLong(1, num);
+			pstmt.setLong(1, pageNum);
 			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
 			rs = pstmt.executeQuery();
 			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
 			// 단일 : if  /  다중 : while
 			if (rs.next()) {
 				dto=new PageDto();
-				dto.setPageNum(num);
-				dto.setStayNum(rs.getLong("stay_num"));
-				dto.setUsersNum(rs.getLong("users_num"));;
+				dto.setPageNum(pageNum);
+				dto.setStayNum(rs.getLong("page_stay_num"));
+				dto.setStayName(rs.getString("stay_name"));
+				dto.setStayLoc(rs.getString("stay_loc"));
+				dto.setUsersNum(rs.getLong("page_users_num"));;
+				dto.setUsersId(rs.getString("users_id"));
 				dto.setPageContent(rs.getString("page_content"));
 				dto.setPageReserve(rs.getString("page_reserve"));
 				dto.setPageGuide(rs.getString("page_guide"));
@@ -402,6 +406,11 @@ public class PageDao {
 			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
 			rowCount = pstmt.executeUpdate();
 		} catch (Exception e) {
+			System.err.println("[PageDao.insert()] 데이터 저장 중 예외 발생!");
+		    System.err.println("PageNum: " + dto.getPageNum());
+		    System.err.println("StayNum: " + dto.getStayNum());
+		    System.err.println("UsersNum: " + dto.getUsersNum());
+		    System.err.println("Content: " + dto.getPageContent());
 			e.printStackTrace();
 		} finally {
 			DBConnector.close(pstmt, conn);

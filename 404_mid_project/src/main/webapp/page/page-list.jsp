@@ -9,7 +9,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
-	//검색 keyword 가 있는지 읽어와 본다
+	// 검색 keyword 가 있는지 읽어와 본다
 	String keyword=request.getParameter("keyword");
 	// System.out.println(keyword); // null or "" 또는 "검색어..." 
 	if(keyword==null){
@@ -25,12 +25,12 @@
 		// 해당 페이지 번호를 숫자로 변경해서 사용한다 
 		pageNum=Integer.parseInt(strPageNum);
 	}
-
+	
 	// 한 페이지에 몇 개씩 표시할 것인지
 	final int PAGE_ROW_COUNT=3;
 	// 하단 페이지를 몇 개씩 표시할 것인지
 	final int PAGE_DISPLAY_COUNT=5;
-
+	
 	// 보여줄 페이지 시작 ROWNUM
 	int startRowNum=1+(pageNum-1)*PAGE_ROW_COUNT; // 공차수열
 	// 보여줄 페이지의 끝 ROWNUM
@@ -58,8 +58,13 @@
 		endPageNum=totalPageCount; // 보정해 준다
 	}
 	
+	String usersId = (String)session.getAttribute("usersId");
+	String stayName = (String)session.getAttribute("stayName");
+	
 	// dto 에 select 할 row 의 정보를 담고
 	PageDto dto=new PageDto();
+	dto.setPageNum(pageNum);
+	dto.setStayName(stayName);
 	dto.setStartRowNum(startRowNum);
 	dto.setEndRowNum(endRowNum);
 	
@@ -83,6 +88,7 @@
 <jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
 </head>
 <body>
+	<jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
 	<div class="container py-4">
 		<h2>숙소 페이지 목록</h2>
 	
@@ -94,39 +100,43 @@
 					<i class="bi bi-search"></i>
 				</button>
 			</div>
-		</form>
+		</form><br>
+		
+		<a class="btn btn-outline-primary btn-sm" href="${pageContext.request.contextPath}/page/page-new-form.jsp" >
+			<i class="bi bi-plus-lg"></i> 상세페이지 등록
+		</a>
 	
 		<!--  글 목록 -->
-		<div class="row row-cols-1 row-cols-md-3 g-4">
+		<div class="row row-cols-1 row-cols-md-3">
 			<% for(PageDto tmp : list){ 
 				long stayNum = tmp.getStayNum();
 			    double avgStar = StayDao.getInstance().getAverageStar(stayNum);
 				int reviewCount = StayDao.getInstance().getReviewCount(stayNum);
 			%>
-			<div class="col">
-				<div class="card h-100">
+			<div class="card-container">
+				<div class="card h-100" style="width: 25rem;">
 					<!-- 썸네일 이미지가 있는 경우 / list의 0번째 사진 = 썸네일? -->
-					<img src="<%=request.getContextPath()%>/images/#" class="card-img-top" alt="<%=tmp.getStayName()%>">
+					<img src="${pageContext.request.contextPath}/page/images/stay01.png" class="card-img-top" alt="<%=tmp.getStayName()%>">
 					
 					<div class="card-body">
-						<h5 class="card-title"><%=tmp.getStayName() %></h5>
+						<h5 class="card-title"><%=tmp.getStayName() %></h5><br>
 						<p class="card-text">
-							<%=tmp.getUsersName() %><br>
-							
-							<%=String.format("%.1f", avgStar) %> (<%=reviewCount %>)
+							<%=tmp.getStayLoc() %><br>
+							<%=String.format("%.1f", avgStar) %> (<%=reviewCount %>)<br>
 						</p>
-						<a href="page-detail.jsp?num=<%=tmp.getPageNum()%>" class="btn btn-sm btn-primary">상세 보기</a>
+						<a href="${pageContext.request.contextPath}/page/page-view.jsp?pageNum=<%=tmp.getPageNum()%>" class="btn btn-sm btn-primary">상세 보기</a>
 					</div>
 				</div>
 			</div>
-			<% } %>
+			<%} %>
+		</div>
 			
 			<% if(list.size() == 0){ %>
 			<div class="col">
 				<div class="alert alert-warning text-center w-100">등록된 페이지가 없습니다.</div>
 			</div>
-			<% } %>
-		</div>
+			<%} %>
+	</div>
 		
 		<!--  페이징 UI -->
 		<ul class="pagination">

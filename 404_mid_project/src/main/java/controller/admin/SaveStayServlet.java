@@ -85,10 +85,6 @@ public class SaveStayServlet extends HttpServlet {
 
 
     // 5) 완료 후 목록 페이지 이동
-    resp.setContentType("text/html; charset=UTF-8");
-    resp.getWriter().println(
-      "<script>alert('숙소 및 이미지 저장 완료');"
-    + "location.href='${pageContext.request.contextPath}/test/stay-list.jsp';</script>"
-    );
+    resp.sendRedirect(req.getContextPath() + "/test/stay-list.jsp");
   }
 }

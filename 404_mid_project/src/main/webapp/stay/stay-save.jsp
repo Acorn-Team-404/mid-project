@@ -28,7 +28,7 @@
 	// DB 에 저장하기
 	StayDto dto = new StayDto();
 	dto.setStayNum(stayNum);
-    dto.setUsersNum(usersNum);
+	dto.setStayUsersNum(usersNum);
 	dto.setStayName(stayName);
 	dto.setStayAddr(stayAddr);
 	dto.setStayLoc(stayLoc);
@@ -49,8 +49,8 @@
 <body>
 	<%if(isSuccess){ %>
 		<script>
-			alert("숙소 저장 완료 객실 등록 페이지로 이동");
-			location.href = "/room/.jsp?stayNum=<%=stayNum %>";
+			alert("숙소 저장 완료");
+			location.href = "${pageContext.request.contextPath}/stay/stay-list.jsp";
 		</script>
 	<%}else { %>
 		<script>

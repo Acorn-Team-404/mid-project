@@ -9,6 +9,8 @@ public class ScopeDto {
 	private String scopeCreatedAt;
 	private String scopeDelete;
 	
+	private String usersId;
+	
 	// setter, getter
 	public long getScopeNum() {
 		return scopeNum;
@@ -51,5 +53,11 @@ public class ScopeDto {
 	}
 	public void setScopeDelete(String scopeDelete) {
 		this.scopeDelete = scopeDelete;
+	}
+	public String getUsersId() {
+		return usersId;
+	}
+	public void setUsersId(String usersId) {
+		this.usersId = usersId;
 	}
 }
