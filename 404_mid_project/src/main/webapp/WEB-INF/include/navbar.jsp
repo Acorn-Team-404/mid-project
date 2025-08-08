@@ -47,7 +47,7 @@
 	      	<a class="nav-link text-nowrap fw-normal text-semiblack" href="${pageContext.request.contextPath}/dbtest">DBTest</a>
 	      </li>
 	      <li class="nav-item mx-2">
-	      	<a class="nav-link text-nowrap fw-normal text-semiblack" href="${pageContext.request.contextPath}/test/link.jsp">LINK</a>
+	      	<a class="nav-link text-nowrap fw-normal text-semiblack" href="${pageContext.request.contextPath}/test/stay-list.jsp">ADMIN</a>
 	      </li>
 	      <li class="nav-item">
 	        <div class="vr"></div> <!-- 세로 구분선 -->

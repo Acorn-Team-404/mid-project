@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.page.PageDto;
 import model.room.RoomDto;
 import model.util.DBConnector;
 
@@ -130,6 +129,7 @@ public class StayInfoDao {
             String sql = """
                 SELECT stay_num, stay_name
                 FROM stay
+                WHERE stay_delete = 'N' 
                 ORDER BY stay_num DESC
             """;
             pstmt = conn.prepareStatement(sql);
@@ -242,5 +242,38 @@ public class StayInfoDao {
 			DBConnector.close(rs, pstmt, conn);
 		} // 하단에 return 값 넣어주셔야함!
 		return dto;
+	}
+	
+	public boolean deleteStay(long stayNum) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		String delete = "D";
+		// 변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
+		int rowCount = 0;
+		try {
+			conn = DBConnector.getConn();
+			String sql = """
+					UPDATE stay
+					SET stay_delete = ?
+					WHERE stay_num = ?
+					""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 순서대로 필요한 값 바인딩
+			pstmt.setString(1, delete);
+			pstmt.setLong(2, stayNum);
+			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
+			rowCount = pstmt.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(pstmt, conn);
+		}
+		// 작업의 성공 여부 (변화된 row 의 갯수로 판단)
+		if (rowCount > 0) {
+			return true; // 작업 성공
+		} else {
+			return false; // 작업 실패
+		}
 	}
 }

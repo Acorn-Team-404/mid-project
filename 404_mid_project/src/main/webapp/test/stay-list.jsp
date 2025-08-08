@@ -26,6 +26,7 @@
         <th>숙소 번호</th>
         <th>숙소 이름</th>
         <th>예약하기</th>
+        <th>삭제하기</th>        
       </tr>
     </thead>
     <tbody>
@@ -44,6 +45,14 @@
             <button type="submit" class="btn btn-sm btn-primary">예약</button>
           </form>
         </td>
+				<td>
+				    <form action="<%=request.getContextPath()%>/test/stay-delete.jsp"
+				          method="post" style="margin:0;"
+				          onsubmit="return confirm('숙소를 삭제하시겠습니까?');">
+				        <input type="hidden" name="stayNum" value="<%= s.getStayNum() %>">
+				        <button type="submit" class="btn btn-sm btn-danger">삭제</button>
+				    </form>
+				</td>
       </tr>
     <%
         }
