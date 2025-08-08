@@ -46,8 +46,27 @@
 .hover-card:hover .hover-title {
   opacity: 1;
 }
-    
 
+/* 처음엔 숨김 */
+.overlay-text{
+  opacity: 0;
+  transition: opacity .25s ease, transform .25s ease;
+  transform: translate(-50%, -52%); /* 살짝 위로 */
+  z-index: 2; /* 이미지 위로 */
+}
+
+/* 부모 .group 위에 마우스 올리면 나타남 */
+.group:hover .overlay-text{
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+
+.group:hover img{
+  filter: brightness(0.7);
+}
+
+/* 선택: 박스가 클릭 막지 않게 하려면 */
+.overlay-text a { pointer-events: auto; }
 .post-content img {
   max-width: 100%;   /* 부모 너비를 넘지 않음 */
   height: auto;      /* 비율 유지 */

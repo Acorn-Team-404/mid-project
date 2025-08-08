@@ -10,10 +10,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
-    // PostDto dto = (PostDto) request.getAttribute("dto");
     
-    
-  	
   	int num= Integer.parseInt(request.getParameter("num"));
   	
   	PostDto dto=PostDao.getInstance().getByPostNum(num);
@@ -26,10 +23,8 @@
   	
   	boolean isLogin = usersNum != null;
   	
-  	
   	//댓글 목록
   	List<CommentDto> commentList = CommentDao.getInstance().selectAll(num);
-  	
   	
   	List<ImageDto> carouselImages = ImageDao.getInstance().getListByTarget("post", num); // post 영역
     int size = carouselImages.size();
@@ -106,60 +101,59 @@
 		<div> <!-- 제목 -->
 			<h1 class="text-center my-5"><%=dto.getPostTitle() %></h1>
 		</div>
-		
-		
-		
+
 		<!-- 본문 -->
 		<div class="container col-10 card-body post-content">
 			<%= dto.getPostContent() == null ? "내용없음" : dto.getPostContent().replaceAll("\n", "<br>") %>
 		</div>
 
-			<!-- 게시글 정보 -->		
-			<div class="container col-10 mt-5"> 
+		<!-- 게시글 정보 -->		
+		<div class="container col-10 mt-5"> 
 
-				<div class="row border-bottom py-2">
-				  <div class="col-6 fw-semibold">글 번호</div>
-				  <div class="col-6 text-end"><%= dto.getPostNum() %></div>
-				</div>
-				
-				<div class="row border-bottom py-2">
-				  <div class="col-6 fw-semibold">작성자</div>
-				  <div class="col-6 text-end"><%= dto.getPostWriterId() %></div>
-				</div>
-				
-				<div class="row border-bottom py-2">
-				  <div class="col-6 fw-semibold">숙소 번호</div>
-				  <div class="col-6 text-end"><%= dto.getPostStayNum() %></div>
-				</div>
-				
-				<div class="row border-bottom py-2">
-				  <div class="col-6 fw-semibold">조회수</div>
-				  <div class="col-6 text-end"><%= dto.getPostViews() %></div>
-				</div>
-				
-				<div class="row border-bottom py-2">
-				  <div class="col-6 fw-semibold">작성일</div>
-				  <div class="col-6 text-end"><%= dto.getPostCreatedAt() %></div>
-				</div>
-				
-				<!-- 숨기고 싶은 값 -->
-				<div class="d-none">
-				  <%= dto.getPostType() %>
-				</div>
-				
-			</div> <!-- 게시글 정보 -->	
-			
-			<div class="d-flex col-10 justify-content-end mx-auto my-4"> <!-- 수정/삭제 버튼 -->
-				<%if(dto.getPostWriterNum().equals(usersNum)){ %>
-					<div class="text-end pt-2">
-						<a class="btn btn-sm btn-outline-secondary" href="update.post?num=<%=dto.getPostNum()%>">Edit</a>
-						<a class="btn btn-sm btn-outline-secondary" href="delete.post?num=<%=dto.getPostNum()%>">Delete</a>
-					</div>
-				<%} %>
+			<div class="row border-bottom py-2">
+			  <div class="col-6 fw-semibold">글 번호</div>
+			  <div class="col-6 text-end"><%= dto.getPostNum() %></div>
 			</div>
+			
+			<div class="row border-bottom py-2">
+			  <div class="col-6 fw-semibold">작성자</div>
+			  <div class="col-6 text-end"><%= dto.getPostWriterId() %></div>
+			</div>
+			
+			<div class="row border-bottom py-2">
+			  <div class="col-6 fw-semibold">숙소 번호</div>
+			  <div class="col-6 text-end"><%= dto.getPostStayNum() %></div>
+			</div>
+			
+			<div class="row border-bottom py-2">
+			  <div class="col-6 fw-semibold">조회수</div>
+			  <div class="col-6 text-end"><%= dto.getPostViews() %></div>
+			</div>
+			
+			<div class="row border-bottom py-2">
+			  <div class="col-6 fw-semibold">작성일</div>
+			  <div class="col-6 text-end"><%= dto.getPostCreatedAt() %></div>
+			</div>
+			
+			<!-- 숨기고 싶은 값 -->
+			<div class="d-none">
+			  <%= dto.getPostType() %>
+			</div>
+			
+		</div> <!-- 게시글 정보 -->	
+		
+		<div class="d-flex col-10 justify-content-end mx-auto my-4"> <!-- 수정/삭제 버튼 -->
+			<%if(dto.getPostWriterNum().equals(usersNum)){ %>
+				<div class="text-end pt-2">
+					<a class="btn btn-sm btn-outline-secondary" href="update.post?num=<%=dto.getPostNum()%>">Edit</a>
+					<a class="btn btn-sm btn-outline-secondary" href="delete.post?num=<%=dto.getPostNum()%>">Delete</a>
+				</div>
+			<%} %>
+		</div>
 		
 		
 		<!-- 댓글 -->
+		
 		<div class="card col-10 mx-auto my-4">
 		  <div class="card-header bg-secondary text-white">
 		    댓글을 입력해 주세요
@@ -176,7 +170,7 @@
 		        <textarea id="commentContent" name="content" rows="5" class="form-control" placeholder="댓글을 입력하세요"></textarea>
 		      </div>
 		
-		      <button type="submit" class="btn btn-sm btn-outline-secondary">등록</button>
+		      <button type="submit" class="btn btn-sm btn-outline-secondary float-end">등록</button>
 		    </form>
 		  </div>
 		</div>
@@ -190,11 +184,11 @@
 						<div class="card-body">삭제된 댓글입니다.</div>
 					<%}else{ %>
 						<div class="card-body d-flex flex-column flex-sm-row position-relative">
-							<%-- <%if(tmp.getReplyCount() != 0 && tmp.getCommentNum() == tmp.getCommentGroupNum()){ %>
+							<%--<%if(tmp.getCommentReplyCount() != 0 && tmp.getCommentNum() == tmp.getCommentGroupNum()){ %>
 			            		<button class="dropdown-btn btn btn-outline-secondary btn-sm position-absolute"
 			            			style="bottom:16px; right:16px;">
 			            			<i class="bi bi-caret-down"></i>
-			            			답글 <%=tmp.getReplyCount() %> 개
+			            			답글 <%=tmp.getCommentReplyCount() %> 개
 			            		</button>
 		            		<%} %> --%>
 		            		
@@ -241,7 +235,7 @@
 	                    			</div>	
 		                    	
 		                    	<%}else{ %>
-			                    	<button class="btn btn-sm btn-outline-secondary show-reply-btn">댓글</button>  
+			                    	<button class="btn btn-sm btn-outline-secondary show-reply-btn float-end">댓글</button>  
 		                   			<!-- 댓글 입력 폼 (처음에는 숨김) -->
 		                   			<div class="d-none form-div">
 		                       			<form action="save-comment.jsp" method="post">
@@ -265,41 +259,40 @@
 	</div> <!-- container -->
 	<script>
 		//로그인 여부
-		boolean isLogin = usersNum != null;;
+		const isLogin = <%=isLogin %>;
 		
 		//대댓글 보기 버튼 눌렀을 때 실행할 함수 등록
     	document.querySelectorAll(".dropdown-btn").forEach(item => {
-		item.addEventListener("click", (e) => {
-			if(isLogin){
-				//click 이벤트 발생한 그 버튼의 자손요소 중에서 caret up 또는 down 요소 찾기
-				const caret = item.querySelector(".bi-caret-up, .bi-caret-down");
-	     		//caret 모양을 위아래로 토글시키기
-				
-				caret.classList.toggle("bi-caret-down");
-				caret.classList.toggle("bi-caret-up");
-				
-				// 1. 버튼의 두 단계 부모 요소로 이동
-				const grandParent = item.parentElement.parentElement;
-				// 2. 두단계 부모요소의 바로 다음 형제 요소의 참조값 얻어내기
-				let next = grandParent.nextElementSibling;
-				// 3. 반복문->
-				while (next) {
-					//re-re 존재하면
-					if(next.classList.contains("re-re")){
-						//d-block 클래스를 토글
-						next.classList.toggle("d-block");
-					}else{
-						//re-re 존재하지 않으면 반복문 탈출
-						break;
+			item.addEventListener("click", (e) => {
+				if(isLogin){
+					//click 이벤트 발생한 그 버튼의 자손요소 중에서 caret up 또는 down 요소 찾기
+					const caret = item.querySelector(".bi-caret-up, .bi-caret-down");
+		     		//caret 모양을 위아래로 토글시키기
+					
+					caret.classList.toggle("bi-caret-down");
+					caret.classList.toggle("bi-caret-up");
+					
+					// 1. 버튼의 두 단계 부모 요소로 이동
+					const grandParent = item.parentElement.parentElement;
+					// 2. 두단계 부모요소의 바로 다음 형제 요소의 참조값 얻어내기
+					let next = grandParent.nextElementSibling;
+					// 3. 반복문->
+					while (next) {
+						//re-re 존재하면
+						if(next.classList.contains("re-re")){
+							//d-block 클래스를 토글
+							next.classList.toggle("d-block");
+						}else{
+							//re-re 존재하지 않으면 반복문 탈출
+							break;
+						}
+						
+						//그 다음 형제 참조값 얻어내기
+						next = next.nextElementSibling;
+						
 					}
-					
-					//그 다음 형제 참조값 얻어내기
-					next = next.nextElementSibling;
-					
 				}
-				});
-			}
-     		
+			});
 		});
 		
 		//삭제 버튼을 눌렀을 때
@@ -338,13 +331,13 @@
 		document.querySelector("#commentContent").addEventListener("input", ()=>{
 			//원글의 댓글 입력란에 포커스 왔을 때 -- 로그인 x라면
 			if(!isLogin){
+				
+			
 				const isMove=confirm("댓글 작성을 위해 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?");
 				location.href=
-					"${pageContext.request.contextPath }/user/login.jsp?url=${pageContext.request.contextPath }/post/view.jsp?num=<%=num %>";
-			}else{
-				<div class="alert alert-warning">댓글 작성을 위해 로그인해주세요.</div>
+					"${pageContext.request.contextPath }/user/login-form.jsp?url=${pageContext.request.contextPath }/post/view.jsp?num=<%=num %>";
 			}
-		})
+		});
 		
         //모든 댓글 버튼에 이벤트 등록
         document.querySelectorAll(".show-reply-btn").forEach(item=>{
@@ -352,9 +345,10 @@
             item.addEventListener("click", ()=>{
             	//로그인 안했다면
             	if(!isLogin){
-    				alert("댓글 작성을 위해 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?");
+					
+            		const isMove=confirm("댓글 작성을 위해 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?");
     				location.href=
-    					"${pageContext.request.contextPath }/user/login.jsp?url=${pageContext.request.contextPath }/post/view.jsp?num=<%=num %>";
+    					"${pageContext.request.contextPath }/user/login-form.jsp?url=${pageContext.request.contextPath }/post/view.jsp?num=<%=num %>";
     				return;
             	}
                 //클릭한 버튼의 다음 형제요소의 class 목록에서 d-none 을 제거 

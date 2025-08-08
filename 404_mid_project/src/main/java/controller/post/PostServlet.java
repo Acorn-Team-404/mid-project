@@ -10,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.image.ImageDao;
 import model.post.CommentDao;
 import model.post.CommentDto;
 import model.post.PostDao;
@@ -110,7 +111,9 @@ public class PostServlet extends HttpServlet {
 				req.setAttribute("error", "게시글 저장 실패!");
 				req.getRequestDispatcher("/post/form.jsp").forward(req, res);
 			}
-
+			
+			
+			
 		// 5. 게시글 업데이트
 		} else if (path.equals("/update.post")) {
 			int num = Integer.parseInt(req.getParameter("num"));
