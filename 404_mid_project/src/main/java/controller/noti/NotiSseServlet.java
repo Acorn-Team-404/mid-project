@@ -97,7 +97,7 @@ public class NotiSseServlet extends HttpServlet {
                     PrintWriter out = resp.getWriter(); // 텍스트 데이터 전송을 위한 출력 스트림
 
                     if (!retrySent) {
-                        out.write("retry: 60000\n"); //재연결 간격을 60초로 설정
+                        out.write("retry: 20000\n"); //재연결 간격을 20초로 설정
                         out.flush();
                         retrySent = true;
                     }
@@ -186,6 +186,6 @@ public class NotiSseServlet extends HttpServlet {
                     }
                 }
             }
-        }, 0, 60000); // 처음 실행은 즉시, 이후에는 60초마다 run() 메서드 실행
+        }, 0, 20000); // 처음 실행은 즉시, 이후에는 20초마다 run() 메서드 실행
     }
 }
