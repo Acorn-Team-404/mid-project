@@ -23,7 +23,7 @@ public class DisabledDatesServlet extends HttpServlet{
 		
 		//json-simple 라이브러리로 json array로 받음
 		JSONArray jsonArray = new JSONArray();
-		jsonArray.add(disabledDates);
+		jsonArray.addAll(disabledDates);
 		
 		// 클라우언트에서 /getDisabled 호출하면 ["2000-00-00","2001-00-00"] 형태로 받게 된다.
 		try (PrintWriter out = res.getWriter()){

@@ -127,86 +127,72 @@
 						          </div>
 						        </div>
 						        
-<!-- 객실 상세정보 보기 영역 (모달처럼 펼치기) -->
-<div class="modal fade" id="roomModal<%= room.getRoomNum() %>"
-     tabindex="-1"
-     aria-labelledby="roomModalLabel<%= room.getRoomNum() %>"
-     aria-hidden="true">
-  <!-- 모달 가로폭을 넓힌다 -->
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="roomModalLabel<%= room.getRoomNum() %>">
-          <%= room.getRoomName() %> - 객실 상세정보
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
-      </div>
-
-      <!-- 모달 바디 높이를 제한한다 -->
-      <div class="modal-body p-3">
-        <div class="row g-3 align-items-stretch">
-          <!-- 왼쪽: 캐러셀 영역 -->
-          <div class="col-md-6">
-            <%
-              String modalCarouselId = "modal-carousel-room-" + room.getRoomNum();
-              if (imageList != null && !imageList.isEmpty()) {
-            %>
-              <div id="<%= modalCarouselId %>" class="carousel slide h-100">
-                <!-- 비율 유틸(ratio)을 제거하고 고정 높이를 준다 -->
-                <div class="carousel-inner rounded overflow-hidden" style="height:40vh;"><%-- 캐러셀 높이를 고정한다. --%>
-                  <% for (int j = 0; j < imageList.size(); j++) {
-                       String savedName = imageList.get(j).getImageSavedName();
-                  %>
-                    <div class="carousel-item <%= (j == 0) ? "active" : "" %> h-100">
-                      <img src="<%= request.getContextPath() %>/show.img?imageName=<%= savedName %>"
-                           class="d-block w-100 h-100"
-                           style="object-fit:cover; object-position:center;" <%-- 중앙 기준으로 위아래를 크롭한다. --%>
-                           alt="객실 이미지 <%= j + 1 %>">
-                    </div>
-                  <% } %>
-                </div>
-
-                <% if (imageList.size() > 1) { %>
-                  <button class="carousel-control-prev" type="button"
-                          data-bs-target="#<%= modalCarouselId %>" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                  </button>
-                  <button class="carousel-control-next" type="button"
-                          data-bs-target="#<%= modalCarouselId %>" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                  </button>
-                <% } %>
-              </div>
-            <% } else { %>
-              <!-- 이미지가 없을 경우 기본 이미지 -->
-              <div class="rounded overflow-hidden" style="height:40vh;">
-                <img src="<%= request.getContextPath() %>/images/no-image.png"
-                     class="w-100 h-100"
-                     style="object-fit:cover; object-position:center;" <%-- 기본 이미지도 동일하게 크롭한다. --%>
-                     alt="기본 이미지">
-              </div>
-            <% } %>
-          </div>
-
-          <!-- 오른쪽: 텍스트 영역 (스크롤) -->
-          <div class="col-md-6">
-            <div class="h-100" style="max-height:40vh; overflow:auto;"><%-- 텍스트가 길면 스크롤한다. --%>
-              <p><strong>숙소명:</strong> <%= room.getRoomStayName() %></p>
-              <p><strong>타입:</strong> <%= room.getRoomType() %></p>
-              <p><strong>최대 인원:</strong> <%= room.getRoomPaxMax() %>명</p>
-              <p><strong>가격:</strong> ₩<%= room.getRoomPrice() %></p>
-              <hr/>
-              <p><strong>객실 상세 설명:</strong><br/><%= room.getRoomContent().replaceAll("\n", "<br/>") %></p>
-              <p><strong>편의 시설:</strong><br/><%= room.getRoomStayFacilities() %></p>
-            </div>
-          </div>
-        </div>
-      </div> <!-- /modal-body -->
-    </div>
-  </div>
-</div> <!-- (modal)객실 상세정보 보기 ends -->
+										<!-- 객실 상세정보 보기 영역 (모달처럼 펼치기) -->
+										<div class="modal fade" id="roomModal<%= room.getRoomNum() %>" tabindex="-1" aria-labelledby="roomModalLabel<%= room.getRoomNum() %>" aria-hidden="true">
+											<div class="modal-dialog modal-lg modal-dialog-centered">
+											  <div class="modal-content">
+											    <div class="modal-header">
+											      <h5 class="modal-title" id="roomModalLabel<%= room.getRoomNum() %>"><%= room.getRoomName() %> - 객실 상세정보</h5>
+													  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+													</div>
+													<div class="modal-body">
+													  <div class="row">
+													  
+													  
+														<!-- 모달창 안에 이미지 슬라이드 영역 -->
+														<div class="col-md-6">
+														  <% 
+																String modalCarouselId = "modal-carousel-room-" + room.getRoomNum();
+																if (imageList != null && !imageList.isEmpty()) { 
+															%>
+														<!-- 캐러셀 컨테이너 -->
+														<div id="<%= modalCarouselId %>" class="carousel slide" data-bs-ride="carousel">
+															<div class="carousel-inner ratio ratio-4x3 rounded overflow-hidden">
+																<% for (int j = 0; j < imageList.size(); j++) {
+																   String savedName = imageList.get(j).getImageSavedName();
+																%>
+																	<div class="carousel-item <%= (j == 0) ? "active" : "" %>">
+																	 <img src="<%= request.getContextPath() %>/show.img?imageName=<%= savedName %>"
+																	      class="d-block w-100 h-100 object-fit-cover"
+																	      alt="객실 이미지 <%= j + 1 %>">
+																	</div>
+																<% } %>
+															</div>
+															<% if (imageList.size() > 1) { %>
+																<button class="carousel-control-prev" type="button" data-bs-target="#<%= modalCarouselId %>" data-bs-slide="prev">
+																  <span class="carousel-control-prev-icon"></span>
+																</button>
+																<button class="carousel-control-next" type="button" data-bs-target="#<%= modalCarouselId %>" data-bs-slide="next">
+																  <span class="carousel-control-next-icon"></span>
+																</button>
+															<% } %>
+														</div>
+															<% } else { %>
+																<!-- 이미지가 없을 경우 기본 이미지 -->
+																<div class="ratio ratio-4x3 rounded overflow-hidden">
+																  <img src="<%= request.getContextPath() %>/images/no-image.png"
+																       class="img-fluid h-100 w-100 object-fit-cover"
+																       alt="기본 이미지">
+																</div>
+															<% } %>
+														</div>
+													        
+											        <div class="col-md-6">
+										          	<p><strong>숙소명:</strong> <%= room.getRoomStayName() %></p>
+																<p><strong>타입:</strong> <%= room.getRoomType() %></p>
+																<p><strong>최대 인원:</strong> <%= room.getRoomPaxMax() %>명</p>
+																<p><strong>가격:</strong> ₩<%= room.getRoomPrice() %></p>
+																<hr/>
+																<div>
+																<p><strong>객실 상세 설명:</strong><br/><%= room.getRoomContent().replaceAll("\n", "<br/>") %></p>
+																<p><strong>편의 시설:</strong><br/><%=room.getRoomStayFacilities() %></p>
+																</div>
+													    </div>
+													  </div>
+													</div>
+											    </div>
+											  </div>
+										</div> <!-- (modal)객실 상세정보 보기 ends -->
 						
 						      </div>
 						    </div>
@@ -438,13 +424,10 @@
 		});
 	});
 	</script>
+	<script>
+    	const CONTEXT_PATH = '<%= request.getContextPath() %>';
+	</script>
 	<script src="${pageContext.request.contextPath}/js/booking/book.js"></script>
 		<jsp:include page="/WEB-INF/include/footer.jsp" />
-	<!-- DisabledDates불러오기 위한 경로 추가 ++++++ -->
-	<script>
-  		const CONTEXT_PATH = '<%=request.getContextPath()%>';
-	</script>
-	<script src="${CONTEXT_PATH}/js/booking/book.js"></script>
-
 </body>
 </html>
