@@ -54,7 +54,8 @@ public class NotificationDao {
 					    END AS noti_days_ago,
 					    (SELECT COUNT(noti_read_code)
 						FROM notifications
-						WHERE noti_read_code = 10) AS noti_read_count,
+						WHERE noti_read_code = 10
+							AND noti_recipient_num = ?) AS noti_read_count,
 						b.book_num AS noti_book_num,
 					    TO_CHAR(b.book_checkin_date, 'YYYY-MM-DD') AS noti_book_checkin,
 					    TO_CHAR(b.book_checkout_date, 'YYYY-MM-DD') AS noti_book_checkout,
@@ -62,7 +63,7 @@ public class NotificationDao {
 					    s.stay_name AS noti_stay_name,
 					    comm.comment_content AS noti_comment_content,
 					    comm.comment_parent_num AS noti_comment_parent_num,
-					    u.users_num AS noti_comment_users_num,
+					    comm.comment_writer AS noti_comment_users_num,
 					    u.users_id AS noti_comment_writer,
 					    inq.inq_num AS noti_inq_num,
 						inq.inq_title AS noti_inq_title,
@@ -77,7 +78,9 @@ public class NotificationDao {
 					  AND b.book_stay_num = s.stay_num
 					LEFT JOIN comments comm
 					  ON n.noti_type_code = 20 
-					 AND n.noti_sender_num = comm.comment_writer
+					   AND n.noti_target_num = TO_CHAR(comm.comment_num)
+						 AND n.noti_sender_num = comm.comment_writer
+						 AND n.noti_recipient_num = comm.comment_target_writer
 					LEFT JOIN users u
 						ON n.noti_type_code = 20
 						AND n.noti_sender_num = u.users_num
@@ -103,7 +106,8 @@ public class NotificationDao {
 					""";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setLong(1, usersNum);
-			pstmt.setLong(2, lastNotiNum);
+			pstmt.setLong(2, usersNum);
+			pstmt.setLong(3, lastNotiNum);
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {

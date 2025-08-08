@@ -38,7 +38,7 @@ function initializeSSE() {
 		let notiCountNum = document.querySelector(".noti-btn-count") // 안읽은 알림 수 표시할 요소
 		
 		notiData.forEach(noti => {
-			
+			console.log(notiData[0].readCount);
 			
 			// 안읽은 알림이 없다면
 			if(notiData[0].readCount == 0) {
