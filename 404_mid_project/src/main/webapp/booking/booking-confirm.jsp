@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <title>/booking/book-confirm.jsp</title>
     <jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 	<jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>

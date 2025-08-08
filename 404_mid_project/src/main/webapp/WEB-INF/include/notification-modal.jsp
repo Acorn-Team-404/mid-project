@@ -19,11 +19,3 @@
   	</div>
 </div>
 
-
-<!-- 세션이 있을 때만 noti.SSE를 호출하는 js -->
-<%if(request.getAttribute("usersId") != null && session.getAttribute("usersId") != null) {%>
-	<script src="${pageContext.request.contextPath}/js/notification/noti-sse.js?v=<%= System.currentTimeMillis() %>"></script>
-	<script src="${pageContext.request.contextPath}/js/notification/noti-control.js?v=<%= System.currentTimeMillis() %>"></script>
-<%} %>
-
-
