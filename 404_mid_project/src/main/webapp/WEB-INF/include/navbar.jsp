@@ -37,7 +37,7 @@
     <div class="collapse navbar-collapse me-3" id="navbarNav">
 	    <ul class="navbar-nav align-items-center ms-auto fw-semibold">
 	    	<li class="nav-item mx-2 me-5">
-	     	 <a class="nav-link text-nowrap fw-normal fw-bold text-success fs-5" href="${pageContext.request.contextPath}/post/list.jsp">난 슬플 때 여행을 가.. 🍂</a>
+	     	 <a class="nav-link text-nowrap fw-normal fw-bold text-primary fs-5" href="${pageContext.request.contextPath}/post/list.jsp">🎉 8월 썸머 프로모션 진행 중! 🎉</a>
 	      </li>
 	      <li class="nav-item mx-2">
 
