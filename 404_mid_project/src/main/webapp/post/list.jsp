@@ -94,19 +94,21 @@
 		<div> 
 		
 			<div class="d-flex justify-content-end">
-			<a class="btn btn-sm btn-outline-secondary mt-4" 
-				href="${pageContext.request.contextPath}/post/form.jsp"
-				id="postBtn" >
-				post
-			<i class="bi bi-pencil-square"></i>
-			</a>
+				<% if(isLogin){ %>
+					<a class="btn btn-sm btn-outline-secondary mt-5" 
+						href="${pageContext.request.contextPath}/post/form.jsp"
+						id="postBtn" >
+						post
+					<i class="bi bi-pencil-square"></i>
+					</a>
+				<%} %>
 			</div>
 			<h2 class="text-center my-5">JOURNAL</h2>
 			
 		</div>
 		
 		<div> <!-- 카드 형태의 게시글 -->
-			<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-5">
+			<div class="row row-cols-1 row-cols-md-3 g-5 my-3">
 				<%
 				for(PostDto post : list) {
 					int postNum = post.getPostNum();
@@ -127,9 +129,16 @@
 										alt="기본 이미지">
 								<% } %>
 							</a>
-							<div class="hover-title position-absolute top-50 start-50 translate-middle w-100 bg-dark bg-opacity-50 text-white text-center px-3 py-2">
-								<%=post.getPostTitle() %>
-							</div>
+							
+							 <!-- 오버레이 텍스트 박스 -->
+			                <div class="overlay-text hover position-absolute top-50 start-50 translate-middle text-center p-4 bg-white bg-opacity-2 shadow rounded-3">
+			                    <div class="text-secondary fw-light mb-2">#<%=postNum%></div>
+			                    <h5 class="fw-bold mb-2"><%=post.getPostTitle()%></h5>
+			                    <a href="${pageContext.request.contextPath}/post/view.post?num=<%=postNum%>"
+			                       class="text-decoration-none text-secondary fw-semibold">
+			                        read more
+			                    </a>
+			                </div>
 						</div>
 					</div>
 				</div>
@@ -165,6 +174,7 @@
 			
 		</ul>
 	</div> <!-- container -->
+	
 	<script>
 	const isLogin = <%= isLogin %>; // JSP → JS로 전달
 
