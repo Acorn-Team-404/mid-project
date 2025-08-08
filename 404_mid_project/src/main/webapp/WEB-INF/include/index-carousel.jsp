@@ -7,7 +7,7 @@
     List<ImageDto> carouselImages = ImageDao.getInstance().getListByTarget("index", 2); // 예: index 영역
     int size = carouselImages.size();
 %>
-	<div class="w-75 mx-auto mt-3">
+	<div class="mb-3">
 		<% if (size > 0) { %>
 		<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
 		  <div class="carousel-indicators">

@@ -16,10 +16,17 @@ public class StayInfoDto {
     private String stayLong;         // STAY.STAY_LONG
     private String stayPhone;        // STAY.STAY_PHONE
     private String stayFacilities;   // STAY.STAY_FACILITIES
+    private String stayContent;		 // STAY.STAY_CONTENT
     private List<RoomDto> rooms;     // 연관된 ROOM 목록
     
     // getters / setters
     
+    public String getStayContent() {
+		return stayContent;
+	}
+    public void setStayContent(String stayContent) {
+		this.stayContent = stayContent;
+	}
 	public long getStayNum() {
 		return stayNum;
 	}

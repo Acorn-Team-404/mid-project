@@ -34,6 +34,7 @@ public class SaveStayServlet extends HttpServlet {
     info.setStayLong(req.getParameter("stay_lng"));
     info.setStayPhone(req.getParameter("stay_contact"));
     info.setStayFacilities(req.getParameter("stay_facilities"));
+    info.setStayContent(req.getParameter("stay_content"));
 
     // 2) 객실 DTO 목록 파싱
     List<RoomDto> rooms = new ArrayList<>();

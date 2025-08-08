@@ -5,6 +5,12 @@
   <meta charset="UTF-8">
   <title>숙소 등록</title>
   <jsp:include page="/WEB-INF/include/resource.jsp" /> <!-- Bootstrap, Icons 포함 -->
+  <!-- Toast UI Editor CSS -->
+	<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+	<!-- Toast UI Editor JS -->
+	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+	<!-- 한국어 번역 파일 추가 -->
+	<script src="https://uicdn.toast.com/editor/latest/i18n/ko-kr.js"></script>
   <style>
     .drop-zone {
       border: 2px dashed #0d6efd;
@@ -78,6 +84,7 @@
           <option value="경북">경북</option>
           <option value="경남">경남</option>
           <option value="제주">제주</option>
+          <option value="제주">평양</option>
         </select>
       </div>
       <div class="col-md-8">
@@ -85,21 +92,21 @@
         <input type="text" class="form-control" name="stay_address" placeholder="상세주소를 입력하세요" required>
       </div>
     </div>
-    <div class="row g-3 mb-3">
-      <div class="col-md-6">
-        <label class="form-label">위도</label>
-        <input type="text" class="form-control" name="stay_lat">
-      </div>
-      <div class="col-md-6">
-        <label class="form-label">경도</label>
-        <input type="text" class="form-control" name="stay_lng">
-      </div>
-    </div>
     <div class="mb-3">
       <label class="form-label">편의시설</label>
       <input type="text" class="form-control" name="stay_facilities" placeholder="예: WiFi,Parking,Pool">
     </div>
-
+		
+		<!-- 소개글 등록 -->
+		<div class="Container" id="info">
+			<h2>소개글 작성</h2>
+			<div class="mb-2">
+				<!-- Editor ui 이 출력될 div -->
+				<div id="editor"></div>
+			</div>
+			<input type="hidden" name="stay_content" id="hiddenContent">
+		</div>
+		
     <!-- 숙소 대표 이미지 -->
     <h5 class="mt-4">숙소 대표 이미지 등록</h5>
     <div class="drop-zone mb-3" id="stayDropZone">
@@ -125,6 +132,7 @@
 </div>
 
 <script>
+
   // 파일을 Data URL로 읽어오는 유틸 함수
   function readFileAsDataURL(file) {
     return new Promise(function(resolve, reject) {
@@ -318,6 +326,34 @@
     document.getElementById('stayFileInput'),
     document.getElementById('stayPreview')
   );
+  
+	// Toast UI 에디터 함수
+	const editor = new toastui.Editor({
+	el: document.querySelector('#editor'),
+	height: '500px',
+	initialEditType: 'wysiwyg',
+	previewStyle: 'vertical',
+	language: 'ko'
+	});
+	
+	 // 폼 요소를 가져온다. (id는 stayForm이 맞다)
+  const stayForm = document.getElementById('stayForm');
+	
+	//소개글 비어있을 때 방지 + hidden에 값 주입
+  stayForm.addEventListener('submit', (e) => {
+    const content = editor.getHTML().trim(); // 에디터 내용을 읽어온다.
+
+    // 내용 비어있음 체크 (Toast UI가 비어있을 때 생성하는 기본 HTML도 걸러낸다)
+    if (!content || content === '<p><br></p>') {
+      alert('소개글을 입력하세요.');
+      e.preventDefault();
+      editor.focus();
+      return;
+    }
+
+    // hidden 필드에 값을 넣는다.
+    document.getElementById('hiddenContent').value = content;
+	});	
 </script>
 </body>
 </html>

@@ -351,7 +351,7 @@ public class PageDao {
 	}
 	
 	// 글 하나의 정보 불러오기
-	public PageDto getByNum(long pageNum) {
+	public PageDto getByNum(long stayNum) {
 		PageDto dto=null;
 		
 		Connection conn = null;
@@ -363,12 +363,11 @@ public class PageDao {
 			String sql = """
 				SELECT stay_num, stay_name, stay_loc, page_content, stay_addr
 				FROM stay
-				JOIN page ON page_stay_num=stay_num
-				WHERE page_num=?
+				WHERE stay_num=?
 			""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 값 바인딩
-			pstmt.setLong(1, pageNum);
+			pstmt.setLong(1, stayNum);
 			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
 			rs = pstmt.executeQuery();
 			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다

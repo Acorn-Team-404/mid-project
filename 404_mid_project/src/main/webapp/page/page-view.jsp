@@ -87,6 +87,13 @@
     	margin-bottom: 15px;
     	border-radius: 8px;
 	}
+	/* 컨텐츠 출력 이미지 제어 */
+	.fs-7 img {
+  max-width: 100%;    /* 부모 영역을 넘어가지 않게 */
+  height: auto;       /* 비율 유지 */
+  display: block;     /* inline gap 방지 */
+  margin: 0 auto;     /* 중앙 정렬 */
+	}
 </style>
 </head>
 <body>

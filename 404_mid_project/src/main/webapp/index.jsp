@@ -37,7 +37,6 @@
 	
 	<jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
 	
-	<jsp:include page="/WEB-INF/include/index-carousel.jsp"></jsp:include>
 	<jsp:include page="/WEB-INF/include/index-stay-card.jsp" />
 	<jsp:include page="/WEB-INF/include/footer.jsp"></jsp:include>
 </body>

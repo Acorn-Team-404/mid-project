@@ -8,7 +8,8 @@
     List<StaySummaryDto> list = StayInfoDao.getInstance().getStaySummaries();
 		
 %>
-<div class="container gx-1 w-75 mx-auto my-5">
+<div class="container gx-1 w-75 mx-auto my-4">
+	<jsp:include page="/WEB-INF/include/index-carousel.jsp"></jsp:include>
   <!-- ── 섹션 헤더 (화살표 없음) ── -->
   <div class="mb-3">
     <h3 class="mb-1">STAYLOG의 모든 숙소</h3>
@@ -38,10 +39,10 @@
             imageUrl = request.getContextPath() + "/show.img?imageName=" + imageName;
         }
 %>
-  <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-    <div class="card listing-card position-relative shadow-sm mx-auto mb-4">
+  <div class="col-12 col-sm-6 col-md-4 col-lg-4">
+    <div class="card listing-card position-relative shadow-sm mx-auto mb-4" style="max-width: 30rem; width: 100%;">
       <!-- 1) 이미지 -->
-			<div class="ratio ratio-4x3">
+			<div class="ratio ratio-16x9">
 			  <img
 			    src="<%= imageUrl %>"
 			    class="card-img-top"

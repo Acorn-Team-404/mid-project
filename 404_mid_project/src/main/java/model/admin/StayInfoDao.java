@@ -35,8 +35,8 @@ public class StayInfoDao {
                 INSERT INTO stay (
                   stay_num, stay_user_num, stay_name, stay_addr,
                   stay_loc, stay_lat, stay_long, stay_phone,
-                  stay_facilities, stay_update_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATE)
+                  stay_facilities, stay_update_at, stay_content
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATE, ?)
             """;
             pstmt = conn.prepareStatement(staySql);
             pstmt.setLong(1, staySeq);
@@ -48,6 +48,7 @@ public class StayInfoDao {
             pstmt.setString(7, info.getStayLong());
             pstmt.setString(8, info.getStayPhone());
             pstmt.setString(9, info.getStayFacilities());
+            pstmt.setString(10, info.getStayContent());
             pstmt.executeUpdate();
             pstmt.close();
 

@@ -25,7 +25,8 @@
     info.setStayLong(request.getParameter("stay_lng"));
     info.setStayPhone(request.getParameter("stay_contact"));
     info.setStayFacilities(request.getParameter("stay_facilities"));
-
+    info.setStayContent(request.getParameter("stay_content"));
+    
     // 3) 객실 정보 파싱
     List<RoomDto> roomList = new ArrayList<>();
     for (int i = 0; ; i++) {
