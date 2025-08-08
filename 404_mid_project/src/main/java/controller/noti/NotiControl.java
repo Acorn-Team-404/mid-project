@@ -19,6 +19,8 @@ public class NotiControl extends HttpServlet{
 		String uri = request.getRequestURI();
 		String path = uri.substring(uri.lastIndexOf("/"));
 		
+		
+		
 
 		// 읽음 상태 처리
 		if(path.equals("/setRead.noti")) {

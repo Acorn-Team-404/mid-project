@@ -11,6 +11,7 @@ import model.util.DBConnector;
 public class NotificationDao {
 	
 	
+	
 	// Connection Pool 관리
 	private static NotificationDao notiDao;
 	static {
@@ -23,7 +24,7 @@ public class NotificationDao {
 	
 	
 	
-	
+	// SELECT 쿼리
 	public List<NotificationDto> notiSelectAfter(long usersNum, long lastNotiNum) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -162,7 +163,6 @@ public class NotificationDao {
 	
 	
 	
-	
 	// 댓글 작성 시 함께 실행될 댓글알림 insert 메서드
 	public boolean notiInsert(NotificationDto dto) {
 		Connection conn = null;
@@ -207,6 +207,7 @@ public class NotificationDao {
 	
 	
 	
+	// 알림을 삭제하는 메서드(아직 사용안함)
 	public boolean notiDelete(long notiNum) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -238,6 +239,39 @@ public class NotificationDao {
 	}
 	
 	
+	
+	// 사용자의 안읽은 알림의 수를 반환하는 메서드
+	public int notiReadCount(long usersNum) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int readCount = 0;
+		
+		try {
+			conn = DBConnector.getConn();
+			String sql = """
+					SELECT COUNT(noti_read_code) AS 
+					FROM notifications
+					WHERE noti_read_code = 10
+						AND noti_recipient_num = ?
+					""";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setLong(1, usersNum);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				readCount = rs.getInt("noti_read_count");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		}
+		return readCount;
+	}
+	
+	
+	
+	// 알림을 읽음 처리하는 메서드
 	public boolean notiSetRead(long notiNum) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
