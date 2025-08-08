@@ -47,7 +47,7 @@ function initializeSSE() {
 			} else { // 있으면
 				notiCountNum.classList.remove("d-none") // 보이게 하고
 				if(notiData[0].readCount > 9) {
-					notiCountNum.innerText = "9+"
+					notiCountNum.innerText = "+9"
 				} else {
 					notiCountNum.innerText = `${notiData[0].readCount}` // 안읽은 알림 수 표시
 				}

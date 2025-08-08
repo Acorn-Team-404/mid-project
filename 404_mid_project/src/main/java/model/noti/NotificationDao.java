@@ -250,7 +250,7 @@ public class NotificationDao {
 		try {
 			conn = DBConnector.getConn();
 			String sql = """
-					SELECT COUNT(noti_read_code) AS 
+					SELECT COUNT(noti_read_code) AS noti_read_count
 					FROM notifications
 					WHERE noti_read_code = 10
 						AND noti_recipient_num = ?

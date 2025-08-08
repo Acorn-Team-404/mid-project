@@ -1,3 +1,4 @@
+<%@page import="model.noti.NotificationDao"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%-- /WEB-INF/include/navbar.jsp --%>
@@ -11,7 +12,14 @@
 		    : null;
 	request.setAttribute("usersId", usersId);
 	request.setAttribute("usersNum", usersNum);
-%>
+	
+	
+	// 안읽은 알림 수
+	int notiReadCount = 0;
+	if (session.getAttribute("usersNum") != null && request.getAttribute("usersNum") != null) {
+		notiReadCount = NotificationDao.getInstance().notiReadCount(Long.valueOf(usersNum));
+	}
+%> 
 
 <%-- index에서 include하기 때문에 중복 방지<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include> --%>
 <nav class="navbar navbar-expand-lg sticky-top bg-white border-bottom shadow-sm py-3">
@@ -80,9 +88,16 @@
 	        <div class="vr"></div> <!-- 세로 구분선 -->
 	      </li>
           <li class="nav-item mx-2">
+          	<!-- 알림 모달 버튼 -->
             <button type="button" class="btn position-relative p-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
 				  <i class="bi bi-bell-fill fs-4 text-muted"></i>
+				  <% if(notiReadCount == 0) { %>
 				  <span class="noti-btn-count position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger px-2"></span>
+				  <% } else if(notiReadCount > 9) { %>
+				  <span class="noti-btn-count position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger px-2">+9</span>
+				  <%} else { %>
+				  <span class="noti-btn-count position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger px-2"><%=notiReadCount %></span>
+				  <%} %>
 			</button>
           </li>
           <li class="nav-item mx-2">
