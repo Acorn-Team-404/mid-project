@@ -158,23 +158,28 @@ public class StayInfoDao {
 				  s.stay_num,
 				  s.stay_name,
 				  s.stay_loc,
-				  NVL((SELECT MIN(r.room_price)
-				         FROM room r
-				        WHERE r.room_stay_num   = s.stay_num), 0)                 AS min_price,
-				  NVL((SELECT ROUND(AVG(rv.review_rating), 2)
-				         FROM review rv
-				        WHERE rv.review_stay_num = s.stay_num), 0)                 AS avg_rating,
-				  NVL((SELECT COUNT(*)
-				         FROM review rv
-				        WHERE rv.review_stay_num = s.stay_num), 0)                 AS review_count,
-				  NVL((SELECT img.image_saved_name
-				         FROM image_file img
-				        WHERE img.image_target_type = 'stay'
-				          AND img.image_target_id   = s.stay_num
-				          AND ROWNUM = 1), 'default.jpg')                           AS image_name,
-				  NVL((SELECT MAX(p.page_num)
-				         FROM page p
-				        WHERE p.page_stay_num    = s.stay_num), 0)                 AS page_num
+				  NVL((
+				    SELECT MIN(r.room_price)
+				    FROM room r
+				    WHERE r.room_stay_num = s.stay_num
+				  ), 0) AS min_price,
+				  NVL((
+				    SELECT ROUND(AVG(rv.review_rating), 2)
+				    FROM review rv
+				    WHERE rv.review_stay_num = s.stay_num
+				  ), 0) AS avg_rating,
+				  NVL((
+				    SELECT COUNT(*)
+				    FROM review rv
+				    WHERE rv.review_stay_num = s.stay_num
+				  ), 0) AS review_count,
+				  NVL((
+				    SELECT img.image_saved_name
+				    FROM image_file img
+				    WHERE img.image_target_type = 'stay'
+				      AND img.image_target_id   = s.stay_num
+				      AND ROWNUM = 1
+				  ), 'default.jpg') AS image_name
 				FROM stay s
 				WHERE s.stay_delete = 'N'
 				ORDER BY s.stay_num DESC
@@ -193,7 +198,6 @@ public class StayInfoDao {
                 dto.setAvgRating   (rs.getDouble("avg_rating"));
                 dto.setReviewCount (rs.getInt   ("review_count"));  // ★ 여기
                 dto.setImageName   (rs.getString("image_name"));
-                dto.setLatestPageNum(rs.getLong("page_num"));
                 list.add(dto);
               }
             } catch (Exception e) {
@@ -201,36 +205,6 @@ public class StayInfoDao {
             }
             return list;
         }
-    
-    public Long getPageNumByStayNum(long stayNum) {
-        Long pageNum = 0L;  // 기본값을 0으로 설정
-
-        String sql = """
-            SELECT NVL(MAX(p.page_num), 0) AS page_num
-              FROM page p
-             WHERE p.page_stay_num = ?
-            """;
-
-        try (
-            Connection conn = DBConnector.getConn();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-        ) {
-            // 1) ?에 stayNum 바인딩
-            pstmt.setLong(1, stayNum);
-
-            // 2) 쿼리 실행
-            try (ResultSet rs = pstmt.executeQuery()) {
-                // 3) 결과에서 page_num 읽기
-                if (rs.next()) {
-                    pageNum = rs.getLong("page_num");
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return pageNum;
-    }
     
 	// 글 하나의 정보 불러오기
 	public StayInfoDto getByNum(long stayNum) {

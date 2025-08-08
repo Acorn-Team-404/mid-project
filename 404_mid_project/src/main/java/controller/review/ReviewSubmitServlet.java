@@ -45,8 +45,6 @@ public class ReviewSubmitServlet extends HttpServlet {
 		dto.setComment(comment);
 		dto.setReviewStayNum(stayNum);
 		
-		long pageNum = StayInfoDao.getInstance().getPageNumByStayNum(stayNum);
-		
 		// DB 저장
 		boolean result = ReviewDao.getInstance().insert(dto);
 		
@@ -54,7 +52,7 @@ public class ReviewSubmitServlet extends HttpServlet {
 		// 만약 저장이 된다면
 		if(result) {
 			// 임시로 상세페이지 이동
-			resp.sendRedirect(req.getContextPath() + "/page/page-view.jsp?pageNum=" + pageNum);
+			resp.sendRedirect(req.getContextPath() + "/page/page-view.jsp?stayNum=" + stayNum);
 		}else {
 			// 에러 페이지
 			resp.sendRedirect(req.getContextPath() + "/index.jsp");

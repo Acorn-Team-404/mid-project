@@ -119,6 +119,7 @@
 			      <div class="carousel-item <%= (i == 0) ? "active" : "" %>">
 			        <img src="<%= request.getContextPath() %>/show.img?imageName=<%= img.getImageSavedName() %>"
 							     class="d-block w-100"
+							     style="height:100%; object-fit:cover; object-position:center;"
 							     alt="<%= img.getImageOriginalName() %>">
 			      </div>
 			    <% } %>
@@ -152,7 +153,7 @@
 
 	<div class="container">
 	    <!-- md 이하에서 상단 고정 가로 네비게이션 -->
-	    <div class="d-lg-none sticky-top" style="top:79px; z-index: 1020;">
+	    <div class="d-lg-none sticky-top" style="top:78px; z-index: 1020;">
 	        <div class="bg-white border-bottom p-2 mb-3">
 	            <ul class="nav nav-pills justify-content-center">
 	                <li class="nav-item me-3">
