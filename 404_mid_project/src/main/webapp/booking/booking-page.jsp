@@ -440,5 +440,11 @@
 	</script>
 	<script src="${pageContext.request.contextPath}/js/booking/book.js"></script>
 		<jsp:include page="/WEB-INF/include/footer.jsp" />
+	<!-- DisabledDates불러오기 위한 경로 추가 ++++++ -->
+	<script>
+  		const CONTEXT_PATH = '<%=request.getContextPath()%>';
+	</script>
+	<script src="${CONTEXT_PATH}/js/booking/book.js"></script>
+
 </body>
 </html>

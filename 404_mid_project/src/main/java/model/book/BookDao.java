@@ -35,6 +35,44 @@ public class BookDao {
       return dao;
    }
 
+   // 예약불가 목록 불러오기
+   public List<String> getDisabledDates(long bookRoomNum){
+	   List<String> dates_list = new ArrayList<>();
+	   Connection conn = null;
+	   PreparedStatement pstmt = null;
+	   ResultSet rs = null;
+	   
+	   String sql = """
+	   		SELECT book_checkIn_date,book_checkout_date 
+	   		FROM BOOKING
+	   		WHERE book_room_num = ?
+	   		""";
+	   
+	   try {
+		    conn = DBConnector.getConn();
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setLong(1,bookRoomNum);
+	        rs = pstmt.executeQuery();
+	        
+	        while(rs.next()) {
+	        	LocalDate start = rs.getDate("book_checkIn_date").toLocalDate();
+	        	LocalDate end = rs.getDate("book_checkOut_date").toLocalDate().minusDays(1);
+	        	//checkout 당일은 에약 가능하게 -1
+	        	
+	        	//체크인날자를 체크아웃 전 날까지 블럭해줘야하기 때문에 end까지 돌면서 dates_lsit에 담는다. 
+	        	while (!start.isAfter(end)) {
+	        		dates_list.add(start.toString()); // yyyy-mm-dd
+	        		start = start.plusDays(1);
+	        		
+	        	}
+	        }
+	   } catch(Exception e) {
+		   e.printStackTrace();
+	   }
+	   return dates_list;
+	   
+   }
+   
    // 사용자의 모든 예약 목록을 조회하기
    public List<BookDto> getByUserNum(long userNum){
 	   List<BookDto> list = new ArrayList<BookDto>();
