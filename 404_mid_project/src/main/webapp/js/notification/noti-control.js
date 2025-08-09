@@ -26,7 +26,7 @@ notiModal.addEventListener("hidden.bs.offcanvas", () => {
 
 
 
-// 읽음 처리 이벤트핸들러
+// 읽음 처리 함수
 const contextPath = "/" + window.location.pathname.split("/")[1];
 async function setRead(notiCard) {
   const notiNum = notiCard.dataset.notiNum;
@@ -49,10 +49,15 @@ async function setRead(notiCard) {
   }
 }
 
+// 읽음 처리 이벤트핸들러(이미 읽은 알림이라면 return)
 document.querySelector(".offcanvas-body").addEventListener("click", function(e) {
 	const notiCard = e.target.closest(".noti-card");
-	if (!notiCard) return;
-	setRead(notiCard);
+	const readDot = notiCard.querySelector(".read-dot");
+	if(!notiCard || readDot.classList.contains("d-none")) {
+		return;
+	} else {
+		setRead(notiCard);
+	}
 });
 
 
