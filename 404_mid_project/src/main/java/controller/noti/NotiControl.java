@@ -30,6 +30,13 @@ public class NotiControl extends HttpServlet{
 				System.out.println(setReadIsSuccess ? notiNum + "번 알림 읽음처리 성공" : notiNum + "번 알림 읽음처리 실패");
 		        if (setReadIsSuccess) {
 		            response.setStatus(200);
+		            // 🔽🔽🔽 여기 추가: 같은 유저의 다른 탭에도 배지 카운트 실시간 반영
+                    Long usersNum = (Long) request.getSession(false).getAttribute("usersNum");
+                    if (usersNum != null) {
+                        int unread = NotificationDao.getInstance().notiReadCount(usersNum);
+                        NotiEventBroker.getInstance().publishCountOnly(usersNum, unread);
+                    }
+                    // 🔼🔼🔼 추가 끝
 		        } else {
 		            response.setStatus(500); // 처리 실패
 		        }
