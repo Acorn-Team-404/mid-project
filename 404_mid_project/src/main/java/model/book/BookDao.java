@@ -34,7 +34,47 @@ public class BookDao {
    public static BookDao getInstance() {
       return dao;
    }
+   
+   // 예약대기 상태로 오래있는 데이터 삭제시키는 DAO
+   public List<ExpiredBookingDto> findExpiredBook(Connection conn) throws SQLException {
+	    String sql = """
+	        SELECT BOOK_NUM, BOOK_USERS_NUM
+	        FROM BOOKING
+	        WHERE BOOK_STATUS_CODE = 10
+	          AND BOOK_CREATED_AT <= (SYSTIMESTAMP - INTERVAL '1' MINUTE)
+	        """;
 
+	    List<ExpiredBookingDto> list = new ArrayList<>();
+	    
+	    try (
+	        PreparedStatement pstmt = conn.prepareStatement(sql);
+	        ResultSet rs = pstmt.executeQuery()
+	    ) {
+	        while (rs.next()) {
+	            String bookNum = rs.getString("BOOK_NUM");
+	            long userId = rs.getLong("BOOK_USERS_NUM");
+
+	            ExpiredBookingDto booking = new ExpiredBookingDto(bookNum, userId);
+	            list.add(booking);
+	        }
+	    }
+	    return list;
+	}
+
+   
+   // 스케쥴러로 예약대기 상태 삭제하는 DAO
+   public void deleteByBookNum(Connection conn, String bookNum) throws SQLException {
+	    String sql = """
+	    		DELETE FROM BOOKING 
+	    		WHERE BOOK_NUM = ?
+	    		""";
+	    
+	    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setString(1, bookNum);
+	        pstmt.executeUpdate();
+	    }
+	}
+   
    // 예약불가 목록 불러오기
    public List<String> getDisabledDates(long bookRoomNum){
 	   List<String> dates_list = new ArrayList<>();
