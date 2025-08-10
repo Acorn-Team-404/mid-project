@@ -1,4 +1,5 @@
-// noti-sse.js
+
+
 // 전역변수 중복 선언 방지 (없다면 선언)
 if (typeof window.eventSourceInitialized === "undefined") {
   window.eventSourceInitialized = false; // SSE 연결 여부
@@ -12,24 +13,25 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeSSE();
 });
 
+// SSE를 호출하는 함수
 function initializeSSE() {
   if (window.eventSourceInitialized) {
     console.log("🔁 SSE 이미 연결됨 - 중복 연결 방지");
-    return;
+    return; // 이미 연결되어 있다면 종료
   }
 
   const contextPath = "/" + window.location.pathname.split("/")[1];
-  const offcanvasBody = document.querySelector(".offcanvas-body");
+  const offcanvasBody = document.querySelector(".offcanvas-body"); // 알림 카드를 삽입할 부모요소
   if (!offcanvasBody) {
     console.warn("offcanvas-body 요소를 찾지 못함");
   }
 
+  // 서버가 보내는 실시간 이벤트를 받을 내장 객체
   window.eventSource = new EventSource(contextPath + "/sse");
-  window.eventSourceInitialized = true;
+  window.eventSourceInitialized = true; // 연결된 상태로 변경
 
-  // ─────────────────────────────────────────────────────────────
-  // 배지 카운트 전용 이벤트 (서버: event: count)
-  // ─────────────────────────────────────────────────────────────
+  
+  // 읽지 않은 알림 수를 가져오는 이벤트리스너
   window.eventSource.addEventListener("count", (event) => {
     let data;
     try {
@@ -38,13 +40,13 @@ function initializeSSE() {
       console.error("count JSON 파싱 실패:", e, event.data);
       return;
     }
-    const count = data.readCount ?? 0;
+    const count = data.readCount ?? 0; // null이나 undefined라면 0으로 사용
     updateBadge(count);
   });
 
-  // ─────────────────────────────────────────────────────────────
-  // 알림 카드 렌더 이벤트 (서버: event: noti)
-  // ─────────────────────────────────────────────────────────────
+  
+  
+  // 알림 카드를 출력하는 이벤트리스너
   window.eventSource.addEventListener("noti", (event) => {
     let notiData;
     try {
@@ -53,14 +55,15 @@ function initializeSSE() {
       console.error("noti JSON 파싱 실패:", e, event.data);
       return;
     }
+	// 1개 알림일 경우 배열이 아닌 객체로만 오기 때문에 배열이 아닐 경우 배열로 변환
     const arr = Array.isArray(notiData) ? notiData : [notiData];
 
     arr.forEach((noti) => {
-      // 배지 갱신
+      // 안읽은 알림 수 갱신
       const rc = Number.isFinite(noti.readCount) ? noti.readCount : 0;
       updateBadge(rc);
 
-      // 카드 렌더링
+      // 알림카드 렌더링
       const html = renderNotiCard(noti, contextPath);
       if (html && offcanvasBody) {
         offcanvasBody.insertAdjacentHTML("afterbegin", html);
@@ -68,6 +71,7 @@ function initializeSSE() {
     });
   });
 
+  
   // 기본 이벤트(onmessage) 백업 핸들러
   // 서버가 event 라인을 안 쓰고 기본으로 보낼 때 대비
   window.eventSource.onmessage = function (event) {
@@ -88,19 +92,17 @@ function initializeSSE() {
       // heartbeat(: ping) 등 무시
     }
   };
-
   window.eventSource.onerror = function (e) {
     console.error("❌ SSE 연결 에러 발생", e);
   };
 }
 
-// ─────────────────────────────────────────────────────────────
-// 배지 카운트 갱신
-// ─────────────────────────────────────────────────────────────
+
+// 안읽은 알림 수를 갱신하는 함수
 function updateBadge(count) {
   const notiCountNum = document.querySelector(".noti-btn-count");
   if (!notiCountNum) return;
-  const c = Number(count) || 0;
+  const c = Number(count) || 0; // 숫자로 변환하고, 변환이 실패하면 0을 사용
   if (c === 0) {
     notiCountNum.classList.add("d-none");
   } else {
@@ -109,10 +111,8 @@ function updateBadge(count) {
   }
 }
 
-// ─────────────────────────────────────────────────────────────
-// 알림 카드 템플릿
-// 기존 분기(typeCode 10/20/30/40) 그대로 유지, 안전가드 추가
-// ─────────────────────────────────────────────────────────────
+
+// 알림 카드 템플릿 (타입에 따라서 분기)
 function renderNotiCard(noti, contextPath) {
   if (!noti || typeof noti !== "object") return "";
 

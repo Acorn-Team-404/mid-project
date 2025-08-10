@@ -29,7 +29,7 @@ notiModal.addEventListener("hidden.bs.offcanvas", () => {
 // 읽음 처리 함수
 const contextPath = "/" + window.location.pathname.split("/")[1];
 async function setRead(notiCard) {
-  const notiNum = notiCard.dataset.notiNum;
+  const notiNum = notiCard.dataset.notiNum; // dataset에 저장한 notiNum 가져오기
   const readDot = notiCard.querySelector(".read-dot")
   try {
     const response = await fetch(contextPath + '/setRead.noti', {

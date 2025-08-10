@@ -15,61 +15,75 @@ import org.json.simple.JSONObject;
 import model.noti.NotificationDto;
 
 public class NotiEventBroker {
+	
+	// 싱글톤 패턴
     private static final NotiEventBroker INSTANCE = new NotiEventBroker();
 
-    // 유저별 다중 연결(탭) 지원
+    // 유저별 SSE 연결을 보관하는 자료구조 선언 (같은 유저가 여러 탭에서 접속할 수 있으므로 중복된 등록을 방지할 수 있는 Set으로 관리)
+    // Long에는 usersNum이 들어감
+    // 유저가 SSE 연결 시 해당 유저 키에 Set이 없으면 만들고, 있다면 기존 것을 사용
     private final ConcurrentHashMap<Long, CopyOnWriteArraySet<AsyncContext>> subscribers = new ConcurrentHashMap<>();
 
-    // 하트비트(keep-alive)용 스케줄러
+    // 주기적으로 작업을 실행하기 위한 스레드 풀을 담을 필드
+    // ScheduledExecutorService : 일정 시간 간격 또는 지연 실행이 필요한 작업을 스레드에서 돌릴 수 있게 함
     private final ScheduledExecutorService scheduler;
 
     private NotiEventBroker() {
+    	// 스레드 풀 생성
         scheduler = Executors.newScheduledThreadPool(
-            1,
-            r -> {
-                Thread t = new Thread(r, "SSE-Heartbeat");
-                t.setDaemon(true);
+            1, // 하트비트 처리용
+            r -> { // 스레드 팩토리를 사용하여 정의
+                Thread t = new Thread(r, "SSE-Heartbeat"); // 스레드 이름 정의
+                t.setDaemon(true); // 데몬 스레드(메인 스레드 종료 시 함께 종료)
                 return t;
             }
         );
-        // 25초마다 전체 하트비트 전송 (중간 프락시 타임아웃 방지)
+        // 주기적으로 실행할 메서드 정의
+        // 브로커 생성 후 25초 대기한 후 heartbeatAll() 실행. 그 후 매 25초마다 반복 실행
         scheduler.scheduleAtFixedRate(this::heartbeatAll, 25, 25, TimeUnit.SECONDS);
     }
 
+    // NotiEventBroker를 참조하기 위한 메서드
     public static NotiEventBroker getInstance() {
         return INSTANCE;
     }
 
+    
+    // 연결 등록 및 연결 종료 시 자동 해제 
     public void subscribe(long usersNum, AsyncContext ctx) {
+    	// 키는 usersNum, 값은 해당 유저의 SSE 연결 set
+    	// 해당 유저의 키가 없으면 새로운 Set을 만들고, 있다면 기존 Set 반환
         subscribers.computeIfAbsent(usersNum, k -> new CopyOnWriteArraySet<>()).add(ctx);
-
-        // 연결 수명 정리: 완료/에러/타임아웃 시 구독 해제
+        
+        // 수명 관리
         ctx.addListener(new AsyncListener() {
-            @Override public void onComplete(AsyncEvent event) { unsubscribe(usersNum, ctx); }
-            @Override public void onTimeout(AsyncEvent event)  { unsubscribe(usersNum, ctx); }
-            @Override public void onError(AsyncEvent event)    { unsubscribe(usersNum, ctx); }
-            @Override public void onStartAsync(AsyncEvent event) { /* no-op */ }
+            @Override public void onComplete(AsyncEvent event) { unsubscribe(usersNum, ctx); } // 정상 종료 시 제거
+            @Override public void onTimeout(AsyncEvent event)  { unsubscribe(usersNum, ctx); } // 타임아웃 시 제거
+            @Override public void onError(AsyncEvent event)    { unsubscribe(usersNum, ctx); } // 예외 발생 시 제거
+            @Override public void onStartAsync(AsyncEvent event) { /* no-op */ } // SSE에선 보통 할 일 없음
         });
     }
 
+    // 끊어진 SSE 연결을 정리하는 메서드
+    // 여러 기기에서 접속하다가 하나가 끊겨도 나머지 유지
     public void unsubscribe(long usersNum, AsyncContext ctx) {
         Set<AsyncContext> set = subscribers.get(usersNum);
         if (set != null) {
-            set.remove(ctx);
-            if (set.isEmpty()) {
-                subscribers.remove(usersNum);
+            set.remove(ctx); // 유저의 해당 연결만 제거
+            if (set.isEmpty()) { // 남은 연결이 하나도 없다면
+                subscribers.remove(usersNum); // 유저 자체를 제거
             }
         }
-        // 안전 종료
-        try { ctx.complete(); } catch (Exception ignore) {}
+        try { ctx.complete(); } catch (Exception ignore) {} // 비동기 사이클을 종료하고 리소스 해제
     }
 
-    // 알림 생성 시 호출 → 해당 유저의 모든 연결로 즉시 푸시
+    
+    // 데이터를 SSE 형식으로 전송하는 메서드
     public void publish(long usersNum, Iterable<NotificationDto> notis, int unreadCount) {
-        Set<AsyncContext> conns = subscribers.get(usersNum);
-        if (conns == null || conns.isEmpty()) return;
+        Set<AsyncContext> conns = subscribers.get(usersNum); // 유저별로 열린 SSE 채널 집합 가져오기
+        if (conns == null || conns.isEmpty()) return; // 비어있다면 종료
 
-        // 기존 프런트 스키마를 유지: 배열 형태에 각 객체마다 readCount 포함
+        // 데이터를 JSON으로 array에 담기
         JSONArray array = new JSONArray();
         for (NotificationDto dto : notis) {
             JSONObject obj = dtoToJson(dto);
@@ -77,15 +91,17 @@ public class NotiEventBroker {
             array.add(obj);
         }
 
-        // 커스텀 이벤트명 사용 가능. (기존 onmessage만 써도 동작함)
+        // SSE 규격에 맞게 조립. JS에서 addEventListener("noti", ...)로 가져올 수 있음
         String payload = "event: noti\n" + "data: " + array.toJSONString() + "\n\n";
 
+        // 모든 연결에 전송
         for (AsyncContext ctx : conns) {
             try {
                 HttpServletResponse resp = (HttpServletResponse) ctx.getResponse();
                 PrintWriter out = resp.getWriter();
-                out.write(payload);
-                out.flush();
+                out.write(payload); // 조립한 문자열 삽입
+                out.flush(); // 전송
+                // 연결이 끊기거나 예외 발생 시 정리
                 if (out.checkError()) unsubscribe(usersNum, ctx);
             } catch (Exception e) {
                 unsubscribe(usersNum, ctx);
@@ -93,36 +109,44 @@ public class NotiEventBroker {
         }
     }
 
-    // 읽음 카운트만 갱신이 필요할 때(옵션)
+    
+    // 읽지 않은 알림 개수를 SSE 형식으로 전송하는 메서드
     public void publishCountOnly(long usersNum, int unreadCount) {
-        Set<AsyncContext> conns = subscribers.get(usersNum);
-        if (conns == null || conns.isEmpty()) return;
+        Set<AsyncContext> conns = subscribers.get(usersNum); // 유저별로 열린 SSE 채널 집합 가져오기
+        if (conns == null || conns.isEmpty()) return; // 비어있다면 종료
 
         JSONObject obj = new JSONObject();
-        obj.put("readCount", unreadCount);
+        obj.put("readCount", unreadCount); // 읽지 않은 알림 개수만 삽입
+        // SSE 규격에 맞게 조립. JS에서 addEventListener("count", ...)로 가져올 수 있음
         String payload = "event: count\n" + "data: " + obj.toJSONString() + "\n\n";
 
+        // 모든 연결에 전송
         for (AsyncContext ctx : conns) {
             try {
                 HttpServletResponse resp = (HttpServletResponse) ctx.getResponse();
                 PrintWriter out = resp.getWriter();
-                out.write(payload);
-                out.flush();
+                out.write(payload); // 조립한 문자열 삽입
+                out.flush(); // 전송
+                // 연결이 끊기거나 예외 발생 시 정리
                 if (out.checkError()) unsubscribe(usersNum, ctx);
             } catch (Exception e) {
                 unsubscribe(usersNum, ctx);
             }
         }
     }
+    
 
+    // 모든 열린 SSE 연결에 주기적으로 하트비트를 보내서 타임아웃되지 않게 하는 메서드
     private void heartbeatAll() {
+    	// 유저별로 열려있는 모든 AsyncContext를 순회
         subscribers.forEach((user, conns) -> {
             for (AsyncContext ctx : conns) {
                 try {
                     HttpServletResponse resp = (HttpServletResponse) ctx.getResponse();
                     PrintWriter out = resp.getWriter();
-                    out.write(": ping\n\n"); // SSE 주석 라인 → keep-alive
+                    out.write(": ping\n\n"); // :으로 시작하는 라인은 SSE 주석. 데이터 흐름만 만들어 연결을 유지할 목적
                     out.flush();
+                    // 연결이 끊기거나 예외 발생 시 정리
                     if (out.checkError()) unsubscribe(user, ctx);
                 } catch (Exception e) {
                     unsubscribe(user, ctx);
@@ -131,6 +155,8 @@ public class NotiEventBroker {
         });
     }
 
+    
+    // dto 데이터를 Object에 담는 메서드
     private JSONObject dtoToJson(NotificationDto tmp) {
         JSONObject obj = new JSONObject();
         // noti 필수 속성
