@@ -54,6 +54,13 @@ public class NotiCommentServlet extends HttpServlet {
 			
 		}
 	}
+	
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        // 루트 요청을 index.jsp로 넘긴다.
+        req.getRequestDispatcher("/index.jsp").forward(req, resp); // 서버 내부 포워드 한다.
+    }
 }
 
 
