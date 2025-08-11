@@ -169,11 +169,11 @@
 		      <input type="hidden" name="targetWriter" value="<%=dto.getPostWriterNum() %>" />
 		
 		      <div class="mb-3">
-		        <label for="commentContent" class="form-label">댓글 내용</label>
+		        <label for="commentContent" class="form-label" hidden>댓글 내용</label>
 		        <textarea id="commentContent" name="content" rows="5" class="form-control" placeholder="댓글을 입력하세요"></textarea>
 		      </div>
 		
-		      <button type="submit" class="btn btn-sm btn-outline-secondary float-end">등록</button>
+		      <button type="submit" class="btn btn-sm btn-outline-secondary show-reply-btn float-end">등록</button>
 		    </form>
 		  </div>
 		</div>
@@ -332,33 +332,43 @@
                 formDiv.previousElementSibling.classList.remove("d-none");
             })
         })
-		document.querySelector("#commentContent").addEventListener("input", ()=>{
+		<%-- document.querySelector("#commentContent").addEventListener("input", ()=>{
 			//원글의 댓글 입력란에 포커스 왔을 때 -- 로그인 x라면
 			if(!isLogin){
 				
 			
-				const isMove=confirm("댓글 작성을 위해 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?");
+				const isMove=alert("댓글 작성을 위해 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?");
 				location.href=
 					"${pageContext.request.contextPath }/user/login-form.jsp?url=${pageContext.request.contextPath }/post/view.jsp?num=<%=num %>";
 			}
-		});
+		}); --%>
 		
         //모든 댓글 버튼에 이벤트 등록
         document.querySelectorAll(".show-reply-btn").forEach(item=>{
             // 매개변수에 전달된 item 은 댓글 button 의 참조값이다 
-            item.addEventListener("click", ()=>{
+            item.addEventListener("click", (e)=>{
+            	 
             	//로그인 안했다면
             	if(!isLogin){
-					
-            		const isMove=confirm("댓글 작성을 위해 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?");
+            		e.preventDefault();
+            		if(confirm("댓글 작성을 위해 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?")){
     				location.href=
     					"${pageContext.request.contextPath }/user/login-form.jsp?url=${pageContext.request.contextPath }/post/view.jsp?num=<%=num %>";
-    				return;
+            		}
+            		return;
             	}
                 //클릭한 버튼의 다음 형제요소의 class 목록에서 d-none 을 제거 
                 item.nextElementSibling.classList.remove("d-none");
                 //클릭한 버튼의 class 목록에 d-none 을 추가
                 item.classList.add("d-none");
+                
+               // 내용이 없다면
+               const commentContent = document.querySelector("#commentContent");
+               if(!commentContent && commentContent=""){
+            	   alert("내용을 입력하세요");
+            	   return;
+               }
+               
             });
         });
 
