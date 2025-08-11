@@ -1,9 +1,9 @@
 
 
 const servletPath = window.contextPath + "/pay/PaymentsServlet";
-console.log("successUrl", window.location.origin + servletPath);
-console.log("failUrl", window.location.origin + servletPath);
-console.log("contextPath is", contextPath);
+//console.log("successUrl", window.location.origin + servletPath);
+//console.log("failUrl", window.location.origin + servletPath);
+//console.log("contextPath is", contextPath);
 
 
 let selectedPaymentMethod = null;
@@ -49,7 +49,7 @@ async function requestPayment() {
 				method: "CARD", // 카드 및 간편결제
 				amount,
 				orderId: generateRandomString(),
-				orderName: bookingInfo.stayName + "/" + bookingInfo.roomName + "/" + bookingInfo.totalPax, // 숙소명+ 방번호 + 인원수 + ~~@
+				orderName: bookingInfo.stayName + "/" + bookingInfo.roomName + "/ 총인원 :" + bookingInfo.totalPax, // 숙소명+ 방번호 + 인원수 + ~~@
 				successUrl:  window.location.origin + servletPath,
 				failUrl:  window.location.origin + servletPath,
 				customerEmail: "limchaehozzang@gmail.com",
@@ -70,7 +70,7 @@ async function requestPayment() {
 				method: "TRANSFER", // 계좌이체 결제
 				amount,
 				orderId: generateRandomString(),
-				orderName: bookingInfo.stayName + "/" + bookingInfo.roomName + "/" + bookingInfo.totalPax,
+				orderName: bookingInfo.stayName + "/" + bookingInfo.roomName + "/ 총인원 :" + bookingInfo.totalPax,
 				successUrl:  window.location.origin + servletPath,
 				failUrl:  window.location.origin + servletPath,
 				customerEmail: "limchaehozzang@gmail.com",
@@ -90,7 +90,7 @@ async function requestPayment() {
 				method: "MOBILE_PHONE", // 휴대폰 결제
 				amount,
 				orderId: generateRandomString(),
-				orderName: bookingInfo.stayName + "/" + bookingInfo.roomName + "/" + bookingInfo.totalPax,
+				orderName: bookingInfo.stayName + "/" + bookingInfo.roomName + "/ 총인원 :" + bookingInfo.totalPax,
 				successUrl:  window.location.origin + servletPath,
 				failUrl:  window.location.origin + servletPath,
 				customerEmail: "limchaehozzang@gmail.com",
