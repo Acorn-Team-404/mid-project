@@ -8,19 +8,24 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
-	String uri=request.getContextPath()+"/inquiry/new-inquiry.jsp";
-	if (session.getAttribute("usersNum") == null) {
-	    response.sendRedirect(request.getContextPath()+"/user/login-form.jsp?url="+URLEncoder.encode(uri, "UTF-8"));
-	    return;
-	}
-	long usersNum=(long)session.getAttribute("usersNum");
-	UserDto dto=UserDao.getInstance().getBasicInfoByNum(usersNum);
-	List<StayDto> list=StayDao.getInstance().selectAll();
 	String stayNumStr = request.getParameter("stayNum");
 	long stayNum = 0;
 	if (stayNumStr != null && !stayNumStr.trim().isEmpty()) {
 		stayNum = Long.parseLong(stayNumStr.trim());
 	}
+
+	String uri=request.getContextPath()+"/inquiry/new-inquiry.jsp";
+	if(stayNum > 0){
+		uri += "?stayNum=" + stayNum;
+	}
+	if (session.getAttribute("usersNum") == null) {
+	    response.sendRedirect(request.getContextPath()+"/user/login-form.jsp?url="+URLEncoder.encode(uri, "UTF-8"));
+	    return;
+	}
+	
+	long usersNum=(long)session.getAttribute("usersNum");
+	UserDto dto=UserDao.getInstance().getBasicInfoByNum(usersNum);
+	List<StayDto> list=StayDao.getInstance().selectAll();
 %>
 <!DOCTYPE html>
 <html>
@@ -29,6 +34,9 @@
 <title>/inquiry/new-inquiry.jsp</title>
 <jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
 <style>
+.navbar-collapse.show ~ * .d-lg-none.sticky-top {
+    display: none;
+}
 	.form-section {
     	border-top: 1px solid #dee2e6;
         border-bottom: 1px solid #dee2e6;

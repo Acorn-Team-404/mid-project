@@ -129,10 +129,17 @@ public class BookSaveServlet extends HttpServlet {
 		
 		int totalAmount = Integer.parseInt(req.getParameter("totalAmountValue"));
 		dto.setBookTotalAmount(totalAmount);
-
+		
 		// 예약 상태 (예약 대기)
 		dto.setBookStatusCode(10);
-
+		
+		//내가 고른 날짜와 기존 예약되있는 것들 겹치는 거 있는지 서버단에서 검사
+		if (BookDao.getInstance().isDateOverlap(dto)) {
+		    req.setAttribute("errorMsg", "선택한 날짜에 이미 예약이 존재합니다. 다른 날짜를 선택해주세요.");
+		    req.getRequestDispatcher("/booking/booking-page.jsp").forward(req, res);
+		    return;
+		}
+		
 		boolean isSuccess = BookDao.getInstance().insert(dto);
 
 		if (!isSuccess) {

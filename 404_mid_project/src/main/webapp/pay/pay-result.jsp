@@ -43,7 +43,7 @@
   <meta charset="UTF-8">
   <title>결제 확인</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
   <style>
     body {
       background-color: #f8f9fa;

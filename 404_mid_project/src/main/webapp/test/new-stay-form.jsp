@@ -84,7 +84,7 @@
           <option value="경북">경북</option>
           <option value="경남">경남</option>
           <option value="제주">제주</option>
-          <option value="제주">평양</option>
+          <option value="평양">평양</option>
         </select>
       </div>
       <div class="col-md-8">
@@ -111,7 +111,7 @@
     <h5 class="mt-4">숙소 대표 이미지 등록</h5>
     <div class="drop-zone mb-3" id="stayDropZone">
       <span class="text-muted">이미지를 드래그하거나 클릭하세요</span>
-      <input type="file" id="stayFileInput" name="stayUploadFile" multiple hidden>
+      <input type="file" id="stayFileInput" name="stayUploadFile" multiple hidden accept="image/*">
     </div>
     <div id="stayPreview" class="d-flex flex-wrap mb-4"></div>
 
@@ -263,7 +263,7 @@
             '<label class="form-label">객실 이미지 업로드</label>' +
             '<div class="drop-zone p-3" id="roomDropZone-' + idx + '">' +
               '<span class="text-muted">이미지를 드래그하거나 클릭</span>' +
-              '<input type="file" class="d-none" id="roomFileInput-' + idx + '" name="roomUploadFile_' + idx + '" multiple>' +
+              '<input type="file" class="d-none" id="roomFileInput-' + idx + '" name="roomUploadFile_' + idx + '" multiple accept="image/*">' +
             '</div>' +
             '<div id="roomPreview-' + idx + '" class="d-flex flex-wrap mt-2"></div>' +
           '</div>' +
@@ -339,21 +339,45 @@
 	 // 폼 요소를 가져온다. (id는 stayForm이 맞다)
   const stayForm = document.getElementById('stayForm');
 	
-	//소개글 비어있을 때 방지 + hidden에 값 주입
-  stayForm.addEventListener('submit', (e) => {
-    const content = editor.getHTML().trim(); // 에디터 내용을 읽어온다.
+	//① 에디터 → hidden ‘실시간’ 동기화: submit 이벤트가 막혀도 값은 항상 들어가게 한다.
+  const hiddenContentEl = document.getElementById('hiddenContent');
+  editor.on('change', () => {
+    const html = editor.getHTML();
+    hiddenContentEl.value = html; // 에디터 내용 변할 때마다 hidden에 반영한다.
+  });
 
-    // 내용 비어있음 체크 (Toast UI가 비어있을 때 생성하는 기본 HTML도 걸러낸다)
-    if (!content || content === '<p><br></p>') {
+  // ② 견고한 빈 내용 체크로 오탐지 제거 + 제출 직전 숫자 정리
+  function isEditorEmpty(html) {
+    if (!html) return true;
+    const plain = html
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/?[^>]+>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .trim();
+    return plain.length === 0;
+  }
+
+  stayForm.addEventListener('submit', (e) => {
+		// ✅ 인덱스 강제 정렬 (0..N-1)
+	  reindexRooms();
+		
+    const content = editor.getHTML(); // 최신 HTML
+    if (isEditorEmpty(content)) {
       alert('소개글을 입력하세요.');
       e.preventDefault();
       editor.focus();
       return;
     }
 
-    // hidden 필드에 값을 넣는다.
-    document.getElementById('hiddenContent').value = content;
-	});	
+    // 가격 입력 콤마 제거: 서버가 숫자 파싱하기 쉽게 한다.
+    document.querySelectorAll('.price-input').forEach(inp => {
+      inp.value = inp.value.replace(/,/g, '');
+    });
+
+    // hidden이 비었을 가능성에 대비해 한 번 더 보정
+    hiddenContentEl.value = content;
+  });
+
 </script>
 </body>
 </html>

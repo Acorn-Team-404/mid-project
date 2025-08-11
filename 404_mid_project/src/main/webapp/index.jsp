@@ -39,6 +39,7 @@
 	
 	<jsp:include page="/WEB-INF/include/index-stay-card.jsp" />
 	<jsp:include page="/WEB-INF/include/footer.jsp"></jsp:include>
+	
 </body>
 
 </html>

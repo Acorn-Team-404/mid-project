@@ -18,8 +18,6 @@ public class ShowImageServlet extends HttpServlet{
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
     	String fileName = req.getParameter("imageName");
-    	
-        System.out.println("[ImageServeServlet] 요청된 파일 이름: " + fileName);
 
         if (fileName == null || fileName.isBlank()) {
             System.out.println("[ImageServeServlet] 파일명 누락 - 400 오류 발생");
@@ -31,17 +29,13 @@ public class ShowImageServlet extends HttpServlet{
 
         FTPClient ftp = new FTPClient();
         try {
-            System.out.println("[ImageServeServlet] FTP 연결 시도 → " + HOST + ":" + PORT);
             // UTF-8 인코딩
             ftp.setControlEncoding("UTF-8");
             ftp.connect(HOST, PORT);
-            boolean loginSuccess = ftp.login(USER, PASSWORD);
-            System.out.println("[ImageServeServlet] FTP 로그인 성공 여부: " + loginSuccess);
+            ftp.login(USER, PASSWORD);
 
             ftp.enterLocalPassiveMode();
             ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
-
-            System.out.println("[ImageServeServlet] NAS 경로로부터 파일 스트림 요청: " + REMOTE_DIR + ftpFileName);
             InputStream is = ftp.retrieveFileStream(REMOTE_DIR + ftpFileName);
             if (is == null) {
                 System.out.println("[ImageServeServlet] 파일 없음 또는 다운로드 실패 - 404 오류 발생");
@@ -69,7 +63,7 @@ public class ShowImageServlet extends HttpServlet{
 
             is.close();
             boolean completed = ftp.completePendingCommand();
-            System.out.println("[ImageServeServlet] FTP 전송 완료 여부: " + completed);
+            System.out.println("[ImageServeServlet] FTP 이미지 로드됨: " + completed);
         } catch (Exception e) {
             System.out.println("[ImageServeServlet] 예외 발생: " + e.getMessage());
             e.printStackTrace();
@@ -77,7 +71,6 @@ public class ShowImageServlet extends HttpServlet{
         } finally {
             if (ftp.isConnected()) {
                 ftp.disconnect();
-                System.out.println("[ImageServeServlet] FTP 연결 종료");
             }
         }
     }

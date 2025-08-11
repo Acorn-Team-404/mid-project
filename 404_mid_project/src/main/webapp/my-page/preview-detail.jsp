@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
     <title>예약 상세 보기</title>
     <!-- Bootstrap CDN 추가 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include>
 </head>
 <body class="bg-light">
 

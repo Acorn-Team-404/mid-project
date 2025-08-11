@@ -22,7 +22,7 @@
 	</jsp:include>
 	<div class="container">
 		<h3 class="text-center" style="margin-top: 60px; margin-bottom: 60px;"><i class="bi bi-image me-3"></i>게시글 작성 폼</h3>
-		<form action="upload.post" method="post" id="saveForm" enctype="multipart/form-data">
+		<form action="${pageContext.request.contextPath}/upload.post" method="post" id="saveForm" enctype="multipart/form-data">
 			<div class="mb-4">
 				<label class="form-label" for="title">제목</label>
 				<input class="form-control" type="text" name="title" id="title" />			

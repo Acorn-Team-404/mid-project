@@ -23,39 +23,39 @@ public class ImageUpload extends HttpServlet {
     private static final String REMOTE_DIR = "/team404/upload/";
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        // ✅ GET도 동일 로직으로 처리하고, 절대 응답에 쓰지 않는다.
+        doPost(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/html; charset=UTF-8");
+        // ❌ include 환경에서 절대 응답에 쓰지 않는다. (contentType/PrintWriter 금지)
 
-        PrintWriter out = resp.getWriter();
-
-        // 1. target_type 우선 파라미터에서 꺼내기
+        // 1) target_type
         String targetType = req.getParameter("target_type");
         if (targetType == null || targetType.isEmpty()) {
-            // 파라미터 없으면 서블릿 맵핑 경로 기준으로 추출
-            String servletPath = req.getServletPath();      // e.g. "/stay.img"
-            targetType = servletPath.substring(1)           // "stay.img"
-                                 .replace(".img", "");     	// "stay"
+            String servletPath = req.getServletPath(); // "/post.img"
+            targetType = servletPath.substring(1).replace(".img", ""); // "post"
         }
 
-        // 2. target_id 추출
+        // 2) target_id
         String targetIdStr = req.getParameter("target_id");
-        int targetId = 0;
+        int targetId;
         try {
             targetId = Integer.parseInt(targetIdStr);
-        } catch (NumberFormatException e) {
-        	out.println("<script>alert('잘못된 target_id 값입니다.'); history.back();</script>");
-            return;
-        }
-        
-        // **2.1) partName 파라미터 추출**
-        String partName = req.getParameter("partName");
-        if (partName == null || partName.isEmpty()) {
-            // 기존 동작을 유지하려면 기본값 "uploadFile"
-            partName = "uploadFile";
+        } catch (Exception e) {
+            System.out.println("[ImageUpload] invalid target_id: " + targetIdStr);
+            return; // ✅ 무출력 종료
         }
 
-        // 3. FTP 연결
+        // 3) partName 기본값
+        String partName = req.getParameter("partName");
+        if (partName == null || partName.isEmpty()) partName = "uploadFile";
+
         FTPClient ftp = new FTPClient();
         try {
             ftp.connect(HOST, PORT);
@@ -65,81 +65,67 @@ public class ImageUpload extends HttpServlet {
             ftp.enterLocalPassiveMode();
             ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
 
-         // 4. 파일 반복 업로드 (partName 필터링 적용)
-            Collection<Part> parts = req.getParts();
             int successCount = 0;
-            StringBuilder alertMessages = new StringBuilder();
-
+            Collection<Part> parts = req.getParts();
             for (Part part : parts) {
-                // partName 파라미터와 일치하는 파일 input만 처리
-                if (!part.getName().equals(partName) || part.getSize() == 0) {
+                if (!partName.equals(part.getName()) || part.getSize() == 0) continue;
+
+                // ✅ 이미지 MIME만 허용한다.
+                String ctype = part.getContentType();
+                if (ctype == null || !ctype.startsWith("image/")) {
+                    System.out.println("[ImageUpload] skip non-image: " + part.getSubmittedFileName());
                     continue;
                 }
 
                 String originalName = part.getSubmittedFileName();
-                String extension = "";
-                int dotIndex = originalName.lastIndexOf(".");
-                if (dotIndex != -1) {
-                    extension = originalName.substring(dotIndex);
+                if (originalName == null || originalName.isEmpty()) {
+                    System.out.println("[ImageUpload] empty filename part skipped");
+                    continue;
                 }
 
-                // 현재 날짜 문자열 얻기 (예: 20250803)
+                String extension = "";
+                int dot = originalName.lastIndexOf('.');
+                if (dot != -1) extension = originalName.substring(dot);
+
                 String today = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
-                // UUID 생성
                 String uuid = UUID.randomUUID().toString();
-                // 저장할 파일명: 날짜_UUID.확장자
                 String savedName = today + "_" + uuid + extension;
+
+                // FTP는 ISO-8859-1로 파일명을 맞춘다.
                 String ftpFileName = new String(savedName.getBytes("UTF-8"), "ISO-8859-1");
 
-                try (InputStream input = part.getInputStream()) {
-                    boolean uploaded = ftp.storeFile(REMOTE_DIR + ftpFileName, input);
+                try (InputStream in = part.getInputStream()) {
+                    boolean uploaded = ftp.storeFile(REMOTE_DIR + ftpFileName, in);
                     if (uploaded) {
-                        // 자동 sort_order 방식으로 저장
                         boolean inserted = ImageDao.getInstance()
-                            .insertAutoSort(originalName, savedName, targetType, targetId);
+                                .insertAutoSort(originalName, savedName, targetType, targetId);
                         if (inserted) {
                             successCount++;
-                            System.out.println("업로드 성공: "+ originalName);
-							/* alertMessages.append("업로드 성공: ").append(originalName).append("\\n"); */
+                            System.out.println("[ImageUpload] uploaded: " + originalName + " -> " + savedName);
                             if ("profile".equals(targetType)) {
-                                boolean updated = ImageDao.getInstance()
-                                    .updateUserProfileImage(targetId, savedName);
-                                if (updated) {
-                                    alertMessages.append("사용자 프로필 이미지 갱신 완료\\n");
-                                } else {
-                                    alertMessages.append("사용자 테이블 갱신 실패\\n");
-                                }
+                                boolean ok = ImageDao.getInstance()
+                                        .updateUserProfileImage(targetId, savedName);
+                                System.out.println("[ImageUpload] profile update: " + ok);
                             }
                         } else {
-                            alertMessages.append("DB 저장 실패: ").append(originalName).append("\\n");
+                            System.out.println("[ImageUpload] DB insert failed: " + originalName);
                         }
                     } else {
-                        alertMessages.append("FTP 업로드 실패: ").append(originalName).append("\\n");
+                        System.out.println("[ImageUpload] FTP upload failed: " + originalName);
                     }
                 }
             }
-
-            System.out.println("총 성공 파일 수: " + successCount);
-			/* alertMessages.append("총 성공 파일 수: ").append(successCount); */
+            System.out.println("[ImageUpload] success files: " + successCount);
             ftp.logout();
-            // 파일명에 따른 오류 방지용 HTML 이스케이프
-			/*
-			 * String safeMessage = alertMessages.toString().replace("'", "\\'");
-			 * out.println("<script>alert('" + safeMessage +
-			 * "'); history.back();</script>");
-			 */
 
         } catch (Exception e) {
-            e.printStackTrace(out);
-            out.println("오류 발생: " + e.getMessage());
+            // ❗ 절대 resp에 쓰지 않는다.
+            e.printStackTrace();
         } finally {
             if (ftp.isConnected()) {
-                try {
-                    ftp.disconnect();
-                } catch (IOException e) {
-                    e.printStackTrace(out);
-                }
+                try { ftp.disconnect(); } catch (IOException ignore) {}
             }
         }
+        // ✅ 여기서도 끝. 어떤 출력도 하지 않는다.
     }
 }

@@ -17,10 +17,17 @@ public class StayInfoDto {
     private String stayPhone;        // STAY.STAY_PHONE
     private String stayFacilities;   // STAY.STAY_FACILITIES
     private String stayContent;		 // STAY.STAY_CONTENT
+    private String stayDelete;		 // STAY.STAY_DELETE
     private List<RoomDto> rooms;     // 연관된 ROOM 목록
     
     // getters / setters
     
+    public String getStayDelete() {
+		return stayDelete;
+	}
+    public void setStayDelete(String stayDelete) {
+		this.stayDelete = stayDelete;
+	}
     public String getStayContent() {
 		return stayContent;
 	}

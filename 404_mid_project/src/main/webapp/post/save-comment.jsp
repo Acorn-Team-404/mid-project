@@ -60,7 +60,7 @@
 		long notiSenderNum = usersNum;
 		int notiTypeCode = 20;
 		int notiTargetTypeCode = 20;
-		String notiTargetNum = String.valueOf(usersNum);
+		String notiTargetNum = String.valueOf(num);
 		String notiMessage = content;
 		
 		NotificationDto notiDto = new NotificationDto();

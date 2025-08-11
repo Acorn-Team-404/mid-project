@@ -5,8 +5,20 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 
+
 <!-- notification 커스텀 css -->
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/notification/notification-modal.css" />
+<!-- 세션이 있을 때만 noti.SSE를 호출하는 js -->
+<script src="${pageContext.request.contextPath}/js/notification/noti-sse.js?v=<%= System.currentTimeMillis() %>" async></script>
+<script src="${pageContext.request.contextPath}/js/notification/noti-control.js?v=<%= System.currentTimeMillis() %>" async></script>
+<script>
+	//DOM이 완성된 후 SSE 실행
+	document.addEventListener("DOMContentLoaded", () => {
+	  initializeSSE();
+	});
+</script>
+
+
 
 <!-- 달력 -->
 <!-- flatpickr CSS -->

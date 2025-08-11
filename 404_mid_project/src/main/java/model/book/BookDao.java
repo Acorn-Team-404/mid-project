@@ -34,7 +34,124 @@ public class BookDao {
    public static BookDao getInstance() {
       return dao;
    }
+   
+   // BookDao.java
+   public boolean isDateOverlap(BookDto dto) {
+	   	Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+	   String sql = """
+	   		    SELECT 1
+	   		    FROM BOOKING
+	   		    WHERE BOOK_ROOM_NUM = ?
+	   		      AND BOOK_STATUS_CODE IN (10,11)
+	   		      AND (? < TO_DATE(BOOK_CHECKOUT_DATE, 'YYYY-MM-DD')
+	   		      AND ? > TO_DATE(BOOK_CHECKIN_DATE, 'YYYY-MM-DD'))
+	   		""";
+	   
+	   try {
+			 
+		   
+		   conn = DBConnector.getConn();
+		   pstmt = conn.prepareStatement(sql);
+		   pstmt.setLong(1, dto.getBookRoomNum());
+		   pstmt.setString(2, dto.getBookCheckIn()); // 새 체크아웃 < 기존 체크인보다 이후
+		   pstmt.setString(3, dto.getBookCheckOut());  // 새 체크인 > 기존 체크아웃보다 이전
+		   rs = pstmt.executeQuery();
+		   
+		   
+		   if(rs.next()) {
+			   return true;
+		   }
+		   
+		   return false;
+		   
+	   } catch (Exception e) {
+		   e.printStackTrace();
+		   return true; // 예외 발생 시 그냥 겹친다 처리 
+	   } finally {
+		   DBConnector.close(rs, pstmt, conn);
+	   }
+   }
+   
+   // 예약대기 상태로 오래있는 데이터 삭제시키는 DAO
+   public List<ExpiredBookingDto> findExpiredBook(Connection conn) throws SQLException {
+	    String sql = """
+	        SELECT BOOK_NUM, BOOK_USERS_NUM
+	        FROM BOOKING
+	        WHERE BOOK_STATUS_CODE = 10
+	          AND BOOK_CREATED_AT <= (SYSTIMESTAMP - INTERVAL '1' MINUTE)
+	        """;
 
+	    List<ExpiredBookingDto> list = new ArrayList<>();
+	    
+	    try (
+	        PreparedStatement pstmt = conn.prepareStatement(sql);
+	        ResultSet rs = pstmt.executeQuery()
+	    ) {
+	        while (rs.next()) {
+	            String bookNum = rs.getString("BOOK_NUM");
+	            long userId = rs.getLong("BOOK_USERS_NUM");
+
+	            ExpiredBookingDto booking = new ExpiredBookingDto(bookNum, userId);
+	            list.add(booking);
+	        }
+	    }
+	    return list;
+	}
+
+   
+   // 스케쥴러로 예약대기 상태 삭제하는 DAO
+   public void deleteByBookNum(Connection conn, String bookNum) throws SQLException {
+	    String sql = """
+	    		DELETE FROM BOOKING 
+	    		WHERE BOOK_NUM = ?
+	    		""";
+	    
+	    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	        pstmt.setString(1, bookNum);
+	        pstmt.executeUpdate();
+	    }
+	}
+   
+   // 예약불가 목록 불러오기
+   public List<String> getDisabledDates(long bookRoomNum){
+	   List<String> dates_list = new ArrayList<>();
+	   Connection conn = null;
+	   PreparedStatement pstmt = null;
+	   ResultSet rs = null;
+	   
+	   String sql = """
+	   		SELECT book_checkIn_date,book_checkout_date 
+	   		FROM BOOKING
+	   		WHERE book_room_num = ?
+	   		""";
+	   
+	   try {
+		    conn = DBConnector.getConn();
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setLong(1,bookRoomNum);
+	        rs = pstmt.executeQuery();
+	        
+	        while(rs.next()) {
+	        	LocalDate start = rs.getDate("book_checkIn_date").toLocalDate();
+	        	LocalDate end = rs.getDate("book_checkOut_date").toLocalDate().minusDays(1);
+	        	//checkout 당일은 에약 가능하게 -1
+	        	
+	        	//체크인날자를 체크아웃 전 날까지 블럭해줘야하기 때문에 end까지 돌면서 dates_lsit에 담는다. 
+	        	while (!start.isAfter(end)) {
+	        		dates_list.add(start.toString()); // yyyy-mm-dd
+	        		start = start.plusDays(1);
+	        		
+	        	}
+	        }
+	   } catch(Exception e) {
+		   e.printStackTrace();
+	   }
+	   return dates_list;
+	   
+   }
+   
    // 사용자의 모든 예약 목록을 조회하기
    public List<BookDto> getByUserNum(long userNum){
 	   List<BookDto> list = new ArrayList<BookDto>();

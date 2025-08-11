@@ -127,7 +127,7 @@ public class StayInfoDao {
         try {
             conn = DBConnector.getConn();
             String sql = """
-                SELECT stay_num, stay_name
+                SELECT stay_num, stay_name, stay_delete
                 FROM stay
                 ORDER BY stay_num DESC
             """;
@@ -137,6 +137,7 @@ public class StayInfoDao {
                 StayInfoDto dto = new StayInfoDto();
                 dto.setStayNum(rs.getLong("stay_num"));
                 dto.setStayName(rs.getString("stay_name"));
+                dto.setStayDelete(rs.getString("stay_delete"));
                 list.add(dto);
             }
         } catch (Exception e) {
@@ -157,23 +158,28 @@ public class StayInfoDao {
 				  s.stay_num,
 				  s.stay_name,
 				  s.stay_loc,
-				  NVL((SELECT MIN(r.room_price)
-				         FROM room r
-				        WHERE r.room_stay_num   = s.stay_num), 0)                 AS min_price,
-				  NVL((SELECT ROUND(AVG(rv.review_rating), 2)
-				         FROM review rv
-				        WHERE rv.review_stay_num = s.stay_num), 0)                 AS avg_rating,
-				  NVL((SELECT COUNT(*)
-				         FROM review rv
-				        WHERE rv.review_stay_num = s.stay_num), 0)                 AS review_count,
-				  NVL((SELECT img.image_saved_name
-				         FROM image_file img
-				        WHERE img.image_target_type = 'stay'
-				          AND img.image_target_id   = s.stay_num
-				          AND ROWNUM = 1), 'default.jpg')                           AS image_name,
-				  NVL((SELECT MAX(p.page_num)
-				         FROM page p
-				        WHERE p.page_stay_num    = s.stay_num), 0)                 AS page_num
+				  NVL((
+				    SELECT MIN(r.room_price)
+				    FROM room r
+				    WHERE r.room_stay_num = s.stay_num
+				  ), 0) AS min_price,
+				  NVL((
+				    SELECT ROUND(AVG(rv.review_rating), 2)
+				    FROM review rv
+				    WHERE rv.review_stay_num = s.stay_num
+				  ), 0) AS avg_rating,
+				  NVL((
+				    SELECT COUNT(*)
+				    FROM review rv
+				    WHERE rv.review_stay_num = s.stay_num
+				  ), 0) AS review_count,
+				  NVL((
+				    SELECT img.image_saved_name
+				    FROM image_file img
+				    WHERE img.image_target_type = 'stay'
+				      AND img.image_target_id   = s.stay_num
+				      AND ROWNUM = 1
+				  ), 'default.jpg') AS image_name
 				FROM stay s
 				WHERE s.stay_delete = 'N'
 				ORDER BY s.stay_num DESC
@@ -192,7 +198,6 @@ public class StayInfoDao {
                 dto.setAvgRating   (rs.getDouble("avg_rating"));
                 dto.setReviewCount (rs.getInt   ("review_count"));  // ★ 여기
                 dto.setImageName   (rs.getString("image_name"));
-                dto.setLatestPageNum(rs.getLong("page_num"));
                 list.add(dto);
               }
             } catch (Exception e) {
@@ -201,33 +206,103 @@ public class StayInfoDao {
             return list;
         }
     
-    public Long getPageNumByStayNum(long stayNum) {
-        Long pageNum = 0L;  // 기본값을 0으로 설정
+	// 글 하나의 정보 불러오기
+	public StayInfoDto getByNum(long stayNum) {
+		StayInfoDto dto=null;
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DBConnector.getConn();
+			// 실행할 sql 문
+			String sql = """
+				SELECT stay_num, stay_name, stay_loc, stay_content, stay_addr
+				FROM stay
+				WHERE stay_num=?
+			""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 값 바인딩
+			pstmt.setLong(1, stayNum);
+			// Select 문 실행하고 결과를 ResultSet 으로 받아온다
+			rs = pstmt.executeQuery();
+			// 반복문 돌면서 ResultSet 에 담긴 데이터를 추출해서 어떤 객체에 담는다
+			// 단일 : if  /  다중 : while
+			if (rs.next()) {
+				dto=new StayInfoDto();
+				dto.setStayNum(rs.getLong("stay_num"));
+				dto.setStayName(rs.getString("stay_name"));
+				dto.setStayLoc(rs.getString("stay_loc"));
+				dto.setStayContent(rs.getString("stay_content"));
+				dto.setStayAddr(rs.getString("stay_addr"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(rs, pstmt, conn);
+		} // 하단에 return 값 넣어주셔야함!
+		return dto;
+	}
+	
+	public boolean deleteStay(long stayNum) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		// 변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
+		int rowCount = 0;
+		try {
+			conn = DBConnector.getConn();
+			String sql = """
+					UPDATE stay
+					SET stay_delete = 'D'
+					WHERE stay_num = ?
+					""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 순서대로 필요한 값 바인딩
+			pstmt.setLong(1, stayNum);
+			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
+			rowCount = pstmt.executeUpdate();
 
-        String sql = """
-            SELECT NVL(MAX(p.page_num), 0) AS page_num
-              FROM page p
-             WHERE p.page_stay_num = ?
-            """;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(pstmt, conn);
+		}
+		// 작업의 성공 여부 (변화된 row 의 갯수로 판단)
+		if (rowCount > 0) {
+			return true; // 작업 성공
+		} else {
+			return false; // 작업 실패
+		}
+	}
+	
+	public boolean restoreStay(long stayNum) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		// 변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
+		int rowCount = 0;
+		try {
+			conn = DBConnector.getConn();
+			String sql = """
+					UPDATE stay
+					SET stay_delete = 'N'
+					WHERE stay_num = ?
+					""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 순서대로 필요한 값 바인딩
+			pstmt.setLong(1, stayNum);
+			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
+			rowCount = pstmt.executeUpdate();
 
-        try (
-            Connection conn = DBConnector.getConn();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-        ) {
-            // 1) ?에 stayNum 바인딩
-            pstmt.setLong(1, stayNum);
-
-            // 2) 쿼리 실행
-            try (ResultSet rs = pstmt.executeQuery()) {
-                // 3) 결과에서 page_num 읽기
-                if (rs.next()) {
-                    pageNum = rs.getLong("page_num");
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return pageNum;
-    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(pstmt, conn);
+		}
+		// 작업의 성공 여부 (변화된 row 의 갯수로 판단)
+		if (rowCount > 0) {
+			return true; // 작업 성공
+		} else {
+			return false; // 작업 실패
+		}
+	}
 }
