@@ -1,7 +1,5 @@
 <%@page import="model.post.CommentDao"%>
 <%@page import="model.post.CommentDto"%>
-<%@page import="test.dao.CommentDao"%>
-<%@page import="test.dto.CommentDto"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%

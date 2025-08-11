@@ -221,10 +221,14 @@
 			                        
 		                    	</div>
 		                    	<pre><%=tmp.getCommentContent() %></pre>
+		                    	
+		                    	<div>
+		                    	
+		                    	</div>
 		                    	<!-- 댓글 작성자가 로그인된 userName이라면 수정폼 / 아니면 댓글폼 -->
-		                    	<%if(isLogin && usersNum.equals(tmp.getCommentWriter())){ %>
+		                    	<%if(tmp.getCommentWriterId().equals(usersId)){ %>
 		                    		<!-- 수정 버튼 (본인에게만 보임) -->
-				                    <button class="btn btn-sm btn-outline-secondary edit-btn">수정</button>
+				                    <button class="btn btn-sm btn-outline-secondary edit-btn ms-2 float-end">수정</button>
 				
 				                    <!-- 댓글 수정 폼 (처음에는 숨김) -->
 				                    <div class="d-none form-div">
@@ -238,7 +242,7 @@
 			                        	</form>
 	                    			</div>	
 		                    	
-		                    	<%}else{ %>
+		                    	
 			                    	<button class="btn btn-sm btn-outline-secondary show-reply-btn float-end">댓글</button>  
 		                   			<!-- 댓글 입력 폼 (처음에는 숨김) -->
 		                   			<div class="d-none form-div">
@@ -332,7 +336,6 @@
                 formDiv.previousElementSibling.classList.remove("d-none");
             })
         })
-		
 		document.querySelector("#commentContent").addEventListener("input", ()=>{
 			//원글의 댓글 입력란에 포커스 왔을 때 -- 로그인 x라면
 			if(!isLogin){
@@ -355,20 +358,12 @@
             		const isMove=confirm("댓글 작성을 위해 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?");
     				location.href=
     					"${pageContext.request.contextPath }/user/login-form.jsp?url=${pageContext.request.contextPath }/post/view.jsp?num=<%=num %>";
-            		
             		return;
             	}
                 //클릭한 버튼의 다음 형제요소의 class 목록에서 d-none 을 제거 
                 item.nextElementSibling.classList.remove("d-none");
                 //클릭한 버튼의 class 목록에 d-none 을 추가
                 item.classList.add("d-none");
-                
-               // 내용이 없다면
-               const commentContent = document.querySelector("#commentContent");
-               if(!commentContent && commentContent=""){
-            	   alert("내용을 입력하세요");
-            	   return;
-               }
                
             });
         });
