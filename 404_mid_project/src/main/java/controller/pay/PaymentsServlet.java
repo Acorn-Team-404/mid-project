@@ -237,7 +237,9 @@ public class PaymentsServlet extends HttpServlet {
 				
 				}catch (Exception e) {
 		            e.printStackTrace();
-		            if (dbConn != null) try { dbConn.rollback(); } catch (Exception rollbackEx) {}
+		            if (dbConn != null) try { 
+		            	System.out.println("롤백이 문제냐");
+		            	dbConn.rollback(); } catch (Exception rollbackEx) {}
 		            System.out.println("결제가 실패하여, 예약이 취소 되었습니다.");
 		            BookDao.getInstance().deleteByBookNum(bookNum); // 예약 삭제 bookNum
 		        } finally {

@@ -286,6 +286,24 @@ public class BookDao {
       } //트랜잭션 처리 해야해서 여기서 close가 아니라 insertPayment랑 같이 close
    }
    
+   // 결제 실패시 예약 정보 삭제하는 메서드
+   public void deleteByBookNum(String bookNum) {
+       String sql = """
+       		    UPDATE BOOKING
+       		SET DELETE_FLAG = 'Y'
+	    		WHERE BOOK_STATUS_CODE = 10
+	    		  AND DELETE_FLAG = 'N'
+	    		  AND BOOK_NUM = ?
+             """;
+       try (Connection conn = DBConnector.getConn();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+           pstmt.setString(1, bookNum);
+           pstmt.executeUpdate();
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
+   }
+   
    
      // 해당 숙소의 객실 목록
       public List<RoomDto> getRoomByStayNum(long stayNum){
