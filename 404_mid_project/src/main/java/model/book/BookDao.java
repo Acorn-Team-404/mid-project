@@ -45,8 +45,8 @@ public class BookDao {
 	   		    FROM BOOKING
 	   		    WHERE BOOK_ROOM_NUM = ?
 	   		      AND BOOK_STATUS_CODE IN (10,11)
-	   		      AND (? < TO_DATE(BOOK_CHECKOUT_DATE, 'YYYY-MM-DD')
-	   		      AND ? > TO_DATE(BOOK_CHECKIN_DATE, 'YYYY-MM-DD'))
+	   		      AND (? < BOOK_CHECKOUT_DATE 
+	   		      AND ? > BOOK_CHECKIN_DATE )
 	   		""";
 	   
 	   try {
@@ -79,7 +79,8 @@ public class BookDao {
 	    String sql = """
 	        SELECT BOOK_NUM, BOOK_USERS_NUM
 	        FROM BOOKING
-	        WHERE BOOK_STATUS_CODE = 10
+	        WHERE BOOK_STATUS_CODE = 10 
+	    	  AND DELETE_FLAG = 'N'
 	          AND BOOK_CREATED_AT <= (SYSTIMESTAMP - INTERVAL '1' MINUTE)
 	        """;
 
@@ -104,8 +105,11 @@ public class BookDao {
    // 스케쥴러로 예약대기 상태 삭제하는 DAO
    public void deleteByBookNum(Connection conn, String bookNum) throws SQLException {
 	    String sql = """
-	    		DELETE FROM BOOKING 
-	    		WHERE BOOK_NUM = ?
+	    		UPDATE BOOKING
+	    		SET DELETE_FLAG = 'Y'
+	    		WHERE BOOK_STATUS_CODE = 10
+	    		  AND DELETE_FLAG = 'N'
+	    		  AND BOOK_NUM = ?
 	    		""";
 	    
 	    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -125,6 +129,7 @@ public class BookDao {
 	   		SELECT book_checkIn_date,book_checkout_date 
 	   		FROM BOOKING
 	   		WHERE book_room_num = ?
+	   		AND DELETE_FLAG = 'N'
 	   		""";
 	   
 	   try {
@@ -169,6 +174,7 @@ public class BookDao {
 				SELECT *
 				FROM BOOKING
 				WHERE BOOK_USERS_NUM = ?
+				  AND DELETE_FLAG = 'N'
 				ORDER BY BOOK_CREATED_AT DESC
 				""";
 		pstmt = conn.prepareStatement(sql);
@@ -221,6 +227,7 @@ public class BookDao {
             SELECT *
             FROM BOOKING
             WHERE BOOK_NUM = ?
+             AND DELETE_FLAG = 'N'
 
             """;
       try {
@@ -269,7 +276,7 @@ public class BookDao {
             SET book_status_code = ?
             WHERE BOOK_STATUS_GROUP_ID = 'RESERVATION_STATUS'
             AND BOOK_NUM = ?
-
+      		AND DELETE_FLAG = 'N'
             """;
       try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
          pstmt.setInt(1, 11); // 예약 확정
@@ -283,6 +290,7 @@ public class BookDao {
        String sql = """
              DELETE FROM BOOKING
              WHERE BOOK_NUM = ?
+             AND DELETE_FLAG = 'N'
              """;
        try (Connection conn = DBConnector.getConn();
             PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -455,6 +463,7 @@ public class BookDao {
 	   		JOIN ROOM r ON b.book_room_num = r.room_num
 	   		JOIN PAYMENTS p ON b.book_num = p.pay_book_num
 	   		WHERE b.book_num = ?
+	   		AND DELETE_FLAG = 'N'
 	   		""";
 	   
 	   try {

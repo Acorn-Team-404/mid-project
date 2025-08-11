@@ -54,6 +54,10 @@
     List<ImageDto> carouselImages = ImageDao.getInstance().getListByTargetLong("stay", stayNum);
     int size = carouselImages.size();
     List<RoomDto> minaRoomList = RoomDao.getInstance().getRoomListByStayNum(stayNum);
+    
+    request.setAttribute("stayNum", stayNum);
+   
+
 %>
 <!DOCTYPE html>
 <html>

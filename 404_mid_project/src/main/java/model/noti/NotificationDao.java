@@ -368,6 +368,10 @@ public class NotificationDao {
 	}
 	
 	
+	public int notiReadCount(Long usersNum) {
+	    return usersNum != null ? notiReadCount(usersNum.longValue()) : 0;
+	}
+
 	
 	// 사용자의 안읽은 알림의 수를 반환하는 메서드
 	public int notiReadCount(long usersNum) {

@@ -19,7 +19,7 @@
 	// 안읽은 알림 수
 	int notiReadCount = 0;
 	if (session.getAttribute("usersNum") != null && request.getAttribute("usersNum") != null) {
-		notiReadCount = NotificationDao.getInstance().notiReadCount(Long.valueOf(usersNum));
+		notiReadCount = NotificationDao.getInstance().notiReadCount(Long.valueOf(usersNum).longValue());
 	}
 %> 
 
