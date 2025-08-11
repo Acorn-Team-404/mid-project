@@ -104,7 +104,7 @@ public class BookDao {
 
    
    // 스케쥴러로 예약대기 상태 삭제하는 DAO
-   public void deleteByBookNum(Connection conn, String bookNum) throws SQLException {
+   public void deleteByBookNum2(Connection conn, String bookNum) throws SQLException {
 	    String sql = """
 	    		UPDATE BOOKING
 	    		SET DELETE_FLAG = 'Y'
@@ -284,22 +284,6 @@ public class BookDao {
          pstmt.setString(2, bookNum);
          pstmt.executeUpdate();
       } //트랜잭션 처리 해야해서 여기서 close가 아니라 insertPayment랑 같이 close
-   }
-   
-   // 결제 실패시 예약 정보 삭제하는 메서드
-   public void deleteByBookNum(String bookNum) {
-       String sql = """
-             DELETE FROM BOOKING
-             WHERE BOOK_NUM = ?
-             AND DELETE_FLAG = 'N'
-             """;
-       try (Connection conn = DBConnector.getConn();
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
-           pstmt.setString(1, bookNum);
-           pstmt.executeUpdate();
-       } catch (Exception e) {
-           e.printStackTrace();
-       }
    }
    
    

@@ -31,7 +31,7 @@ public class BookCleanupTask extends TimerTask{
 	                long bookStayNum = booking.getBookStayNum();
 
 	                // 예약 삭제
-	                bookDao.deleteByBookNum(conn, bookNum);
+	                bookDao.deleteByBookNum2(conn, bookNum);
 
 	                // 알림 저장
 	                // SSE 전송 

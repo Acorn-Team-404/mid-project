@@ -76,9 +76,9 @@ public class NotificationDao {
 	                img.image_saved_name AS noti_image_name
 	            FROM notifications n
 	            LEFT JOIN booking b
-	              ON n.noti_type_code = 10 AND n.noti_target_num = b.book_num
+	              ON n.noti_type_code IN(10, 11) AND n.noti_target_num = b.book_num
 	            LEFT JOIN stay s
-	              ON n.noti_type_code = 10 AND b.book_stay_num = s.stay_num
+	              ON n.noti_type_code IN(10, 11) AND b.book_stay_num = s.stay_num
 	            LEFT JOIN comments comm
 	              ON n.noti_type_code = 20
 	             AND n.noti_target_num = TO_CHAR(comm.comment_num)
@@ -199,10 +199,10 @@ public class NotificationDao {
 						img.image_saved_name AS noti_image_name
 					FROM notifications n
 					LEFT JOIN booking b
-					  ON n.noti_type_code = 10 
+					  ON n.noti_type_code IN(10, 11)
 					 AND n.noti_target_num = b.book_num
 					LEFT JOIN stay s
-					  ON n.noti_type_code = 10 
+					  ON n.noti_type_code IN(10, 11)
 					  AND b.book_stay_num = s.stay_num
 					LEFT JOIN comments comm
 					  ON n.noti_type_code = 20 
