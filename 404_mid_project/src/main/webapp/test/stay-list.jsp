@@ -25,8 +25,8 @@
       <tr>
         <th>숙소 번호</th>
         <th>숙소 이름</th>
-        <th>예약하기</th>
-        <th>삭제하기</th>        
+        <th>숙소 상태</th>
+        <th>숙소 상태변경</th>        
       </tr>
     </thead>
     <tbody>
@@ -37,21 +37,32 @@
     %>
       <tr>
         <td><%= s.getStayNum() %></td>
-        <td><%= s.getStayName() %></td>
         <td>
-          <form action="<%=request.getContextPath()%>/booking/submit"
-                method="get" style="margin:0;">
-            <input type="hidden" name="stayNum" value="<%= s.getStayNum() %>">
-            <button type="submit" class="btn btn-sm btn-primary">예약</button>
-          </form>
+          <a href="${pageContext.request.contextPath}/page/page-view.jsp?stayNum=<%= s.getStayNum() %>"><%= s.getStayName() %></a>
         </td>
 				<td>
+					<%if("N".equals(s.getStayDelete())){ %>
+						활성화
+					<%}else{ %>
+						비활성화
+					<%} %>
+				</td>
+				<td>
+					<%if("N".equals(s.getStayDelete())){ %>
 				    <form action="<%=request.getContextPath()%>/test/stay-delete.jsp"
 				          method="post" style="margin:0;"
-				          onsubmit="return confirm('숙소를 삭제하시겠습니까?');">
+				          onsubmit="return confirm('숙소를 비활성화 하시겠습니까?');">
 				        <input type="hidden" name="stayNum" value="<%= s.getStayNum() %>">
-				        <button type="submit" class="btn btn-sm btn-danger">삭제</button>
-				    </form>
+				        <button type="submit" class="btn btn-sm btn-danger">비활성화</button>
+				    </form>	
+					<%}else{ %>
+				    <form action="<%=request.getContextPath()%>/test/stay-restore.jsp"
+				          method="post" style="margin:0;"
+				          onsubmit="return confirm('숙소를 활성화 하시겠습니까?');">
+				        <input type="hidden" name="stayNum" value="<%= s.getStayNum() %>">
+				        <button type="submit" class="btn btn-sm btn-primary">활성화</button>
+				    </form>	
+					<%} %>
 				</td>
       </tr>
     <%

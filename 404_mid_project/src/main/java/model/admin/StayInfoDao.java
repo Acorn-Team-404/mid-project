@@ -127,9 +127,8 @@ public class StayInfoDao {
         try {
             conn = DBConnector.getConn();
             String sql = """
-                SELECT stay_num, stay_name
+                SELECT stay_num, stay_name, stay_delete
                 FROM stay
-                WHERE stay_delete = 'N' 
                 ORDER BY stay_num DESC
             """;
             pstmt = conn.prepareStatement(sql);
@@ -138,6 +137,7 @@ public class StayInfoDao {
                 StayInfoDto dto = new StayInfoDto();
                 dto.setStayNum(rs.getLong("stay_num"));
                 dto.setStayName(rs.getString("stay_name"));
+                dto.setStayDelete(rs.getString("stay_delete"));
                 list.add(dto);
             }
         } catch (Exception e) {
@@ -247,20 +247,49 @@ public class StayInfoDao {
 	public boolean deleteStay(long stayNum) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		String delete = "D";
 		// 변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
 		int rowCount = 0;
 		try {
 			conn = DBConnector.getConn();
 			String sql = """
 					UPDATE stay
-					SET stay_delete = ?
+					SET stay_delete = 'D'
 					WHERE stay_num = ?
 					""";
 			pstmt = conn.prepareStatement(sql);
 			// ? 에 순서대로 필요한 값 바인딩
-			pstmt.setString(1, delete);
-			pstmt.setLong(2, stayNum);
+			pstmt.setLong(1, stayNum);
+			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
+			rowCount = pstmt.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnector.close(pstmt, conn);
+		}
+		// 작업의 성공 여부 (변화된 row 의 갯수로 판단)
+		if (rowCount > 0) {
+			return true; // 작업 성공
+		} else {
+			return false; // 작업 실패
+		}
+	}
+	
+	public boolean restoreStay(long stayNum) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		// 변화된 row 의 갯수를 담을 변수 선언하고 0으로 초기화
+		int rowCount = 0;
+		try {
+			conn = DBConnector.getConn();
+			String sql = """
+					UPDATE stay
+					SET stay_delete = 'N'
+					WHERE stay_num = ?
+					""";
+			pstmt = conn.prepareStatement(sql);
+			// ? 에 순서대로 필요한 값 바인딩
+			pstmt.setLong(1, stayNum);
 			// sql 문 실행하고 변화된(추가된, 수정된, 삭제된) row 의 갯수 리턴받기
 			rowCount = pstmt.executeUpdate();
 
