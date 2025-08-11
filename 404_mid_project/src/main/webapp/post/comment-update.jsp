@@ -21,16 +21,16 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>/board/comment-update.jsp</title>
+<title>/post/comment-update.jsp</title>
 </head>
 <body>
 	<script>
 		<%if(isSuccess){ %>
 			alert("수정완료");
-			location.href="${pageContext.request.contextPath }/board/view.jsp?num=<%=parentNum %>";
+			location.href="${pageContext.request.contextPath }/post/view.jsp?num=<%=parentNum %>";
 		<%}else{ %>
 			alert("수정 실패!");
-			location.href="${pageContext.request.contextPath }/board/view.jsp?num=<%=parentNum %>";
+			location.href="${pageContext.request.contextPath }/post/view.jsp?num=<%=parentNum %>";
 		<%} %>
 	</script>
 </body>
