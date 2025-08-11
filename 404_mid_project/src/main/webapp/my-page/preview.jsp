@@ -59,11 +59,13 @@
                         
                         // 숙소 이름 가져오기
                         String stayName = "이름 없음"; // 만약 숙소 이름 못 가져오면 임시로
+                        long stayUsersNum = 0;
                         StayDto stayDto = StayDao.getInstance().getByBookStayNum(stayNum);
 
                         // db에 정보가 있으면
                         if (stayDto != null) {
                             stayName = stayDto.getStayName();
+                            stayUsersNum = stayDto.getStayUsersNum();
                         }
                         // 예약 상태 글자로 나오게 하기
                         String statusName = ReviewDao.getInstance().getReservationStatusName(statusCode);
@@ -89,7 +91,7 @@
                                 if (hasReview) { %> <%--예약 번호로 리뷰 쓴 기록이 있다면 리뷰를 썼으면 리뷰 보기로 나오고--%>
                                     <a href="<%= request.getContextPath() %>/page/page-view.jsp?stayNum=<%=stayNum%>#review-section" class="btn btn-sm btn-light">리뷰 보기</a>
                             <%  } else { %><!-- 리뷰를 안 썼으면 리뷰 쓰기로 나오고 -->
-                                    <a href="<%= request.getContextPath() %>/review/review-form.jsp?bookNum=<%= bookNum %>&stayNum=<%= stayNum %>" class="btn btn-sm btn-secondary">리뷰 쓰기</a>
+                                    <a href="<%= request.getContextPath() %>/review/review-form.jsp?bookNum=<%= bookNum %>&stayNum=<%= stayNum %>&stayUsersNum=<%=stayUsersNum %>" class="btn btn-sm btn-secondary">리뷰 쓰기</a>
                             <%  }
                                } else { %> <!-- 예약코드가 10이면 -로 나오게 -->
                                 <span class="text-muted">-</span>

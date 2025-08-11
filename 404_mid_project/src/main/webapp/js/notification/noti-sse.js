@@ -172,14 +172,14 @@ function renderNotiCard(noti, contextPath) {
       <div class="noti-card shadow-sm d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25"
            data-noti-num="${noti.notiNum ?? ""}">
         <span class="read-dot ${Number(noti.readCode) === 11 ? "d-none" : ""} position-absolute top-0 end-0 d-inline-block rounded-circle bg-semired" style="width: 11px; height: 11px;"></span>
-        <div class="noti-img-wrapper ratio ratio-1x1">
-          <img class="img-fluid object-fit-cover rounded-3" src="https://picsum.photos/id/237/200/300" alt="" />
-        </div>
+		<div class="noti-img-wrapper ratio ratio-1x1">
+			<img class="img-fluid object-fit-cover rounded-3" src="${contextPath}/show.img?imageName=${encodeURIComponent(noti.imageName ?? "")}" alt="" />
+		</div>
         <div class="noti-text-wrapper d-flex flex-column">
           <div class="d-flex justify-content-between position-relative">
             <div class="d-flex flex-column ps-3 flex-grow-1">
               <span class="text-secondary fs-8">${noti.createdAt ?? ""}</span>
-              <span class="text-semiblack fw-semibold fs-6" style="max-width: 140px;">${noti.commentWriter ?? ""}</span>
+              <span class="text-semiblack fw-semibold fs-6" style="max-width: 140px;">${noti.reviewStayName ?? ""}</span>
             </div>
             <div class="noti-type-wrapper position-absolute end-0">
               <span class="text-secondary fs-8">${noti.type ?? ""}</span>
@@ -187,7 +187,7 @@ function renderNotiCard(noti, contextPath) {
           </div>
           <hr />
           <div class="noti-message-wrapper d-flex ps-3 justify-content-between">
-            <span class="text-semiblack fs-7" style="max-width: 130px;">${noti.commentContent ?? ""}</span>
+            <span class="text-semiblack fs-7" style="max-width: 130px;">${noti.message ?? ""}</span>
             <span class="text-secondary fs-8">${noti.daysAgo ?? ""}</span>
           </div>
         </div>
