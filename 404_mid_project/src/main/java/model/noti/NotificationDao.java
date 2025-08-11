@@ -53,6 +53,8 @@ public class NotificationDao {
 
 	        if (rowCount > 0) {
 	            
+	        	conn.commit();
+	        	
 	            long usersNum = dto.getNotiRecipientNum();
 	            NotificationDto full = notiSelectOne(usersNum, newNotiNum); // 방금 insert 건 조인해서 완성
 	            int unreadCount = notiReadCount(usersNum);

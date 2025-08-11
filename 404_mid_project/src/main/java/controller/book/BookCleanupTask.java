@@ -62,8 +62,7 @@ public class BookCleanupTask extends TimerTask{
 					}
 	                
 	            }
-
-	            conn.commit();
+	            
 	            if (!expiredList.isEmpty()) {
 	                System.out.println("기한이 만료된 예약 " + expiredList.size() + "건 삭제 및 알림 전송 완료");
 	            }
