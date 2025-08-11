@@ -10,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.image.ImageDao;
 import model.post.CommentDao;
 import model.post.CommentDto;
@@ -90,27 +91,61 @@ public class PostServlet extends HttpServlet {
 		// 4. 게시글 업로드
 		} else if (path.equals("/upload.post")) {
 			System.out.println("게시글 업로드");
-			// 글 작성자는 세션 객체로부터 얻기
-			Long writerNum = (Long) req.getSession().getAttribute("usersNum");
-			
-			PostDto dto = new PostDto();
+			 // 0) 로그인 체크
+		    HttpSession session = req.getSession(false);
+		    Object userNumObj = (session != null) ? session.getAttribute("usersNum") : null;
+		    if (userNumObj == null) {
+		        res.setContentType("text/html; charset=UTF-8");
+		        res.getWriter().println("<script>alert('로그인이 필요합니다.'); location.href='"
+		                + req.getContextPath() + "/user/login.jsp';</script>");
+		        return;
+		    }
+		    long writerNum = Long.parseLong(userNumObj.toString());
+		    String writerId = (String)(session != null ? session.getAttribute("usersId") : null);
 
-			int num = dao.getSequence();
-			dto.setPostNum(num);
-			dto.setPostWriterNum(writerNum); // 로그인된 사용자 번호 (임시)
-			dto.setPostStayNum(1); // 게시글 관련 숙소 번호 (임시)
-			dto.setPostType(0); // 게시글 타입 0:일반, 1:공지 등
-			dto.setPostTitle(req.getParameter("title"));
-			dto.setPostContent(req.getParameter("content"));
+		    // 1) 파라미터 읽기 (멀티파트에서도 getParameter 가능)
+		    String title   = req.getParameter("title");
+		    String content = req.getParameter("content");
 
-			boolean success = dao.insert(dto);
+		    if (title == null || title.trim().isEmpty() ||
+		        content == null || content.trim().isEmpty()) {
+		        res.setContentType("text/html; charset=UTF-8");
+		        res.getWriter().println("<script>alert('제목과 내용을 입력하세요.'); history.back();</script>");
+		        return;
+		    }
 
-			if (success) {
-				res.sendRedirect("view.post?num=" + num);
-			} else {
-				req.setAttribute("error", "게시글 저장 실패!");
-				req.getRequestDispatcher("/post/form.jsp").forward(req, res);
-			}
+		    int postType = 0;
+		    try { postType = Integer.parseInt(req.getParameter("post_type")); } catch (Exception ignore) {}
+		    int postStayNum = 0;
+		    try { postStayNum = Integer.parseInt(req.getParameter("post_stay_num")); } catch (Exception ignore) {}
+
+		    // 2) 글번호 선발급 → DTO 구성 → 저장
+		    int postNum = PostDao.getInstance().getSequence();
+
+		    PostDto dto = new PostDto();
+		    dto.setPostNum(postNum);               // 선발급 PK
+		    dto.setPostWriterNum(writerNum);       // 작성자 번호
+		    dto.setPostWriterId(writerId);         // (선택) 작성자 아이디
+		    dto.setPostTitle(title);               // 제목
+		    dto.setPostContent(content);           // 본문(HTML)
+		    dto.setPostType(postType);             // 타입
+		    dto.setPostStayNum(postStayNum);       // 연관 숙소
+
+		    boolean ok = PostDao.getInstance().insert(dto);
+		    if (!ok) {
+		        res.setContentType("text/html; charset=UTF-8");
+		        res.getWriter().println("<script>alert('게시글 저장 실패'); history.back();</script>");
+		        return;
+		    }
+
+		    // 3) 이미지 업로드 include
+		    //    - form의 파일 input name="images" 와 partName=images 가 일치해야 한다.
+		    req.getRequestDispatcher(
+		        "/post.img?target_type=post&target_id=" + postNum + "&partName=images"
+		    ).include(req, res);
+
+		    // 4) 완료 이동 (상세 보기)
+		    res.sendRedirect(req.getContextPath() + "/post/view.jsp?num=" + postNum);
 			
 			
 			

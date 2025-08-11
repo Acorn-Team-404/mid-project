@@ -52,7 +52,7 @@
 	</div>
 	<%} %>
 	
-	<div>
+	<div class="container col-10 my-4">
 	
 		<!-- carousel -->
 		<% if (size > 0) { %>
@@ -68,14 +68,15 @@
 				  	<% } %>
 				</div>
 	
-			  <div class="carousel-inner ratio ratio-16x9">
+			  <div class="carousel-inner ratio ratio-21x9">
 					<% for (int i = 0; i < size; i++) {
 					     ImageDto img = carouselImages.get(i);
 					%>
 					  <div class="carousel-item <%= (i == 0) ? "active" : "" %>">
 					    <img src="<%= request.getContextPath() %>/show.img?imageName=<%= img.getImageSavedName() %>"
-					     class="d-block w-100"
-					     alt="<%= img.getImageOriginalName() %>">
+					     		 class="d-block w-100"
+							     style="height:100%; object-fit:cover; object-position:center;"
+							     alt="<%= img.getImageOriginalName() %>">
 					  </div>
 					<% } %>
 			  </div>
