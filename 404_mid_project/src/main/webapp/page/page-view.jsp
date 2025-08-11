@@ -236,18 +236,18 @@
 							<%-- startPageNum 이 1이 아닐때 이전 page 가 존재하기 때문에... --%>
 							<%if(startPageNum != 1){ %>
 								<li class="page-item">
-									<a class="page-link" href="view.jsp?pageNum=<%=pageNum%>&rPageNum=<%=startPageNum-1 %>">&lsaquo;</a>
+									<a class="page-link" href="page-view.jsp?stayNum=<%=stayNum%>&pageNum=<%=startPageNum-1 %>#review-section">&lsaquo;</a>
 								</li>
 							<%} %>			
 							<%for(long i=startPageNum; i<=endPageNum ; i++){ %>
 								<li class="page-item">
-									<a class="page-link <%= i==pageNum ? "active":"" %>" href="view.jsp?pageNum=<%=pageNum%>&rPageNum=<%=i %>"><%=i %></a>
+									<a class="page-link <%= i==pageNum ? "active":"" %>" href="page-view.jsp?stayNum=<%=stayNum%>&pageNum=<%=i %>#review-section"><%=i %></a>
 								</li>
 							<%} %>
 							<%-- endPageNum 이 totalPageCount 보다 작을때 다음 page 가 있다 --%>		
 							<%if(endPageNum < totalPageCount){ %>
 								<li class="page-item">
-									<a class="page-link" href="view.jsp?pageNum=<%=pageNum%>&rPageNum=<%=endPageNum+1 %>">&rsaquo;</a>
+									<a class="page-link" href="page-view.jsp?stayNum=<%=stayNum%>&pageNum=<%=endPageNum+1 %>#review-section">&rsaquo;</a>
 								</li>
 							<%} %>	
 						</ul>
