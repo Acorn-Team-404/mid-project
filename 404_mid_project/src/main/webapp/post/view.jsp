@@ -23,6 +23,8 @@
   	
   	boolean isLogin = usersNum != null;
   	
+  	String usersId = (String) session.getAttribute("usersId");
+  	
   	//댓글 목록
   	List<CommentDto> commentList = CommentDao.getInstance().selectAll(num);
   	
@@ -196,8 +198,11 @@
 		            			<i class="bi bi-arrow-return-right position-absolute" style="top:0;left:-30px"></i>
 		            		<%} %>
 			            	<!-- 댓글 작성자가 로그인된 userName일 경우 삭제버튼 출력 -->
-			            	<%if(Objects.equals(tmp.getCommentWriter(), usersNum)) {%>
-			            		<button data-num="<%=tmp.getCommentNum() %>" class="btn-close position-absolute top-0 end-0 m-3"></button>
+			            	<%if(tmp.getCommentWriterId().equals(usersId)){%>
+			            		<button type="button" data-num="<%=tmp.getCommentNum() %>" class="btn-close position-absolute top-0 end-0 m-3"
+			            			href="${pageContext.request.contextPath}/post/comment-delete.jsp">
+			            			삭제
+		            			</button>
 			            	<%} %>
 			            	<%-- <%if(tmp.getProfileImage()==null){ %>
 			            		<i style="font-size:50px;" class="bi me-3 align-self-center bi-person-circle"></i>
