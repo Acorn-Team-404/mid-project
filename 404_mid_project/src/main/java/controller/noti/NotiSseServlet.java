@@ -2,190 +2,132 @@ package controller.noti;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
+import controller.noti.NotiEventBroker;
 import jakarta.servlet.AsyncContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.*;
 import model.noti.NotificationDao;
 import model.noti.NotificationDto;
 
-@WebServlet(value = "/sse", asyncSupported = true) // 비동기 처리 설정
+// json-simple
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+@WebServlet(value = "/sse", asyncSupported = true) // 비동기 처리를 지원한다는 선언
 public class NotiSseServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-    	// 세션 검증
+        // 세션 검증
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("usersId") == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
-        // 세션 타입 검증
         Object userNumObj = session.getAttribute("usersNum");
-        if (userNumObj == null || !(userNumObj instanceof Long)) {
+        if (!(userNumObj instanceof Long usersNum) || usersNum <= 0) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
-        // 세션 숫자 검증
-        long usersNum = (Long) userNumObj;
-        if (usersNum <= 0) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-        }
-
+        // 필수 헤더 정의
         response.setContentType("text/event-stream");
         response.setCharacterEncoding("UTF-8");
-        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate"); // 캐시 방지
         response.setHeader("Pragma", "no-cache");
         response.setDateHeader("Expires", 0);
         response.setHeader("Connection", "keep-alive");
 
-        // 비동기 처리 선언
-        AsyncContext asyncContext = request.startAsync(); // AsyncContext 객체를 생성하고 연결 유지
-        asyncContext.setTimeout(0); // 비동기 타임아웃 무제한
-        
-        // 마지막 알림 번호 변수 (여러 쓰레드에서 동시에 사용하기 위해 AtomicLong 사용)
-        AtomicLong lastNotiNum = new AtomicLong(0);
-        AtomicBoolean completed = new AtomicBoolean(false); // 중복 종료 방지 (예외 시 딱 한 번만 호출될 예정)
-        long startTime = System.currentTimeMillis(); // 타임아웃 커스텀을 위한 연결 시작 시간 변수
+        // 비동기 시작 + 구독 등록
+        AsyncContext asyncContext = request.startAsync(); // 비동기로 전환
+        asyncContext.setTimeout(0); // 타임아웃 없이 무제한 유지
+        NotiEventBroker.getInstance().subscribe(usersNum, asyncContext); // 유저별 SSE 채널 등록
 
-        // 데몬쓰레드(true) -> 메인 쓰레드가 종료되면 같이 종료되는 백그라운드 작업용 쓰레드
-        // 브라우저나 세션이 종료되면 쓰레드도 함께 끊어주기 위해 데몬쓰레드 사용
-        Timer timer = new Timer(true);
+        PrintWriter out = asyncContext.getResponse().getWriter(); // 비동기 서블릿이기 때문에 asyncContext에서 꺼낸 Response 사용
+        out.write("retry: 20000\n\n"); // 연결이 끊기면 20초 후 재연결 지시
+        out.flush();
 
-        
-        // 60초 마다 새 알림을 전송하고 연결이 없다면 하트비트 전송
-        timer.scheduleAtFixedRate(new TimerTask() {
-            private boolean retrySent = false;
+        // 초기에 한번 현재 상태 스냅샷을 전송
+        long lastNotiNum = 0L; // 기본값은 0으로 초기 연결 시에는 모든 알림 전송 (long 타입 자동 변환)
+        String lastEventId = request.getHeader("Last-Event-ID"); // 재연결 시 브라우저가 자동 첨부
+        if (lastEventId != null) {
+            try { lastNotiNum = Long.parseLong(lastEventId); } catch (NumberFormatException ignore) {}
+        }
 
-            @Override
-            public void run() {
-            	if (completed.get()) {
-                    timer.cancel();
-                    return;
-                }
-            	
-                try {
-                    if (System.currentTimeMillis() - startTime > 1000 * 60 * 10) { // SSE 타임아웃 10분
-                        System.out.println("⏳ SSE 연결 10분 초과 → 종료");
-                        if (completed.compareAndSet(false, true)) {
-                            timer.cancel(); // 알림을 전송하던 TimerTask 중지
-                            asyncContext.complete(); // SSE 연결 종료
-                        }
-                        return;
-                    }
+        // 마지막 알림번호를 기준으로 알림 SELECT 실행
+        List<NotificationDto> initList =
+                NotificationDao.getInstance().notiSelectAfter(usersNum, lastNotiNum);
+        int unreadCount = NotificationDao.getInstance().notiReadCount(usersNum); // 읽지 않은 알림 수 SELECT
 
-                    // 비동기 객체로부터 실제 응답 객체 가져오기
-                    HttpServletResponse resp = (HttpServletResponse) asyncContext.getResponse();
-                    PrintWriter out = resp.getWriter(); // 텍스트 데이터 전송을 위한 출력 스트림
-
-                    if (!retrySent) {
-                        out.write("retry: 20000\n"); //재연결 간격을 20초로 설정
-                        out.flush();
-                        retrySent = true;
-                    }
-
-                    List<NotificationDto> notiList = NotificationDao.getInstance()
-                            .notiSelectAfter(usersNum, lastNotiNum.get());
-
-                    if (!notiList.isEmpty() && lastNotiNum.get() < notiList.get(0).getNotiNum()) {
-                        JSONArray jsonArray = new JSONArray();
-                        for (NotificationDto tmp : notiList) {
-                            JSONObject obj = new JSONObject();
-                            // noti 필수 속성
-                            obj.put("notiNum", tmp.getNotiNum());
-                            obj.put("senderNum", tmp.getNotiSenderNum());
-                            obj.put("message", tmp.getNotiMessage());
-                            obj.put("readCode", tmp.getNotiReadCode());
-                            obj.put("createdAt", tmp.getNotiCreatedAt());
-                            obj.put("imageType", tmp.getNotiImageType());
-                            obj.put("typeCode", tmp.getNotiTypeCode());
-                            
-                            // noti 추가 속성
-                            obj.put("type", tmp.getNotiType());
-                            obj.put("daysAgo", tmp.getNotiDaysAgo());
-                            obj.put("readCount", tmp.getNotiReadCount());
-                            
-                            // 예약 타입
-                            obj.put("bookNum", tmp.getNotiBookNum());
-                            obj.put("bookCheckIn", tmp.getNotiCheckIn());
-                            obj.put("bookCheckOut", tmp.getNotiCheckOut());
-                            obj.put("stayNum", tmp.getNotiStayNum());
-                            obj.put("stayName", tmp.getNotiStayName());
-                            
-                            // 댓글 타입
-                            obj.put("commentUsersNum", tmp.getNotiCommentUsersNum());
-                            obj.put("commentWriter", tmp.getNotiCommentWriter());
-                            obj.put("commentContent", tmp.getNotiCommentContent());
-                            obj.put("commentParentNum", tmp.getNotiCommentParentNum());
-                            
-                            // 문의 타입
-                            obj.put("inqNum", tmp.getNotiInqNum());
-                            obj.put("inqTitle", tmp.getNotiInqTitle());
-                            obj.put("inqContent", tmp.getNotiInqContent());
-                            
-                            // 이미지 table
-                            obj.put("imageName", tmp.getNotiImageName());
-                            jsonArray.add(obj);
-                        }
-
-                        // 현재 알림 목록 중 가장 큰 알림번호 저장
-                        long maxNum = notiList.stream()
-                                .mapToLong(NotificationDto::getNotiNum)
-                                .max()
-                                .orElse(lastNotiNum.get());
-                        lastNotiNum.set(maxNum); // lastNotiNum에 저장
-
-                        out.write("data: " + jsonArray.toJSONString() + "\n\n");
-                        out.flush();
-
-                        if (out.checkError()) {
-                            System.out.println("❌ 클라이언트 연결 끊김");
-                            if (completed.compareAndSet(false, true)) {
-                                timer.cancel();
-                                asyncContext.complete();
-                            }
-                        }
-
-                    } else {
-                        out.write(": heartbeat\n\n"); // 새 알림이 없어도 연결을 유지하기 위한 메세지 전송
-                        out.flush();
-
-                        if (out.checkError()) {
-                            System.out.println("❌ 클라이언트 연결 끊김 (heartbeat)");
-                            if (completed.compareAndSet(false, true)) {
-                                timer.cancel();
-                                asyncContext.complete();
-                            }
-                        }
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.err.println("SSE 예외 발생 → 연결 종료");
-                    if (completed.compareAndSet(false, true)) {
-                        timer.cancel();
-                        asyncContext.complete();
-                    }
-                }
+        if (!initList.isEmpty()) { // 조회 결과가 하나 이상이면
+            JSONArray dataArr = new JSONArray(); // 데이터를 담을 JSON 배열 생성
+            for (NotificationDto dto : initList) {
+                dataArr.add(dtoToJson(dto, unreadCount)); // 각 DTO를 변환 후 배열에 추가
             }
-        }, 0, 20000); // 처음 실행은 즉시, 이후에는 20초마다 run() 메서드 실행
+
+            // 마지막으로 가져온 notiNum을 기억 (재연결 시 이어받을 기준점)
+            long snapshotLastId = initList.get(initList.size() - 1).getNotiNum();
+
+            StringBuilder sb = new StringBuilder(); // 문자열을 효율적으로 이어 붙이기 위한 가변 문자열 객체
+            // SSE 이벤트 구성
+            sb.append("id: ").append(snapshotLastId).append("\n"); // EventSource에서 재연결 시 Last-Event-ID 헤더로 전송
+            sb.append("event: noti\n"); // JS에서 eventSource.addEventListener("noti", handler)로 받을 수 있음
+            sb.append("data: ").append(dataArr.toJSONString()).append("\n\n"); // JSON 페이로드 데이터 전송( \n\n은 SSE 이벤트 종료)
+
+            out.write(sb.toString());
+            out.flush();
+        } else {
+        	// 전송할 데이터가 없더라도 SSE 연결 유지용 전송
+            out.write(": init\n\n");
+            out.flush();
+        }
+    }
+
+    
+    // initList에 쌓일 데이터 (JSON 객체)
+    private static JSONObject dtoToJson(NotificationDto dto, int readCount) {
+        JSONObject obj = new JSONObject();
+
+        obj.put("notiNum", dto.getNotiNum());
+        obj.put("senderNum", dto.getNotiSenderNum());
+        obj.put("message", nz(dto.getNotiMessage()));
+        obj.put("readCode", dto.getNotiReadCode());
+        obj.put("createdAt", nz(dto.getNotiCreatedAt()));
+        obj.put("imageType", nz(dto.getNotiImageType()));
+        obj.put("typeCode", dto.getNotiTypeCode());
+        obj.put("type", nz(dto.getNotiType()));
+        obj.put("daysAgo", nz(dto.getNotiDaysAgo()));
+
+        obj.put("bookNum", nz(dto.getNotiBookNum()));
+        obj.put("bookCheckIn", nz(dto.getNotiCheckIn()));
+        obj.put("bookCheckOut", nz(dto.getNotiCheckOut()));
+
+        obj.put("stayNum", dto.getNotiStayNum());
+        obj.put("stayName", nz(dto.getNotiStayName()));
+
+        obj.put("commentUsersNum", dto.getNotiCommentUsersNum());
+        obj.put("commentWriter", nz(dto.getNotiCommentWriter()));
+        obj.put("commentContent", nz(dto.getNotiCommentContent()));
+        obj.put("commentParentNum", nz(dto.getNotiCommentParentNum()));
+
+        obj.put("inqNum", dto.getNotiInqNum());
+        obj.put("inqTitle", nz(dto.getNotiInqTitle()));
+        obj.put("inqContent", nz(dto.getNotiInqContent()));
+
+        obj.put("imageName", nz(dto.getNotiImageName()));
+        obj.put("readCount", readCount);
+
+        return obj;
+    }
+
+    // null을 안전하게 처리하고 데이터를 String 타입으로 변환하는 메서드
+    private static String nz(Object value) {
+        return value == null ? "" : String.valueOf(value);
     }
 }
