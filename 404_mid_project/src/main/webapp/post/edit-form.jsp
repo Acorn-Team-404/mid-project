@@ -1,3 +1,6 @@
+<%@page import="java.util.List"%>
+<%@page import="model.image.ImageDto"%>
+<%@page import="model.image.ImageDao"%>
 <%@page import="model.post.PostDao"%>
 <%@page import="model.post.PostDto"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -6,6 +9,9 @@
 <%
 	int num=Integer.parseInt(request.getParameter("num"));
 	PostDto dto=PostDao.getInstance().getByPostNum(num);
+	
+	
+	List<ImageDto> imgList = ImageDao.getInstance().getListByTarget("post", num);
 	
 %>    
 <!DOCTYPE html>
@@ -29,7 +35,7 @@
 	</jsp:include>
 	<div class="container">
 		<h3 class="text-center" style="margin-top: 60px; margin-bottom: 60px;"><i class="bi bi-image me-3"></i>게시글 수정 폼</h3>
-			<form action="update.post" method="post" id="edit-form">
+			<form action="update.post" method="post" id="edit-form" enctype="multipart/form-data">
 				<div class="mb-4">
 					<label class="form-label" for="title">제목</label>
 					<input class="form-control" type="text" name="title" id="title" value="<%=dto.getPostTitle()%>" required/>			
@@ -46,12 +52,19 @@
 					<input type="hidden" name="num" value="<%=dto.getPostNum()%>" required> 
 				</div>
 				
-				<div class="mb-3" hidden>
+				<div class="mb-3" >
 					<label class="form-label mt-4">carousel image upload</label>
 						<div class="drop-zone" id="dropZone">
 							<div id="dropText">Drag & Drop Or Click</div>
 							<input type="file" name="images" id="fileInput" multiple hidden>
-							<div class="preview d-flex flex-wrap mt-3" id="preview"></div>
+							<div class="preview d-flex flex-wrap mt-3" id="preview">
+								<% for(ImageDto tmp : imgList) { %>
+									<div class="preview-item" data-existing="true" data-id="<%=tmp.getImageNum()%>">
+									    <img src="<%=request.getContextPath()%>/show.img?imageName=<%=tmp.getImageSavedName()%>" alt="<%=tmp.getImageOriginalName()%>">
+									    <button type="button" class="remove-btn existing-image" id="deletedImg">x</button>
+									</div>
+								<% } %>
+							</div>
 						</div>
 						
 				</div>
@@ -64,105 +77,107 @@
 	
 	
 	<script>
-	const dropZone = document.querySelector("#dropZone");
-    const fileInput = document.querySelector("#fileInput");
-    const preview = document.querySelector("#preview");
-    const dropText = document.querySelector("#dropText"); 
-    
-    let selectedFiles = [];
-    
-    // dropzone click=> input type="file" 을 강제 클릭
-    dropZone.addEventListener("click", ()=>fileInput.click());
-    
-    // drag
-    dropZone.addEventListener("dragover", (e)=>{
-    	e.preventDefault();
-    	// dragover->회색
-    	dropZone.classList.add("dragover")
-    });
-    
-    // drag 나갔을 때
-    dropZone.addEventListener("dragleave", () => {
-    	// dragover 클래스 제거하여 원래 색상으로 돌아가도록
-        dropZone.classList.remove("dragover");
-    });
-    
-    // 파일 drag -> drop
-    dropZone.addEventListener("drop", (e) => {
-    	e.preventDefault();
-    	dropZone.classList.remove("dragover");
-    	// 선택된 파일객체 배열 -> 기능 모두 가능한 배열로 변경
-    	const files = Array.from(e.dataTransfer.files);
-    	// 기존 배열에 추가
-    	selectedFiles = selectedFiles.concat(files);
-    	
-    	updatePreview();
-    })
-    
-    // 파일 직접 선택 input type="file"에 change 이벤트
-    fileInput.addEventListener("change", ()=>{
-    	const files = Array.from(fileInput.files);
-        selectedFiles = selectedFiles.concat(files);
-        updatePreview();
-    })
-    
-    // preview 업데이트 ( await 비동기 함수 -> async 키워드 붙여야 함 )
-    async function updatePreview(){
-    	preview.innerHTML="";
-    	
-    	// 이미지가 하나라도 있으면 dropText 숨기기
-    	if (selectedFiles.length > 0) {
-    	  dropText.style.display = "none";
-    	} else {
-    	  dropText.style.display = "block"; // 또는 inline
+		const dropZone = document.querySelector("#dropZone");
+	    const fileInput = document.querySelector("#fileInput");
+	    const preview = document.querySelector("#preview");
+	    const dropText = document.querySelector("#dropText"); 
+	    const deletedImgFiles = documnet.querySelector("#deletedImg");
+	    
+	    let selectedFiles = [];
+	    let deletedImg = [];
+	    
+	    // dropzone click=> input type="file" 을 강제 클릭
+	    dropZone.addEventListener("click", ()=>fileInput.click());
+	    
+	    // drag
+	    dropZone.addEventListener("dragover", (e)=>{
+	    	e.preventDefault();
+	    	// dragover->회색
+	    	dropZone.classList.add("dragover")
+	    });
+	    
+	    // drag 나갔을 때
+	    dropZone.addEventListener("dragleave", () => {
+	    	// dragover 클래스 제거하여 원래 색상으로 돌아가도록
+	        dropZone.classList.remove("dragover");
+	    });
+	    
+	    // 파일 drag -> drop
+	    dropZone.addEventListener("drop", (e) => {
+	    	e.preventDefault();
+	    	dropZone.classList.remove("dragover");
+	    	// 선택된 파일객체 배열 -> 기능 모두 가능한 배열로 변경
+	    	const files = Array.from(e.dataTransfer.files);
+	    	// 기존 배열에 추가
+	    	selectedFiles = selectedFiles.concat(files);
+	    	
+	    	updatePreview();
+	    })
+	    
+	    // 파일 직접 선택 input type="file"에 change 이벤트
+	    fileInput.addEventListener("change", ()=>{
+	    	const files = Array.from(fileInput.files);
+	        selectedFiles = selectedFiles.concat(files);
+	        updatePreview();
+	    })
+	    
+	    // preview 업데이트 ( await 비동기 함수 -> async 키워드 붙여야 함 )
+	    async function updatePreview(){
+	    	preview.innerHTML="";
+	    	
+	    	// 이미지가 하나라도 있으면 dropText 숨기기
+	    	if (selectedFiles.length > 0) {
+	    	  dropText.style.display = "none";
+	    	} else {
+	    	  dropText.style.display = "block"; // 또는 inline
+	    	}
+	    	
+	    	// input type="file"에 value 넣기
+	    	const dataTransfer=new DataTransfer();
+	    	for(let i=0; i<selectedFiles.length; i++){
+	    		const file = selectedFiles[i];
+	    		if(!file.type.startsWith("image/")) continue; //continue:건너뛰기
+	    		
+	    		try{
+	    			// 선택한 이미지 파일 읽어서 결과 얻어내기
+	            	// promise 객체가 resolve될 때까지 기다림
+	    			const imageUrl = await readFileAsDataURL(file);
+	    			
+	    			const container = document.createElement("div");
+	    			container.classList.add("preview-item");
+	    			
+	    			const img = document.createElement("img");
+	    			img.setAttribute("src", imageUrl);
+	    			
+	    			
+	    			const btn = document.createElement("button");
+	    			btn.classList.add("remove-btn");
+	    			btn.innerText="x"
+	    			
+	    			btn.addEventListener("click", ()=>{
+	    				// selectedFiles 배열에서 i번째 방으로부터 1개의 item 삭제
+	    				selectedFiles.splice(i,1);
+	    				// 삭제 후 preview 다시 update
+	    				updatePreview();
+	    			});
+	    			
+	    			container.insertAdjacentElement("beforeend", img);
+	                container.insertAdjacentElement("beforeend", btn);
+	                preview.insertAdjacentElement("beforeend", container);
+	                
+	                // DataTransfer 에 파일추가
+	                dataTransfer.items.add(file);
+	                
+	    		} catch (err){
+	    			console.error("이미지 로딩 실패", err);
+	    		}
+	    	}
+	    	
+	    	// 선택한 파일 배열을 input type="file"의 value로 넣기
+	    	fileInput.files = dataTransfer.files;
+	    	
     	}
-    	
-    	// input type="file"에 value 넣기
-    	const dataTransfer=new DataTransfer();
-    	for(let i=0; i<selectedFiles.length; i++){
-    		const file = selectedFiles[i];
-    		if(!file.type.startsWith("image/")) continue; //continue:건너뛰기
-    		
-    		try{
-    			// 선택한 이미지 파일 읽어서 결과 얻어내기
-            	// promise 객체가 resolve될 때까지 기다림
-    			const imageUrl = await readFileAsDataURL(file);
-    			
-    			const container = document.createElement("div");
-    			container.classList.add("preview-item");
-    			
-    			const img = document.createElement("img");
-    			img.setAttribute("src", imageUrl);
-    			
-    			
-    			const btn = document.createElement("button");
-    			btn.classList.add("remove-btn");
-    			btn.innerText="x"
-    			
-    			btn.addEventListener("click", ()=>{
-    				// selectedFiles 배열에서 i번째 방으로부터 1개의 item 삭제
-    				selectedFiles.splice(i,1);
-    				// 삭제 후 preview 다시 update
-    				updatePreview();
-    			});
-    			
-    			container.insertAdjacentElement("beforeend", img);
-                container.insertAdjacentElement("beforeend", btn);
-                preview.insertAdjacentElement("beforeend", container);
-                
-                // DataTransfer 에 파일추가
-                dataTransfer.items.add(file);
-                
-    		} catch (err){
-    			console.error("이미지 로딩 실패", err);
-    		}
-    	}
-    	
-    	// 선택한 파일 배열을 input type="file"의 value로 넣기
-    	fileInput.files = dataTransfer.files;
-    	
-    	}
-    
+	    
     	// Promise 객체 리턴
     	function readFileAsDataURL(file){
     		return new Promise((resolve, reject)=>{
@@ -200,11 +215,26 @@
 		        return;
 		    }
 			//만일 선택한 파일이 없다면
-/* 	    	if(selectedFiles.length < 1){
+			/*
+				if(selectedFiles.length < 1){
 	    		alert("업로드할 이미지를 1개 이상 선택해주세요.")
 	    		e.preventDefault();
 	    		return;
 	    	} */
+		})
+		
+		
+		// 기존 이미지 삭제
+		preview.querySelectorAll(".deletedImg").forEach(btn => {
+			btn.addEventListener("click", ()=>{
+				const wrap = btn.closest(".preview-item");
+				const id = wrap.dateaset.id;
+				//UI에서 제거, 삭제 목록에 추가
+				wrap.remove();
+				deletedImg.push(id);
+				deletedImgFiles.value=deletedImg.Join(",");
+				toggleDropText();
+			})
 		})
 	</script>
 	

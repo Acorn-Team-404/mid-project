@@ -26,8 +26,6 @@
 	// String writer=(String)session.getAttribute("userNum");
 	Long usersNum = (Long)session.getAttribute("usersNum");
 	if(usersNum == null){
-	    // 로그인 안 된 사용자 처리
-	    out.println("<script>alert('로그인이 필요합니다.'); history.back();</script>");
 	    return;
 	}
 	int writer = usersNum.intValue();
