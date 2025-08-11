@@ -49,7 +49,7 @@ public class NotiSseServlet extends HttpServlet {
         asyncContext.setTimeout(0); // 타임아웃 없이 무제한 유지
         NotiEventBroker.getInstance().subscribe(usersNum, asyncContext); // 유저별 SSE 채널 등록
 
-        PrintWriter out = asyncContext.getResponse().getWriter(); // asyncContext에서 꺼낸 Response 사용
+        PrintWriter out = asyncContext.getResponse().getWriter(); // 비동기 서블릿이기 때문에 asyncContext에서 꺼낸 Response 사용
         out.write("retry: 20000\n\n"); // 연결이 끊기면 20초 후 재연결 지시
         out.flush();
 
