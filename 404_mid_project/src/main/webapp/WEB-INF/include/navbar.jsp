@@ -19,6 +19,15 @@
 	if (session.getAttribute("usersNum") != null && request.getAttribute("usersNum") != null) {
 		notiReadCount = NotificationDao.getInstance().notiReadCount(Long.valueOf(usersNum));
 	}
+	
+	//주소 읽기
+	String uri = (String) request.getAttribute("javax.servlet.forward.request_uri");
+  	if (uri == null) uri = request.getRequestURI();
+  	String qs  = (String) request.getAttribute("javax.servlet.forward.query_string");
+  	if (qs == null) qs = request.getQueryString();
+  	String currentUrl = uri + (qs != null ? "?" + qs : "");
+  	String encodedCurrentUrl = java.net.URLEncoder.encode(currentUrl, "UTF-8");
+	
 %> 
 
 <%-- index에서 include하기 때문에 중복 방지<jsp:include page="/WEB-INF/include/resource.jsp"></jsp:include> --%>
@@ -66,7 +75,9 @@
         <% if (usersId == null) { %>
           <!-- 비로그인 상태일 때 LOGIN & 회원가입 -->
           <li class="nav-item mx-2">
-            <a class="nav-link text-dark text-nowrap text-muted" href="${pageContext.request.contextPath}/user/login-form.jsp">LOGIN</a>
+            <a class="nav-link text-dark text-nowrap text-muted" href="<%=request.getContextPath()%>/user/login-form.jsp?returnTo=<%= encodedCurrentUrl %>">LOGIN</a>
+          	
+          	
           </li>
           <li class="nav-item mx-2">
             <a class="nav-link d-flex align-items-center text-nowrap text-dark fw-bold" href="${pageContext.request.contextPath}/user/signup-form.jsp">

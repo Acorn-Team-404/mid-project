@@ -1,3 +1,4 @@
+<%@page import="java.net.URLDecoder"%>
 <%@page import="java.net.URLEncoder"%>
 <%@page import="org.mindrot.jbcrypt.BCrypt"%>
 <%@page import="model.user.UserDao"%>
@@ -8,9 +9,22 @@
 	
 	String usersId = request.getParameter("usersId");
 	String usersPassword = request.getParameter("usersPassword");
-	String url = request.getParameter("url");	
+	//String url = request.getParameter("url");
 	
-	String encodedUrl=URLEncoder.encode(url, "UTF-8");		
+	
+    String returnTo = request.getParameter("returnTo");
+    if (returnTo == null || returnTo.isBlank()) {
+        returnTo = request.getContextPath() + "/index.jsp";
+    } else {
+        // URLDecoder로 복원 (네비바에서 인코딩된 값이라면)
+        try { returnTo = URLDecoder.decode(returnTo, "UTF-8"); } catch (Exception ignore) {}
+
+        // 외부 도메인 차단
+        if (returnTo.startsWith("http")) {
+            returnTo = request.getContextPath() + "/index.jsp";
+        }
+    }
+		
 	
 	 UserDto dto = UserDao.getInstance().getByUserId(usersId);
 	
@@ -41,7 +55,7 @@
 			response.addCookie(cook);
 		}
 		
-		response.sendRedirect(url);
+		response.sendRedirect(returnTo);
 
 		
 	} else {
