@@ -10,8 +10,10 @@
 	String usersNum = (session != null && session.getAttribute("usersNum") != null)
 		    ? session.getAttribute("usersNum").toString()
 		    : null;
+	String usersRole = (session != null) ? (String) session.getAttribute("usersRole") : null;
 	request.setAttribute("usersId", usersId);
 	request.setAttribute("usersNum", usersNum);
+	request.setAttribute("usersRole", usersRole);
 	
 	
 	// 안읽은 알림 수
@@ -52,11 +54,20 @@
 	     	 <a class="nav-link text-nowrap fw-normal text-semiblack" href="${pageContext.request.contextPath}/post/list.jsp">JOURNAL</a>
 	      </li>
 	      <li class="nav-item mx-2">
+
+	     	 <a class="nav-link text-nowrap fw-normal text-semiblack" href="${pageContext.request.contextPath}/test/pre-order.jsp">PRE-ORDER</a>
+	      </li>	      
+	      <%
+		      String role = (String)request.getAttribute("usersRole");
+		      if ("ROLE_ADMIN".equals(role)) {
+	      %>
+	      <li class="nav-item mx-2">
 	      	<a class="nav-link text-nowrap fw-normal text-semiblack" href="${pageContext.request.contextPath}/dbtest">DBTest</a>
 	      </li>
 	      <li class="nav-item mx-2">
-	      	<a class="nav-link text-nowrap fw-normal text-semiblack" href="${pageContext.request.contextPath}/test/stay-list.jsp">ADMIN</a>
+	      	<a class="nav-link text-nowrap fw-normal text-semiblack" href="${pageContext.request.contextPath}/test/link.jsp">ADMIN</a>
 	      </li>
+	      <%} %>
 	      <li class="nav-item">
 	        <div class="vr"></div> <!-- 세로 구분선 -->
 	      </li>

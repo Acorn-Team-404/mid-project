@@ -14,7 +14,7 @@
   <jsp:include page="/WEB-INF/include/navbar.jsp" />
 
   <div class="container my-5">
-    <h1>각종 링크 연결 페이지</h1>
+    <h1>사이트 관리용 링크</h1>
 
     <%
       // DAO에서 링크 목록 조회

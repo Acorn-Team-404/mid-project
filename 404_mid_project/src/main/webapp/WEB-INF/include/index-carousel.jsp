@@ -1,10 +1,12 @@
+<%@page import="model.admin.IndexDao"%>
 <%@page import="model.image.ImageDao"%>
 <%@page import="model.image.ImageDto"%>
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
-    List<ImageDto> carouselImages = ImageDao.getInstance().getListByTarget("index", 2); // 예: index 영역
+		int carouselNum = IndexDao.getInstance().getIndexCarouselNum();
+    List<ImageDto> carouselImages = ImageDao.getInstance().getListByTarget("index", carouselNum); // 예: index 영역
     int size = carouselImages.size();
 %>
 	<div class="mb-3">
