@@ -77,7 +77,7 @@ public class BookDao {
    // 예약대기 상태로 오래있는 데이터 삭제시키는 DAO
    public List<ExpiredBookingDto> findExpiredBook(Connection conn) throws SQLException {
 	    String sql = """
-	        SELECT BOOK_NUM, BOOK_USERS_NUM
+	        SELECT BOOK_NUM, BOOK_USERS_NUM, BOOK_STAY_NUM
 	        FROM BOOKING
 	        WHERE BOOK_STATUS_CODE = 10 
 	    	  AND DELETE_FLAG = 'N'
@@ -93,8 +93,9 @@ public class BookDao {
 	        while (rs.next()) {
 	            String bookNum = rs.getString("BOOK_NUM");
 	            long userId = rs.getLong("BOOK_USERS_NUM");
+	            long stayNum = rs.getLong("BOOK_STAY_NUM");
 
-	            ExpiredBookingDto booking = new ExpiredBookingDto(bookNum, userId);
+	            ExpiredBookingDto booking = new ExpiredBookingDto(bookNum, userId, stayNum);
 	            list.add(booking);
 	        }
 	    }

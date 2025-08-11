@@ -185,6 +185,9 @@ public class NotiEventBroker {
         obj.put("commentContent", tmp.getNotiCommentContent());
         obj.put("commentParentNum", tmp.getNotiCommentParentNum());
 
+        // 리뷰 타입
+        obj.put("reviewStayName", tmp.getNotiReviewStayName());
+        
         // 문의 타입
         obj.put("inqNum", tmp.getNotiInqNum());
         obj.put("inqTitle", tmp.getNotiInqTitle());

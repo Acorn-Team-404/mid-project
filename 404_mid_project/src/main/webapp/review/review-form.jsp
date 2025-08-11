@@ -5,6 +5,15 @@
 String usersId = (String) session.getAttribute("usersId");
 String bookNum = request.getParameter("bookNum");
 String stayNum = request.getParameter("stayNum");
+
+// 알림 INSERT에 사용할 데이터
+Long usersNum = (Long) session.getAttribute("usersNum");
+String stayUsersNumParam = request.getParameter("stayUsersNum");
+Long stayUsersNum = null;
+if (stayUsersNumParam != null && !stayUsersNumParam.isEmpty()) {
+    stayUsersNum = Long.valueOf(stayUsersNumParam);
+}
+
 %>
 <!DOCTYPE html>
 <html>
@@ -63,6 +72,10 @@ String stayNum = request.getParameter("stayNum");
         <input type="hidden" name="bookNum" value="<%=bookNum %>">
         <input type="hidden" name="usersId" value="${sessionScope.usersId}">
         <input type="hidden" name="stayNum" value="<%=stayNum %>">
+        
+        <!-- 알림 INSERT에 필요한 데이터 -->
+        <input type="hidden" name="usersNum" value="<%=usersNum %>">
+        <input type="hidden" name="stayUsersNum" value="<%=stayUsersNum %>">
 
         <button type="submit" class="btn btn-primary">리뷰 등록</button>
     </form>

@@ -69,6 +69,7 @@ public class NotificationDao {
 	                comm.comment_parent_num AS noti_comment_parent_num,
 	                comm.comment_writer AS noti_comment_users_num,
 	                u.users_id AS noti_comment_writer,
+	                s_comm.stay_name AS noti_review_stay_name,
 	                inq.inq_num AS noti_inq_num, inq.inq_title AS noti_inq_title,
 	                inq.inq_content AS noti_inq_content,
 	                img.image_saved_name AS noti_image_name
@@ -84,6 +85,8 @@ public class NotificationDao {
 	             AND n.noti_recipient_num = comm.comment_target_writer
 	            LEFT JOIN users u
 	              ON n.noti_type_code = 20 AND n.noti_sender_num = u.users_num
+	            LEFT JOIN stay s_comm
+				ON n.noti_type_code = 30 AND n.noti_target_num = TO_CHAR(s_comm.stay_num)
 	            LEFT JOIN inquiry inq
 	              ON n.noti_type_code = 40 AND n.noti_target_num = TO_CHAR(inq.inq_num)
 	            LEFT JOIN image_file img
@@ -91,6 +94,7 @@ public class NotificationDao {
 	             AND (
 	                   (n.noti_image_type = 'stay' AND img.image_target_id = s.stay_num AND img.image_sort_order = 1)
 	                OR (n.noti_image_type = 'profile' AND img.image_target_id = u.users_num AND img.image_sort_order = 1)
+	                OR (n.noti_image_type = 'stay' AND img.image_target_id = s_comm.stay_num AND img.image_sort_order = 1)
 	             )
 	            LEFT JOIN common_code c
 	              ON c.cc_group_id = 'NOTI_TYPE' AND c.cc_code = n.noti_type_code
@@ -125,6 +129,8 @@ public class NotificationDao {
 	            dto.setNotiCommentParentNum(rs.getString("noti_comment_parent_num"));
 	            dto.setNotiCommentUsersNum(rs.getLong("noti_comment_users_num"));
 	            dto.setNotiCommentWriter(rs.getString("noti_comment_writer"));
+	            
+	            dto.setNotiReviewStayName(rs.getString("noti_review_stay_name"));
 
 	            dto.setNotiInqNum(rs.getLong("noti_inq_num"));
 	            dto.setNotiInqTitle(rs.getString("noti_inq_title"));
@@ -183,6 +189,7 @@ public class NotificationDao {
 					    comm.comment_parent_num AS noti_comment_parent_num,
 					    comm.comment_writer AS noti_comment_users_num,
 					    u.users_id AS noti_comment_writer,
+					    s_comm.stay_name AS noti_review_stay_name,
 					    inq.inq_num AS noti_inq_num,
 						inq.inq_title AS noti_inq_title,
 						inq.inq_content AS noti_inq_content,
@@ -202,6 +209,9 @@ public class NotificationDao {
 					LEFT JOIN users u
 						ON n.noti_type_code = 20
 						AND n.noti_sender_num = u.users_num
+					LEFT JOIN stay s_comm
+						ON n.noti_type_code = 30
+						AND n.noti_target_num = TO_CHAR(s_comm.stay_num)
 					LEFT JOIN inquiry inq
 						ON n.noti_type_code = 40 
 						AND n.noti_target_num = TO_CHAR(inq.inq_num)
@@ -213,6 +223,9 @@ public class NotificationDao {
 					       AND img.image_sort_order = 1)
 					   OR (n.noti_image_type = 'profile'
 					       AND img.image_target_id = u.users_num
+					       AND img.image_sort_order = 1)
+					   OR (n.noti_image_type = 'stay'
+					       AND img.image_target_id = s_comm.stay_num
 					       AND img.image_sort_order = 1)
 					    )
 					LEFT JOIN common_code c
@@ -256,6 +269,9 @@ public class NotificationDao {
 				dto.setNotiCommentParentNum(rs.getString("noti_comment_parent_num"));
 				dto.setNotiCommentUsersNum(rs.getLong("noti_comment_users_num"));
 				dto.setNotiCommentWriter(rs.getString("noti_comment_writer"));
+				
+				// 리뷰 추가필드
+				dto.setNotiReviewStayName(rs.getString("noti_review_stay_name"));
 				
 				// 문의 추가필드
 				dto.setNotiInqNum(rs.getLong("noti_inq_num"));
