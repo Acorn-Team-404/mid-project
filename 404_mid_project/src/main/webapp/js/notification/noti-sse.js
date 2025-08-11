@@ -100,8 +100,8 @@ function renderNotiCard(noti, contextPath) {
   let notiCard = "";
 
   // 예약 타입
-  //if (typeCode === 10 || typeCode === 11) { 일단 보류
-  if (typeCode === 10) {
+	//if (typeCode === 10) {
+  if (typeCode === 10 || typeCode === 11) {
     notiCard = `
       <div class="noti-card shadow-sm d-flex position-relative p-3 m-3 bg-secondary bg-opacity-25"
            data-noti-num="${noti.notiNum ?? ""}"
