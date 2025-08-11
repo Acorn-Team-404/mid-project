@@ -53,7 +53,7 @@ public class BookCleanupTask extends TimerTask{
 					notiDto.setNotiMessage(notiMessage);
 					notiDto.setNotiImageType("stay");
 					
-					boolean isNotiSuccess = NotificationDao.getInstance().notiInsert(notiDto);
+					boolean isNotiSuccess = NotificationDao.getInstance().notiBookUpdate(conn,notiDto);
 					
 					if(isNotiSuccess) {
 						System.out.println("알림 데이터 저장 성공");

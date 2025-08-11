@@ -24,7 +24,54 @@ public class NotificationDao {
 	}
 	
 	
+	public boolean notiBookUpdate(Connection conn, NotificationDto dto) {
+	    PreparedStatement pstmt = null;
+	    int rowCount = 0;
 
+	    try {
+	       
+	        long newNotiNum = nextNotiNum(conn);
+
+	        String sql = """
+	            INSERT INTO notifications (
+	                noti_num, noti_recipient_num, noti_sender_num, noti_type_code,
+	                noti_target_type_code, noti_target_num, noti_message, noti_image_type
+	            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+	        """;
+	        pstmt = conn.prepareStatement(sql);
+
+	        pstmt.setLong(1, newNotiNum);
+	        pstmt.setLong(2, dto.getNotiRecipientNum());
+	        pstmt.setLong(3, dto.getNotiSenderNum());
+	        pstmt.setInt(4, dto.getNotiTypeCode());
+	        pstmt.setInt(5, dto.getNotiTargetTypeCode());
+	        pstmt.setString(6, dto.getNotiTargetNum());
+	        pstmt.setString(7, dto.getNotiMessage());
+	        pstmt.setString(8, dto.getNotiImageType());
+
+	        rowCount = pstmt.executeUpdate();
+
+	        if (rowCount > 0) {
+	            
+	            long usersNum = dto.getNotiRecipientNum();
+	            NotificationDto full = notiSelectOne(usersNum, newNotiNum); // 방금 insert 건 조인해서 완성
+	            int unreadCount = notiReadCount(usersNum);
+
+	            if (full != null) {
+	                // 즉시 푸시
+	            	// List<NotificationDto> list = List.of(full)와 똑같은 문법이지만 간결함(불변)
+	                NotiEventBroker.getInstance().publish(usersNum, java.util.List.of(full), unreadCount);
+	            }
+	        
+	        }
+	    }catch (Exception e) {
+	        e.printStackTrace();
+	       
+	    } finally {}
+	    
+	    return rowCount > 0;
+	}
+	
 	// 시퀀스에서 다음 noti_num 미리 가져오기
 	private long nextNotiNum(Connection conn) throws Exception {
 	    try (PreparedStatement ps = conn.prepareStatement("SELECT noti_seq.NEXTVAL FROM dual");
