@@ -94,7 +94,10 @@
 		<div> 
 		
 			<div class="d-flex justify-content-end">
-				<% if(isLogin){ %>
+	      <%
+		      String role = (String)request.getAttribute("usersRole");
+		      if ("ROLE_ADMIN".equals(role)) {
+	      %>
 					<a class="btn btn-sm btn-outline-secondary mt-5" 
 						href="${pageContext.request.contextPath}/post/form.jsp"
 						id="postBtn" >
