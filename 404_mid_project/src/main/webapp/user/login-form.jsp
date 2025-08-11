@@ -29,6 +29,12 @@
 			}
 		}
 	}
+	
+    String returnTo = request.getParameter("returnTo");
+    if (returnTo == null || returnTo.isBlank()) {
+        // fallback: 기본 페이지
+        returnTo = request.getContextPath() + "/index.jsp";
+    }
 %>
 <!DOCTYPE html>
 <html>
@@ -116,6 +122,7 @@
         <div class="form-floating mb-4">
           <input value="<%=savedUsersId %>" type="text" name="usersId" class="form-control" id="usersId" placeholder="아이디" required>
           <label for="usersId">아이디</label>
+          <input type="hidden" name="returnTo" value="<%= returnTo %>">
         </div>
 
 
@@ -127,6 +134,7 @@
 		<div class="form-check text-start my-3">
 			<input class="form-check-input" type="checkbox" name="isSave" value="yes" id="flexCheckDefault"
          	<%=savedUsersId.equals("") ? "" : "checked" %>>
+ 			 <input type="hidden" name="thisPage" value="<%= returnTo %>">
  			 <label class="form-check-label" for="flexCheckDefault">아이디 정보 저장</label>
 		</div>
 

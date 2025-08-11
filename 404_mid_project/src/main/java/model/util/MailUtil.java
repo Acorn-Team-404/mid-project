@@ -13,14 +13,22 @@ import jakarta.mail.internet.MimeMessage;
 
 public class MailUtil {
     public static void sendEmail(String toEmail, String authCode) {
+    	long start = System.currentTimeMillis(); // 시작 시간
         String fromEmail = "izeroi313@gmail.com";
         String appPassword = "bpxz fcck upae vcah";
 
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");
+        
         props.put("mail.smtp.port", "587");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
+        
+        // 타임아웃 & 종료 최적화
+        props.put("mail.smtp.connectiontimeout", "3000"); // connect 3s
+        props.put("mail.smtp.timeout", "5000");           // read 5s
+        props.put("mail.smtp.writetimeout", "5000");      // write 5s
+        props.put("mail.smtp.quitwait", "false");         // 종료 대기 단축
 
         Session session = Session.getInstance(props, new jakarta.mail.Authenticator() {
             protected jakarta.mail.PasswordAuthentication getPasswordAuthentication() {
@@ -57,9 +65,13 @@ public class MailUtil {
 
             Transport.send(message);
             System.out.println("이메일 전송 성공");
-            System.out.println("발송된 인증코드: " + authCode); // ✅ 여기 추가
+            System.out.println("발송된 인증코드: " + authCode); 
+            long end = System.currentTimeMillis(); // 끝 시간
+            System.out.println("이메일 전송 완료 (소요 시간: " + (end - start) + "ms)");
 
         } catch (MessagingException e) {
+        	long end = System.currentTimeMillis();
+            System.err.println("이메일 전송 실패 (소요 시간: " + (end - start) + "ms)");
             e.printStackTrace();
         }
     }
