@@ -8,7 +8,7 @@
     pageEncoding="UTF-8"%>
 <%
     String usersId = (String) request.getAttribute("usersId");
-		Long stayNum = Long.parseLong(request.getParameter("stayNum"));
+	Long stayNum = (Long) request.getAttribute("stayNum");
     /* if (usersId == null) {
         response.sendRedirect(request.getContextPath() + "/booking/submit");
         return;
@@ -18,6 +18,8 @@
     List<RoomDto> minaRoomList = RoomDao.getInstance().getRoomListByStayNum(stayNum);
     
     GuidelineDto guide = (GuidelineDto) request.getAttribute("guide");
+    
+    
 %>
 
 <!DOCTYPE html>

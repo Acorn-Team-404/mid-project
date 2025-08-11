@@ -45,8 +45,8 @@ public class BookDao {
 	   		    FROM BOOKING
 	   		    WHERE BOOK_ROOM_NUM = ?
 	   		      AND BOOK_STATUS_CODE IN (10,11)
-	   		      AND (? < TO_DATE(BOOK_CHECKOUT_DATE, 'YYYY-MM-DD')
-	   		      AND ? > TO_DATE(BOOK_CHECKIN_DATE, 'YYYY-MM-DD'))
+	   		      AND (? < BOOK_CHECKOUT_DATE 
+	   		      AND ? > BOOK_CHECKIN_DATE )
 	   		""";
 	   
 	   try {

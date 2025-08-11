@@ -32,7 +32,7 @@ public class BookCleanupTask extends TimerTask{
 
 	                // 알림 저장
 	              
-	                // SSE 전송
+	                // SSE 전송 
 	                
 	            }
 

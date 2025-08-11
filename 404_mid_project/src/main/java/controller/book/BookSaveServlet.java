@@ -48,7 +48,8 @@ public class BookSaveServlet extends HttpServlet {
 	        // 숙소 정보 가져오기
 	        StayDto stay = StayDao.getInstance().getByBookStayNum(stayNum);
 	        req.setAttribute("stay", stay);
-
+	        req.setAttribute("stayNum", Long.valueOf(stayNum));
+	        
 	        // 객실 목록 가져오기
 	        List<RoomDto> roomList = RoomDao.getInstance().getRoomListByStayNum(stayNum);
 	        req.setAttribute("roomList", roomList);
@@ -65,7 +66,6 @@ public class BookSaveServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		HttpSession session = req.getSession(false);
-
 		String usersId = (String) session.getAttribute("usersId");
 
 		if (usersId == null) {
