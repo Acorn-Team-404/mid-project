@@ -46,8 +46,8 @@
 					<input type="hidden" name="num" value="<%=dto.getPostNum()%>" required> 
 				</div>
 				
-				<div class="mb-3">
-					<label class="form-label mt-4">image upload</label>
+				<div class="mb-3" hidden>
+					<label class="form-label mt-4">carousel image upload</label>
 						<div class="drop-zone" id="dropZone">
 							<div id="dropText">Drag & Drop Or Click</div>
 							<input type="file" name="images" id="fileInput" multiple hidden>
@@ -200,11 +200,11 @@
 		        return;
 		    }
 			//만일 선택한 파일이 없다면
-	    	if(selectedFiles.length < 1){
+/* 	    	if(selectedFiles.length < 1){
 	    		alert("업로드할 이미지를 1개 이상 선택해주세요.")
 	    		e.preventDefault();
 	    		return;
-	    	}
+	    	} */
 		})
 	</script>
 	

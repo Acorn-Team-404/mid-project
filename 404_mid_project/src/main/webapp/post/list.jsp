@@ -133,7 +133,7 @@
 							 <!-- 오버레이 텍스트 박스 -->
 			                <div class="overlay-text hover position-absolute top-50 start-50 translate-middle text-center p-4 bg-white bg-opacity-2 shadow rounded-3">
 			                    <div class="text-secondary fw-light mb-2">#<%=postNum%></div>
-			                    <h5 class="fw-bold mb-2"><%=post.getPostTitle()%></h5>
+			                    <h5 class="fw-bold mb-2" style="line-height:1.5"><%=post.getPostTitle()%></h5>
 			                    <a href="${pageContext.request.contextPath}/post/view.post?num=<%=postNum%>"
 			                       class="text-decoration-none text-secondary fw-semibold">
 			                        read more

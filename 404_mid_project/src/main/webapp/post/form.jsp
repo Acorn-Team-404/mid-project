@@ -35,11 +35,9 @@
 				<textarea class="form-control" name="content" id="hiddenContent" hidden></textarea>
 				
 			</div>
-			
-			<!-- <form action="upload.post" id="saveForm"
-				method="post" enctype="multipart/form-data"> -->
+						
 				<div class="mb-3">
-					<label class="form-label mt-4">image upload</label>
+					<label class="form-label mt-4">carousel image upload</label>
 						<div class="drop-zone" id="dropZone">
 							<div id="dropText">Drag & Drop Or Click</div>
 							<input type="file" name="images" id="fileInput" multiple hidden>
@@ -47,7 +45,7 @@
 						</div>
 						
 				</div>
-			<!-- </form> -->
+			
 			<button class="btn btn-success btn-sm mb-4" type="submit">save</button>
 		</form>
 		
