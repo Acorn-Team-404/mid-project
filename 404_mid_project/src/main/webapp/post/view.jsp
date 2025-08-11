@@ -23,6 +23,8 @@
   	
   	boolean isLogin = usersNum != null;
   	
+  	String usersId = (String) session.getAttribute("usersId");
+  	
   	//댓글 목록
   	List<CommentDto> commentList = CommentDao.getInstance().selectAll(num);
   	
@@ -100,7 +102,7 @@
 	<div class="container">
 	
 		<div> <!-- 제목 -->
-			<h1 class="text-center my-5"><%=dto.getPostTitle() %></h1>
+			<h1 class="text-center my-5" style="line-height:1.5"><%=dto.getPostTitle() %></h1>
 		</div>
 
 		<!-- 본문 -->
@@ -197,7 +199,7 @@
 		            			<i class="bi bi-arrow-return-right position-absolute" style="top:0;left:-30px"></i>
 		            		<%} %>
 			            	<!-- 댓글 작성자가 로그인된 userName일 경우 삭제버튼 출력 -->
-			            	<%if(Objects.equals(tmp.getCommentWriter(), usersNum)) {%>
+			            	<%if(tmp.getCommentWriterId().equals(usersId)){%>
 			            		<button data-num="<%=tmp.getCommentNum() %>" class="btn-close position-absolute top-0 end-0 m-3"></button>
 			            	<%} %>
 			            	<%-- <%if(tmp.getProfileImage()==null){ %>
@@ -210,12 +212,13 @@
 			                <%} %> --%>
 		                		                
 			                <div class="flex-grow-1">
-			                    <div class="d-flex justify-content-between">
+			                    <div class="d-flex justify-content-between mb-3">
 			                        <div>
 			                            <strong><%=tmp.getCommentWriterId() %></strong>
 			                            <span>@<%=tmp.getCommentTargetWriterId() %></span>
+			                            <small class="text-muted ms-2"><%=tmp.getCommentCreatedAt() %></small>
 			                        </div>
-			                        <small class="text-muted ms-auto"><%=tmp.getCommentCreatedAt() %></small>
+			                        
 		                    	</div>
 		                    	<pre><%=tmp.getCommentContent() %></pre>
 		                    	<!-- 댓글 작성자가 로그인된 userName이라면 수정폼 / 아니면 댓글폼 -->

@@ -149,6 +149,7 @@ public class PostServlet extends HttpServlet {
 			
 			
 			
+			
 		// 5. 게시글 업데이트
 		} else if (path.equals("/update.post")) {
 			int num = Integer.parseInt(req.getParameter("num"));
