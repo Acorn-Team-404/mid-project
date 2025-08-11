@@ -69,6 +69,7 @@ public class NotificationDao {
 	                comm.comment_parent_num AS noti_comment_parent_num,
 	                comm.comment_writer AS noti_comment_users_num,
 	                u.users_id AS noti_comment_writer,
+					s_comm.stay_num AS noti_stay_num_for_review,
 	                s_comm.stay_name AS noti_review_stay_name,
 	                inq.inq_num AS noti_inq_num, inq.inq_title AS noti_inq_title,
 	                inq.inq_content AS noti_inq_content,
@@ -129,7 +130,8 @@ public class NotificationDao {
 	            dto.setNotiCommentParentNum(rs.getString("noti_comment_parent_num"));
 	            dto.setNotiCommentUsersNum(rs.getLong("noti_comment_users_num"));
 	            dto.setNotiCommentWriter(rs.getString("noti_comment_writer"));
-	            
+
+				dto.setNotiStayNumForReview(rs.getLong("noti_stay_num_for_review"));
 	            dto.setNotiReviewStayName(rs.getString("noti_review_stay_name"));
 
 	            dto.setNotiInqNum(rs.getLong("noti_inq_num"));
@@ -189,6 +191,7 @@ public class NotificationDao {
 					    comm.comment_parent_num AS noti_comment_parent_num,
 					    comm.comment_writer AS noti_comment_users_num,
 					    u.users_id AS noti_comment_writer,
+					    s_comm.stay_num AS noti_stay_num_for_review,
 					    s_comm.stay_name AS noti_review_stay_name,
 					    inq.inq_num AS noti_inq_num,
 						inq.inq_title AS noti_inq_title,
@@ -271,6 +274,7 @@ public class NotificationDao {
 				dto.setNotiCommentWriter(rs.getString("noti_comment_writer"));
 				
 				// 리뷰 추가필드
+				dto.setNotiStayNumForReview(rs.getLong("noti_stay_num_for_review"));
 				dto.setNotiReviewStayName(rs.getString("noti_review_stay_name"));
 				
 				// 문의 추가필드

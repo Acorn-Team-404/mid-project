@@ -38,6 +38,7 @@ public class NotificationDto {
 	private long notiCommentUsersNum;
 	
 	// 리뷰 타입(추가 필드)
+	private long notiStayNumForReview;
 	private String notiReviewStayName;
 	
 	
@@ -49,6 +50,14 @@ public class NotificationDto {
 	// 이미지 (추가필드)
 	private String notiImageName;
 	
+	
+	public long getNotiStayNumForReview() {
+		return notiStayNumForReview;
+	}
+	
+	public void setNotiStayNumForReview(long notiStayNumForReview) {
+		this.notiStayNumForReview = notiStayNumForReview;
+	}
 	
 	public String getNotiReviewStayName() {
 		return notiReviewStayName;
