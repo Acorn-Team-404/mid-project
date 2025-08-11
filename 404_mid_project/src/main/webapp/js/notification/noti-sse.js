@@ -72,26 +72,6 @@ function initializeSSE() {
   });
 
   
-  // 기본 이벤트(onmessage) 백업 핸들러
-  // 서버가 event 라인을 안 쓰고 기본으로 보낼 때 대비
-  window.eventSource.onmessage = function (event) {
-    // 기본 이벤트를 쓰지 않으면 여기로 안 들어옴
-    // 필요 시 noti 핸들링과 동일하게 처리해도 됨
-    try {
-      const data = JSON.parse(event.data);
-      const arr = Array.isArray(data) ? data : [data];
-      arr.forEach((noti) => {
-        const rc = Number.isFinite(noti.readCount) ? noti.readCount : 0;
-        updateBadge(rc);
-        const html = renderNotiCard(noti, contextPath);
-        if (html && offcanvasBody) {
-          offcanvasBody.insertAdjacentHTML("afterbegin", html);
-        }
-      });
-    } catch {
-      // heartbeat(: ping) 등 무시
-    }
-  };
   window.eventSource.onerror = function (e) {
     console.error("❌ SSE 연결 에러 발생", e);
   };
