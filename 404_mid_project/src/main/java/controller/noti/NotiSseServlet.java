@@ -116,6 +116,7 @@ public class NotiSseServlet extends HttpServlet {
         obj.put("commentContent", nz(dto.getNotiCommentContent()));
         obj.put("commentParentNum", nz(dto.getNotiCommentParentNum()));
         
+        obj.put("stayNumForReview", dto.getNotiStayNumForReview());
         obj.put("reviewStayName", nz(dto.getNotiReviewStayName()));
 
         obj.put("inqNum", dto.getNotiInqNum());
