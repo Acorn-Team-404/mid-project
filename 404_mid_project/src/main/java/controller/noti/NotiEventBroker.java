@@ -32,7 +32,7 @@ public class NotiEventBroker {
     	// 스레드 풀 생성
         scheduler = Executors.newScheduledThreadPool(
             1, // 하트비트 처리용
-            r -> { // 스레드 팩토리를 사용하여 정의
+            r -> { // 스레드 팩토리를 사용하여 정의(Runnable 타입)
                 Thread t = new Thread(r, "SSE-Heartbeat"); // 스레드 이름 정의
                 t.setDaemon(true); // 데몬 스레드(메인 스레드 종료 시 함께 종료)
                 return t;
@@ -50,31 +50,31 @@ public class NotiEventBroker {
 
     
     // 연결 등록 및 연결 종료 시 자동 해제 
-    public void subscribe(long usersNum, AsyncContext ctx) {
+    public void subscribe(long usersNum, AsyncContext asyncCtx) {
     	// 키는 usersNum, 값은 해당 유저의 SSE 연결 set
     	// 해당 유저의 키가 없으면 새로운 Set을 만들고, 있다면 기존 Set 반환
-        subscribers.computeIfAbsent(usersNum, k -> new CopyOnWriteArraySet<>()).add(ctx);
+        subscribers.computeIfAbsent(usersNum, key -> new CopyOnWriteArraySet<>()).add(asyncCtx);
         
         // 수명 관리
-        ctx.addListener(new AsyncListener() {
-            @Override public void onComplete(AsyncEvent event) { unsubscribe(usersNum, ctx); } // 정상 종료 시 제거
-            @Override public void onTimeout(AsyncEvent event)  { unsubscribe(usersNum, ctx); } // 타임아웃 시 제거
-            @Override public void onError(AsyncEvent event)    { unsubscribe(usersNum, ctx); } // 예외 발생 시 제거
+        asyncCtx.addListener(new AsyncListener() {
+            @Override public void onComplete(AsyncEvent event) { unsubscribe(usersNum, asyncCtx); } // 정상 종료 시 제거
+            @Override public void onTimeout(AsyncEvent event)  { unsubscribe(usersNum, asyncCtx); } // 타임아웃 시 제거
+            @Override public void onError(AsyncEvent event)    { unsubscribe(usersNum, asyncCtx); } // 예외 발생 시 제거
             @Override public void onStartAsync(AsyncEvent event) { /* no-op */ } // SSE에선 보통 할 일 없음
         });
     }
 
     // 끊어진 SSE 연결을 정리하는 메서드
     // 여러 기기에서 접속하다가 하나가 끊겨도 나머지 유지
-    public void unsubscribe(long usersNum, AsyncContext ctx) {
+    public void unsubscribe(long usersNum, AsyncContext asyncCtx) {
         Set<AsyncContext> set = subscribers.get(usersNum);
         if (set != null) {
-            set.remove(ctx); // 유저의 해당 연결만 제거
+            set.remove(asyncCtx); // 유저의 해당 연결만 제거
             if (set.isEmpty()) { // 남은 연결이 하나도 없다면
                 subscribers.remove(usersNum); // 유저 자체를 제거
             }
         }
-        try { ctx.complete(); } catch (Exception ignore) {} // 비동기 사이클을 종료하고 리소스 해제
+        try { asyncCtx.complete(); } catch (Exception ignore) {} // 비동기 사이클을 종료하고 리소스 해제
     }
 
     
@@ -95,16 +95,16 @@ public class NotiEventBroker {
         String payload = "event: noti\n" + "data: " + array.toJSONString() + "\n\n";
 
         // 모든 연결에 전송
-        for (AsyncContext ctx : conns) {
+        for (AsyncContext asyncCtx : conns) {
             try {
-                HttpServletResponse resp = (HttpServletResponse) ctx.getResponse();
+                HttpServletResponse resp = (HttpServletResponse) asyncCtx.getResponse();
                 PrintWriter out = resp.getWriter();
                 out.write(payload); // 조립한 문자열 삽입
                 out.flush(); // 전송
                 // 연결이 끊기거나 예외 발생 시 정리
-                if (out.checkError()) unsubscribe(usersNum, ctx);
+                if (out.checkError()) unsubscribe(usersNum, asyncCtx);
             } catch (Exception e) {
-                unsubscribe(usersNum, ctx);
+                unsubscribe(usersNum, asyncCtx);
             }
         }
     }
@@ -121,16 +121,16 @@ public class NotiEventBroker {
         String payload = "event: count\n" + "data: " + obj.toJSONString() + "\n\n";
 
         // 모든 연결에 전송
-        for (AsyncContext ctx : conns) {
+        for (AsyncContext asyncCtx : conns) {
             try {
-                HttpServletResponse resp = (HttpServletResponse) ctx.getResponse();
+                HttpServletResponse resp = (HttpServletResponse) asyncCtx.getResponse();
                 PrintWriter out = resp.getWriter();
                 out.write(payload); // 조립한 문자열 삽입
                 out.flush(); // 전송
                 // 연결이 끊기거나 예외 발생 시 정리
-                if (out.checkError()) unsubscribe(usersNum, ctx);
+                if (out.checkError()) unsubscribe(usersNum, asyncCtx);
             } catch (Exception e) {
-                unsubscribe(usersNum, ctx);
+                unsubscribe(usersNum, asyncCtx);
             }
         }
     }
@@ -140,16 +140,16 @@ public class NotiEventBroker {
     private void heartbeatAll() {
     	// 유저별로 열려있는 모든 AsyncContext를 순회
         subscribers.forEach((user, conns) -> {
-            for (AsyncContext ctx : conns) {
+            for (AsyncContext asyncCtx : conns) {
                 try {
-                    HttpServletResponse resp = (HttpServletResponse) ctx.getResponse();
+                    HttpServletResponse resp = (HttpServletResponse) asyncCtx.getResponse();
                     PrintWriter out = resp.getWriter();
                     out.write(": ping\n\n"); // :으로 시작하는 라인은 SSE 주석. 데이터 흐름만 만들어 연결을 유지할 목적
                     out.flush();
                     // 연결이 끊기거나 예외 발생 시 정리
-                    if (out.checkError()) unsubscribe(user, ctx);
+                    if (out.checkError()) unsubscribe(user, asyncCtx);
                 } catch (Exception e) {
-                    unsubscribe(user, ctx);
+                    unsubscribe(user, asyncCtx);
                 }
             }
         });

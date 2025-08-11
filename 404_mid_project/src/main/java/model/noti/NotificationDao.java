@@ -13,7 +13,7 @@ public class NotificationDao {
 	
 	
 	
-	// Connection Pool 관리
+	// Connection Pool 관리 (싱글톤 패턴)
 	private static NotificationDao notiDao;
 	static {
 		notiDao = new NotificationDao();
@@ -24,11 +24,8 @@ public class NotificationDao {
 	}
 	
 	
-	
-	
-	// --------- 실험중
-	
-	// 새로 추가: 시퀀스에서 다음 noti_num 미리 가져오기
+
+	// 시퀀스에서 다음 noti_num 미리 가져오기
 	private long nextNotiNum(Connection conn) throws Exception {
 	    try (PreparedStatement ps = conn.prepareStatement("SELECT noti_seq.NEXTVAL FROM dual");
 	         ResultSet rs = ps.executeQuery()) {
@@ -37,7 +34,8 @@ public class NotificationDao {
 	    }
 	}
 
-	// 새로 추가: noti_num 1건으로 상세 조회 (기존 조인 로직 재사용)
+	
+	// 즉시 푸시 용도로 noti_num 1건으로 상세 조회
 	public NotificationDto notiSelectOne(long usersNum, long notiNum) {
 	    Connection conn = null;
 	    PreparedStatement pstmt = null;
@@ -47,7 +45,6 @@ public class NotificationDao {
 	        conn = DBConnector.getConn();
 	        String sql = """
 	            SELECT 
-	                -- (기존 notiSelectAfter와 동일한 SELECT 컬럼들)
 	                n.noti_num, NVL(n.noti_sender_num, 0) AS noti_sender_num,
 	                c.cc_description AS noti_type, n.noti_message, n.noti_read_code,
 	                TO_CHAR(n.noti_created_at, 'YYYY-MM-DD') AS noti_created_at,
@@ -105,7 +102,7 @@ public class NotificationDao {
 	        rs = pstmt.executeQuery();
 	        if (rs.next()) {
 	            dto = new NotificationDto();
-	            // rs → dto 매핑 (기존과 동일)
+	            
 	            dto.setNotiNum(rs.getLong("noti_num"));
 	            dto.setNotiSenderNum(rs.getLong("noti_sender_num"));
 	            dto.setNotiMessage(rs.getString("noti_message"));
@@ -142,9 +139,7 @@ public class NotificationDao {
 	    }
 	    return dto;
 	}
-	
-	// --------- 실험중
-	
+
 	
 	// SELECT 쿼리
 	public List<NotificationDto> notiSelectAfter(long usersNum, long lastNotiNum) {
@@ -270,7 +265,6 @@ public class NotificationDao {
 				// 이미지 추가필드
 				dto.setNotiImageName(rs.getString("noti_image_name"));
 				
-				
 				list.add(dto);
 			}
 
@@ -285,7 +279,7 @@ public class NotificationDao {
 	
 	
 	
-	// 수정: notiInsert → insert 성공 후 즉시 푸시
+	// insert 성공 후 즉시 클라이언트에 데이터 푸시(NotiEventBroker 클래스의 publish 메서드 실행)
 	public boolean notiInsert(NotificationDto dto) {
 	    Connection conn = null;
 	    PreparedStatement pstmt = null;
@@ -324,7 +318,8 @@ public class NotificationDao {
 	            int unreadCount = notiReadCount(usersNum);
 
 	            if (full != null) {
-	                // 🔴 여기서 즉시 푸시된다
+	                // 즉시 푸시
+	            	// List<NotificationDto> list = List.of(full)와 똑같은 문법이지만 간결함(불변)
 	                NotiEventBroker.getInstance().publish(usersNum, java.util.List.of(full), unreadCount);
 	            }
 	        } else {
