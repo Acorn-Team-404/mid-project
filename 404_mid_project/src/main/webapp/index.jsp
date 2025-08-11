@@ -34,7 +34,6 @@
   </style>
 </head> 
 <body>
-	
 	<jsp:include page="/WEB-INF/include/navbar.jsp"></jsp:include>
 	
 	<jsp:include page="/WEB-INF/include/index-stay-card.jsp" />
