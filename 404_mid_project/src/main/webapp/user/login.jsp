@@ -5,21 +5,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%
-	String url = request.getParameter("url");	
-	request.setCharacterEncoding("UTF-8");
-	response.setContentType("text/html;charset=UTF-8");
 	
 	String usersId = request.getParameter("usersId");
 	String usersPassword = request.getParameter("usersPassword");
+	String url = request.getParameter("url");	
 	
+	String encodedUrl=URLEncoder.encode(url, "UTF-8");		
 	
-	if (url == null || url.contains("loginform.jsp")) {
-		url = request.getContextPath() + "/index.jsp";
-	}
+	 UserDto dto = UserDao.getInstance().getByUserId(usersId);
+	
+	 boolean isValid = dto != null && dto.getUsersPw() != null 
+	                     && BCrypt.checkpw(usersPassword, dto.getUsersPw());
 
-   UserDto dto = UserDao.getInstance().getByUserId(usersId);
-   boolean isValid = dto != null && dto.getUsersPw() != null 
-                     && BCrypt.checkpw(usersPassword, dto.getUsersPw());
 
 	if (isValid) {
 		session.setAttribute("usersId", dto.getUsersId());
@@ -27,6 +24,9 @@
 		session.setAttribute("usersRole", dto.getUsersRole()); //role 정보
 		System.out.println("DB에서 읽은 사용자 역할: " + dto.getUsersRole());
 		session.setMaxInactiveInterval(60 * 60); // 1시간 유지
+		
+		
+		System.out.println("로그인 성공");
 		
 		String isSave=request.getParameter("isSave");
 		
@@ -42,6 +42,7 @@
 		}
 		
 		response.sendRedirect(url);
+
 		
 	} else {
 		request.setAttribute("modalMessage", "입력한 정보와 일치하는 계정이 없습니다.");
