@@ -11,7 +11,7 @@
 	Long usersNum=(Long)session.getAttribute("usersNum");
 	String uri=request.getContextPath()+"/inquiry/list.jsp";
 	if (usersNum == null) {
-	    response.sendRedirect(request.getContextPath()+"/user/login-form.jsp?url="+URLEncoder.encode(uri, "UTF-8"));
+	    response.sendRedirect(request.getContextPath()+"/user/login-form.jsp?returnTo="+URLEncoder.encode(uri, "UTF-8"));
 	    return;
 	}
 	
