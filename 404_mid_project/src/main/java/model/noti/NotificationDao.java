@@ -29,7 +29,6 @@ public class NotificationDao {
 	    int rowCount = 0;
 
 	    try {
-	       
 	        long newNotiNum = nextNotiNum(conn);
 
 	        String sql = """
@@ -51,28 +50,18 @@ public class NotificationDao {
 
 	        rowCount = pstmt.executeUpdate();
 
-	        if (rowCount > 0) {
-	            
-	        	conn.commit();
-	        	
-	            long usersNum = dto.getNotiRecipientNum();
-	            NotificationDto full = notiSelectOne(usersNum, newNotiNum); // 방금 insert 건 조인해서 완성
-	            int unreadCount = notiReadCount(usersNum);
+	        // 새로 생성된 알림 번호를 DTO에 저장 → commit 후 publish 때 사용
+	        dto.setNotiNum(newNotiNum);
 
-	            if (full != null) {
-	                // 즉시 푸시
-	            	// List<NotificationDto> list = List.of(full)와 똑같은 문법이지만 간결함(불변)
-	                NotiEventBroker.getInstance().publish(usersNum, java.util.List.of(full), unreadCount);
-	            }
-	        
-	        }
-	    }catch (Exception e) {
+	    } catch (Exception e) {
 	        e.printStackTrace();
-	       
-	    } finally {}
-	    
+	    } finally {
+	        try { if (pstmt != null) pstmt.close(); } catch (Exception ignored) {}
+	    }
+
 	    return rowCount > 0;
 	}
+
 	
 	// 시퀀스에서 다음 noti_num 미리 가져오기
 	private long nextNotiNum(Connection conn) throws Exception {
