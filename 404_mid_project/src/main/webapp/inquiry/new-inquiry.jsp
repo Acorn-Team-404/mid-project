@@ -19,7 +19,7 @@
 		uri += "?stayNum=" + stayNum;
 	}
 	if (session.getAttribute("usersNum") == null) {
-	    response.sendRedirect(request.getContextPath()+"/user/login-form.jsp?url="+URLEncoder.encode(uri, "UTF-8"));
+	    response.sendRedirect(request.getContextPath()+"/user/login-form.jsp?returnTo="+URLEncoder.encode(uri, "UTF-8"));
 	    return;
 	}
 	
