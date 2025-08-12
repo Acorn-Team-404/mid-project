@@ -23,10 +23,9 @@
 	
 	
 	// 댓글 작성자 정보는 session 으로부터 얻어낸다.
-	// String writer=(String)session.getAttribute("userNum");
 	Long usersNum = (Long)session.getAttribute("usersNum");
-	
 	int writer = usersNum.intValue();
+	
 	//저장할 댓글의 글번호를 미리 얻어낸다.
 	int num=CommentDao.getInstance().getSequence();
 	

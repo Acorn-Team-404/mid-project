@@ -1,3 +1,4 @@
+<%@page import="java.net.URLEncoder"%>
 <%@page import="model.image.ImageDto"%>
 <%@page import="model.image.ImageDao"%>
 
@@ -163,7 +164,7 @@
 		  </div>
 		  <div class="card-body">
 		    <!-- 원글의 댓글을 작성할 폼 -->
-		    <form action="save-comment.jsp" method="post">
+		    <form id="commentForm" action="save-comment.jsp" method="post">
 		      <!-- 숨겨진 입력값 -->
 		      <input type="hidden" name="parentNum" value="<%=dto.getPostNum() %>"/>
 		      <input type="hidden" name="targetWriter" value="<%=dto.getPostWriterNum() %>" />
@@ -266,9 +267,64 @@
 		
 	</div> <!-- container -->
 	<script>
-		//로그인 여부
-		const isLogin = <%=isLogin %>;
 		
+		<%-- document.querySelector("#commentContent").addEventListener("input", ()=>{
+			//원글의 댓글 입력란에 포커스 왔을 때 -- 로그인 x라면
+			if(!isLogin){
+				
+			
+				const isMove=confirm("댓글 작성을 위해 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?");
+				location.href=
+					"${pageContext.request.contextPath }/user/login-form.jsp?url=${pageContext.request.contextPath }/post/view.jsp?num=<%=num %>";
+			}
+		});
+	 	--%>
+	 
+	 	document.querySelector("#commentForm").addEventListener("submit", function(e){
+	 		const commentContent = document.querySelector("#commentContent").value;
+			const isLogin = <%=isLogin %>;
+			
+			// 1. 내용 없음
+			if(!commentContent){
+				alert("댓글 내용을 입력하세요.");
+				e.preventDefault();
+			    return;
+			}
+			
+			// 2. 내용은 있지만 로그인 안 한 경우
+			if (!isLogin) {
+		        e.preventDefault();
+		        if (confirm("댓글 작성을 위해 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?")) {
+	                location.href=
+						"${pageContext.request.contextPath }/user/login-form.jsp?returnTo=${pageContext.request.contextPath }/post/view.jsp?num=<%=num %>";
+		        }
+		    }
+			
+	 	}); // submit
+	 
+        //모든 댓글 버튼에 이벤트 등록
+        document.querySelectorAll(".show-reply-btn").forEach(item=>{
+            // 매개변수에 전달된 item 은 댓글 button 의 참조값이다 
+            item.addEventListener("click", ()=>{
+
+                //클릭한 버튼의 다음 형제요소의 class 목록에서 d-none 을 제거 
+                item.nextElementSibling.classList.remove("d-none");
+                //클릭한 버튼의 class 목록에 d-none 을 추가
+                item.classList.add("d-none");
+            });
+        });
+
+        document.querySelectorAll(".cancel-reply-btn").forEach(item=>{
+            item.addEventListener("click", ()=>{
+                //가장 가까운 부모 요소중에 클래스 속성이 form-div 인요소  
+                const formDiv=item.closest(".form-div");
+                //formDiv 에 d-none 클래스 추가해서 안보이게 하고
+                formDiv.classList.add("d-none");
+                //formDiv 의 이전 형제요소(댓글버튼)에 d-none 클래스 제거해서 보이게 한다  
+                formDiv.previousElementSibling.classList.remove("d-none");
+            });
+        });
+        
 		//대댓글 보기 버튼 눌렀을 때 실행할 함수 등록
     	document.querySelectorAll(".dropdown-btn").forEach(item => {
 			item.addEventListener("click", (e) => {
@@ -336,48 +392,8 @@
                 formDiv.previousElementSibling.classList.remove("d-none");
             })
         })
-		document.querySelector("#commentContent").addEventListener("input", ()=>{
-			//원글의 댓글 입력란에 포커스 왔을 때 -- 로그인 x라면
-			if(!isLogin){
-				
-			
-				const isMove=confirm("댓글 작성을 위해 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?");
-				location.href=
-					"${pageContext.request.contextPath }/user/login-form.jsp?url=${pageContext.request.contextPath }/post/view.jsp?num=<%=num %>";
-			}
-		});
-	
-        //모든 댓글 버튼에 이벤트 등록
-        document.querySelectorAll(".show-reply-btn").forEach(item=>{
-            // 매개변수에 전달된 item 은 댓글 button 의 참조값이다 
-            item.addEventListener("click", ()=>{
-            	 
-            	//로그인 안했다면
-            	if(!isLogin){
-            		
-            		const isMove=confirm("댓글 작성을 위해 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?");
-    				location.href=
-    					"${pageContext.request.contextPath }/user/login-form.jsp?url=${pageContext.request.contextPath }/post/view.jsp?num=<%=num %>";
-            		return;
-            	}
-                //클릭한 버튼의 다음 형제요소의 class 목록에서 d-none 을 제거 
-                item.nextElementSibling.classList.remove("d-none");
-                //클릭한 버튼의 class 목록에 d-none 을 추가
-                item.classList.add("d-none");
-               
-            });
-        });
-
-        document.querySelectorAll(".cancel-reply-btn").forEach(item=>{
-            item.addEventListener("click", ()=>{
-                //가장 가까운 부모 요소중에 클래스 속성이 form-div 인요소  
-                const formDiv=item.closest(".form-div");
-                //formDiv 에 d-none 클래스 추가해서 안보이게 하고
-                formDiv.classList.add("d-none");
-                //formDiv 의 이전 형제요소(댓글버튼)에 d-none 클래스 제거해서 보이게 한다  
-                formDiv.previousElementSibling.classList.remove("d-none");
-            });
-        });
+        
+		
     </script>	
 </body>
 </html>

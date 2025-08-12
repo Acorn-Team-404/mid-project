@@ -94,16 +94,16 @@
 		<div> 
 		
 			<div class="d-flex justify-content-end">
-	      <%
-		      String role = (String)request.getAttribute("usersRole");
-		      if ("ROLE_ADMIN".equals(role)) {
-	      %>
-					<a class="btn btn-sm btn-outline-secondary mt-5" 
-						href="${pageContext.request.contextPath}/post/form.jsp"
-						id="postBtn" >
-						post
+				<%
+				 String role = (String)request.getAttribute("usersRole");
+				 if ("ROLE_ADMIN".equals(role)) {
+				%>
+				<a class="btn btn-sm btn-outline-secondary mt-5" 
+					href="${pageContext.request.contextPath}/post/form.jsp"
+					id="postBtn" >
+					post
 					<i class="bi bi-pencil-square"></i>
-					</a>
+				</a>
 				<%} %>
 			</div>
 			<h2 class="text-center my-5">JOURNAL</h2>
