@@ -243,6 +243,7 @@
 			                        	</form>
 	                    			</div>	
 		                    	
+		                    	<% } else { %>
 		                    	
 			                    	<button class="btn btn-sm btn-outline-secondary show-reply-btn float-end">댓글</button>  
 		                   			<!-- 댓글 입력 폼 (처음에는 숨김) -->
