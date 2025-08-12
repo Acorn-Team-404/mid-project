@@ -29,7 +29,7 @@ public class SecurityFilter implements Filter{
 		"/inquiry/list.jsp",
 		"/css/","/test/",
 		"/stay/stay-list.jsp","/stay/stay-view.jsp",
-		"/page/", "/show.img","/booking/"
+		"/page/", "/show.img", "/error/"
 		
 	);
 	
