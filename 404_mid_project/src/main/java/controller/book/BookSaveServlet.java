@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -25,10 +26,24 @@ import model.user.UserDto;
 @WebServlet("/booking/submit")
 public class BookSaveServlet extends HttpServlet {
 	
+	//중복데이터 방지 셋팅
+	private void setBookingPageAttributes(HttpServletRequest req, int stayNum) {
+	    StayDto stay = StayDao.getInstance().getByBookStayNum(stayNum);
+	    req.setAttribute("stay", stay);
+	    req.setAttribute("stayNum", Long.valueOf(stayNum));
+	    
+	    List<RoomDto> roomList = RoomDao.getInstance().getRoomListByStayNum(stayNum);
+	    req.setAttribute("roomList", roomList);
+	    
+	    GuidelineDto guide = GuidelineDao.getInstance().getByGuideId(1);
+	    req.setAttribute("guide", guide);
+	}
+	
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 	    HttpSession session = req.getSession();    
+	    
 	    String usersId = (String) session.getAttribute("usersId");
-
+	    
 	    if (usersId != null) {
 			UserDto dto = UserDao.getInstance().getByUserId(usersId);
 			if (dto != null) {
@@ -66,6 +81,7 @@ public class BookSaveServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		HttpSession session = req.getSession(false);
+		String payToken = UUID.randomUUID().toString();
 		String usersId = (String) session.getAttribute("usersId");
 
 		if (usersId == null) {
@@ -103,6 +119,7 @@ public class BookSaveServlet extends HttpServlet {
 		if (betweenDay <= 0) {
 			// 체크인 날짜는 체크아웃 날짜보다 이전이어야 한다
 			req.setAttribute("errorMsg", "체크아웃 날짜는 체크인 날짜보다 늦어야 합니다");
+			setBookingPageAttributes(req, stayNum);
 			req.getRequestDispatcher("/booking/booking-page.jsp").forward(req, res);
 			return;
 		}
@@ -134,12 +151,13 @@ public class BookSaveServlet extends HttpServlet {
 		dto.setBookStatusCode(10);
 		
 		//내가 고른 날짜와 기존 예약되있는 것들 겹치는 거 있는지 서버단에서 검사
-		if (BookDao.getInstance().isDateOverlap(dto)) {
-		    req.setAttribute("errorMsg", "선택한 날짜에 이미 예약이 존재합니다. 다른 날짜를 선택해주세요.");
-		    req.getRequestDispatcher("/booking/booking-page.jsp").forward(req, res);
-		    return;
-		}
-		
+//		if (BookDao.getInstance().isDateOverlap(dto)) {
+//		    req.setAttribute("errorMsg", "선택한 날짜에 이미 예약이 존재합니다. 다른 날짜를 선택해주세요.");
+//		    setBookingPageAttributes(req, stayNum);
+//		    req.getRequestDispatcher("/booking/booking-page.jsp").forward(req, res);
+//		    return;
+//		}
+//		
 		boolean isSuccess = BookDao.getInstance().insert(dto);
 
 		if (!isSuccess) {
@@ -150,12 +168,19 @@ public class BookSaveServlet extends HttpServlet {
 		} else {
 			// dto전체를 넘길 필요는 없고 결제 페이지에서는 bookNum으로 예약정보를 가져오는 쿼리 사용
 			BookDto bookDto = BookDao.getInstance().getByBookNum(dto.getBookNum());
-			System.out.println("bookDto.getBookStayNum(): " + bookDto.getBookStayNum());
 			StayDto stayDto = StayDao.getInstance().getByBookStayNum(bookDto.getBookStayNum());
-			System.out.println("stayDto: " + (stayDto != null ? "조회됨" : "NULL!!!"));
-			req.setAttribute("bookDto", bookDto);
-			req.setAttribute("stayDto", stayDto);
-			req.getRequestDispatcher("/pay/payments.jsp").forward(req, res);
+			
+			
+			//세션에 UUID토큰 저장해서 요청 간에 유지하면서 결제 검증
+
+			setBookingPageAttributes(req, stayNum);
+			
+			//결제 페이지에 한 번 보여줄 데이터라 요청 한 번에 사라짐
+			session.setAttribute("payToken", payToken);
+			session.setAttribute("bookDto", bookDto);
+			session.setAttribute("stayDto", stayDto);
+			
+			res.sendRedirect(req.getContextPath() + "/pay/payments.jsp?bookNum=" + bookDto.getBookNum());
 
 		}
 

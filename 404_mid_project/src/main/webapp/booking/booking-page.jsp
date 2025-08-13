@@ -396,7 +396,7 @@
                     <input type="hidden" name="selectedBed" id="selectedBed" value=""/>
                     <input type="hidden" name="selectedCheckInTime" id="selectedCheckInTime" value="standard"/>
                     <input type="hidden" name="totalAmountValue" id="totalAmountValue" value="0"/>
-
+					<input type="hidden" name="bookStayNum" id = "bookStayNum" value="" />
                     <button type="submit" class="btn btn-primary w-100">예약하기</button>
                 </div>
             </div>

@@ -50,17 +50,36 @@ public class PaymentsServlet extends HttpServlet {
 		String errorMessage = null;
 		boolean paymentSuccess = false;
 		
+		HttpSession session = request.getSession(); 		
+		String reqToken = request.getParameter("payToken");
+		String sessionToken = (String) session.getAttribute("payToken");
+		
+		if (sessionToken == null || !sessionToken.equals(reqToken)) {
+		    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "잘못된 요청입니다.");
+		    return;
+		}
+		
 		// 토스 서버에 쏴줄 파라미터들 수집하기
 		String paymentKey = request.getParameter("paymentKey");
 		String orderId = request.getParameter("orderId");
 		String amount = request.getParameter("amount");
 		String bookNum = (String) request.getSession().getAttribute("bookNum");
 		BookDto bookDto = BookDao.getInstance().getByBookNum(bookNum);
-		System.out.println(paymentKey);
-		System.out.println(orderId);
-		System.out.println(amount);
-		System.out.println(bookNum);
-		System.out.println(bookDto);
+//		System.out.println(paymentKey);
+//		System.out.println(orderId);
+//		System.out.println(amount);
+//		System.out.println(bookNum);
+//		System.out.println(bookDto);
+		
+		if (PaymentDao.getInstance().existsByBookNum(bookNum)) {
+		    request.setAttribute("paymentSuccess", false);
+		    request.setAttribute("errorCode", "ALREADY_PAID");
+		    request.setAttribute("errorMsg", "이미 결제된 예약입니다.");
+		    RequestDispatcher rd = request.getRequestDispatcher("/pay/pay-result.jsp");
+		    rd.forward(request, response);
+		    return;
+		}
+		
 		
 		String credentials = SECRET_KEY + ":";
 		// 인증헤더 구성 (Base64를 인코딩하려면 바이트 배열이여햐 하기 떄문에 byte배열로 인코딩 후 Base64 문자열로 인코딩)
@@ -135,8 +154,13 @@ public class PaymentsServlet extends HttpServlet {
 				dbConn = DBConnector.getConn();
 				dbConn.setAutoCommit(false);
 				
-				//세션에서 유저고유
-				HttpSession session = request.getSession();
+				// 날짜 검사 먼저 하고 이미 해당 객실에 대한 예약이 있으면 롤백
+				if (BookDao.getInstance().isDateOverlap(dbConn, bookDto)) {
+				    dbConn.rollback();
+				    throw new Exception("예약 날짜가 이미 다른 예약과 겹칩니다.");
+				}
+				//세션에서 유저고유번호 받아옴
+				
 			    Long usersNum = (Long) session.getAttribute("usersNum");
 			    if (usersNum == null) {
 			        throw new IllegalStateException("세션에서 사용자 번호(usersNum)를 가져올 수 없습니다.");

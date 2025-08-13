@@ -1,6 +1,7 @@
 package model.pay;
 
 import java.sql.Connection;
+import java.sql.ConnectionBuilder;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,6 +21,35 @@ public class PaymentDao {
 	
 	public static PaymentDao getInstance() {
 		return dao;
+	}
+	
+	//결제 테이블 같은 예약번호로 결제 두번 되는 거 방지용
+	public boolean existsByBookNum(String payBookNum) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = DBConnector.getConn();
+			String sql = """
+					SELECT 1
+					FROM PAYMENTS
+					WHERE PAY_BOOK_NUM = ?
+					""";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, payBookNum);
+			rs = pstmt.executeQuery();
+			
+			return rs.next();
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally {
+			DBConnector.close(rs,pstmt, conn);
+		}
+		
+		return false;
 	}
 	
 	public String getMethodCodeByPayNum(String payNum) {	
@@ -49,7 +79,7 @@ public class PaymentDao {
 			}
 		} catch (Exception e){
 			e.printStackTrace();
-		}finally {DBConnector.close(pstmt, conn);}
+		}finally {DBConnector.close(rs,pstmt, conn);}
 		
 		return method_code;
 	} 
@@ -93,7 +123,7 @@ public class PaymentDao {
 		}catch (Exception e) {
 			e.printStackTrace();
 		}finally {
-			DBConnector.close(pstmt, conn);
+			DBConnector.close(rs,pstmt, conn);
 		}
 		
 		return dto;
@@ -138,7 +168,7 @@ public class PaymentDao {
 		}catch (Exception e) {
 			e.printStackTrace();
 		}finally {
-			DBConnector.close(pstmt, conn);
+			DBConnector.close(rs,pstmt, conn);
 		}
 		
 		return dto;

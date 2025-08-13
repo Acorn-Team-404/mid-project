@@ -1,6 +1,8 @@
+console.log("toss-payments.js loaded");
 
 
 const servletPath = window.contextPath + "/pay/PaymentsServlet";
+
 //console.log("successUrl", window.location.origin + servletPath);
 //console.log("failUrl", window.location.origin + servletPath);
 //console.log("contextPath is", contextPath);
@@ -41,6 +43,11 @@ const payment = tossPayments.payment({customerKey,
 // ------ 결제하기 버튼 누르면 결제창 띄우기 ------
 // @docs https://docs.tosspayments.com/sdk/v2/js#paymentrequestpayment;
 async function requestPayment() {
+	
+	if (!payment){
+		console.error("pyment 객체가 아직 초기화 되지 ㅇ낳았습니다.")
+		return
+	}
 	// 결제를 요청하기 전에 orderId, amount를 서버에 저장해야함
 	// 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도
 	switch (selectedPaymentMethod) {
@@ -106,6 +113,9 @@ async function requestPayment() {
 function generateRandomString() {
 	return window.btoa(Math.random()).slice(0, 20);
 }
+
+console.log("payment:", payment);
+console.log("requestPayment:", requestPayment);
 
 // 전역 scope 등록
 window.selectPaymentMethod = selectPaymentMethod;

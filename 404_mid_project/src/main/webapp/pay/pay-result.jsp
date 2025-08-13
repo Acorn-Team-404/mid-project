@@ -12,6 +12,9 @@
 <%@page import="model.book.BookDto"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%
+
+	session.removeAttribute("payToken");
+
   	// PaymentsServlet에서 트랜잭션 성공 여부로 결과페이지 분기
   	Boolean success =(Boolean) request.getAttribute("paymentSuccess");
   	if (success == null) success = false;

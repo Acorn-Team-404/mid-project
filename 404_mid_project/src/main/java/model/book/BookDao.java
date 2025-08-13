@@ -35,9 +35,9 @@ public class BookDao {
       return dao;
    }
    
-   // BookDao.java
-   public boolean isDateOverlap(BookDto dto) {
-	   	Connection conn = null;
+   // 날짜 범위 겹치는 예약 방지
+   public boolean isDateOverlap(Connection conn,BookDto bookDto) {
+
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 	   String sql = """
@@ -50,15 +50,12 @@ public class BookDao {
 	   		""";
 	   
 	   try {
-			 
-		   
-		   conn = DBConnector.getConn();
+
 		   pstmt = conn.prepareStatement(sql);
-		   pstmt.setLong(1, dto.getBookRoomNum());
-		   pstmt.setString(2, dto.getBookCheckIn()); // 새 체크아웃 < 기존 체크인보다 이후
-		   pstmt.setString(3, dto.getBookCheckOut());  // 새 체크인 > 기존 체크아웃보다 이전
+		   pstmt.setLong(1, bookDto.getBookRoomNum());
+		   pstmt.setString(2, bookDto.getBookCheckIn()); // 새 체크아웃 < 기존 체크인보다 이후
+		   pstmt.setString(3, bookDto.getBookCheckOut());  // 새 체크인 > 기존 체크아웃보다 이전
 		   rs = pstmt.executeQuery();
-		   
 		   
 		   if(rs.next()) {
 			   return true;
@@ -70,7 +67,6 @@ public class BookDao {
 		   e.printStackTrace();
 		   return true; // 예외 발생 시 그냥 겹친다 처리 
 	   } finally {
-		   DBConnector.close(rs, pstmt, conn);
 	   }
    }
    
@@ -263,7 +259,7 @@ public class BookDao {
       } catch (Exception e) {
          e.printStackTrace();
       }finally {
-         DBConnector.close(pstmt, conn);
+         DBConnector.close(rs,pstmt, conn);
       }
       
       return dto;
@@ -390,7 +386,7 @@ public class BookDao {
       } catch (Exception e) {
          e.printStackTrace();
       } finally {
-         DBConnector.close(pstmt, conn);
+         DBConnector.close(rs,pstmt, conn);
       }
       return price;
    }
@@ -512,7 +508,7 @@ public class BookDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-	        DBConnector.close(pstmt, conn);
+	        DBConnector.close(rs,pstmt, conn);
 		}
 	   return resultMap;		   
    }
